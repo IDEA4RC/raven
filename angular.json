@@ -27,8 +27,7 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/styles.scss",
-              "src/assets/scss/style.scss",
-              "node_modules/angular-calendar/css/angular-calendar.css",
+              "src/assets/scss/style.scss"
             ],
             "scripts": []
           },

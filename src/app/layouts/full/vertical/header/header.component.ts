@@ -39,28 +39,9 @@ interface profiledd {
 }
 
 @Component({
-  selector: 'search-dialog',
-  standalone: true,
-  imports: [RouterModule, MaterialModule, TablerIconsModule, FormsModule],
-  templateUrl: 'search-dialog.component.html',
-})
-export class AppSearchDialogComponent {
-  searchText: string = '';
-  navItems = navItems;
-
-  navItemsData = navItems.filter((navitem) => navitem.displayName);
-
-  // filtered = this.navItemsData.find((obj) => {
-  //   return obj.displayName == this.searchinput;
-  // });
-}
-
-
-
-@Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, NgScrollbarModule, TablerIconsModule, MaterialModule, BrandingComponent, AppSearchDialogComponent],
+  imports: [RouterModule, NgScrollbarModule, TablerIconsModule, MaterialModule, BrandingComponent ],
   templateUrl: './header.component.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -216,3 +197,19 @@ export class HeaderComponent {
   ];
 }
 
+@Component({
+  selector: 'search-dialog',
+  standalone: true,
+  imports: [RouterModule, MaterialModule, TablerIconsModule, FormsModule],
+  templateUrl: 'search-dialog.component.html',
+})
+export class AppSearchDialogComponent {
+  searchText: string = '';
+  navItems = navItems;
+
+  navItemsData = navItems.filter((navitem) => navitem.displayName);
+
+  // filtered = this.navItemsData.find((obj) => {
+  //   return obj.displayName == this.searchinput;
+  // });
+}

@@ -32,27 +32,9 @@ interface profiledd {
 }
 
 @Component({
-  selector: 'app-search-dialog',
-  standalone: true,
-  imports: [MaterialModule, RouterModule, TablerIconsModule, FormsModule],
-  templateUrl: 'search-dialog.component.html',
-})
-export class AppHorizontalSearchDialogComponent {
-  searchText: string = '';
-  navItems = navItems;
-
-  navItemsData = navItems.filter((navitem) => navitem.displayName);
-
-  // filtered = this.navItemsData.find((obj) => {
-  //   return obj.displayName == this.searchinput;
-  // });
-}
-
-
-@Component({
   selector: 'app-horizontal-header',
   standalone: true,
-  imports: [MaterialModule, RouterModule, TablerIconsModule, BrandingComponent, AppHorizontalSearchDialogComponent],
+  imports: [MaterialModule, RouterModule, TablerIconsModule, BrandingComponent],
   templateUrl: './header.component.html',
 })
 export class AppHorizontalHeaderComponent {
@@ -207,3 +189,19 @@ export class AppHorizontalHeaderComponent {
   ];
 }
 
+@Component({
+  selector: 'app-search-dialog',
+  standalone: true,
+  imports: [MaterialModule, RouterModule, TablerIconsModule, FormsModule],
+  templateUrl: 'search-dialog.component.html',
+})
+export class AppHorizontalSearchDialogComponent {
+  searchText: string = '';
+  navItems = navItems;
+
+  navItemsData = navItems.filter((navitem) => navitem.displayName);
+
+  // filtered = this.navItemsData.find((obj) => {
+  //   return obj.displayName == this.searchinput;
+  // });
+}

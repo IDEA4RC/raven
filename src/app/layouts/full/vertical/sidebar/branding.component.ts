@@ -8,9 +8,9 @@ import { CoreService } from 'src/app/services/core.service';
   imports: [RouterModule],
   template: `
     <div class="branding d-none d-lg-flex align-items-center">
-      <a [routerLink]="['/']" class="d-flex">
+      <a [routerLink]="['/']" class="d-flex" style="margin: auto;">
         <img
-          src="./assets/images/logos/light-logo.svg"
+          src="./assets/images/logos/raven_logo.svg"
           class="align-middle m-2"
           alt="logo"
         />

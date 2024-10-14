@@ -21,7 +21,7 @@ import { CoreService } from 'src/app/services/core.service';
 })
 export class CustomizerComponent {
   @Output() optionsChange = new EventEmitter<AppSettings>();
-  constructor(private settings: CoreService) { }
+  constructor(private settings: CoreService) {}
   options = this.settings.getOptions();
 
   setDark() {

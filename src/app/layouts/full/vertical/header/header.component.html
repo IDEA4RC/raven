@@ -26,137 +26,54 @@
 
   <!-- --------------------------------------------------------------- -->
 
-  <!-- --------------------------------------------------------------- -->
-  <!--  Search -->
-  <!-- --------------------------------------------------------------- -->
-  <button
-    mat-icon-button
-    (click)="openDialog()"
-    class="d-flex justify-content-center"
-  >
-    <i-tabler name="search" class="icon-20 d-flex"></i-tabler>
-  </button>
+ 
 
   <span class="flex-1-auto"></span>
 
   <!-- --------------------------------------------------------------- -->
-  <!-- langugage Dropdown -->
-  <!-- --------------------------------------------------------------- -->
-  <button [matMenuTriggerFor]="flags" mat-icon-button class="m-r-5">
-    <img [src]="selectedLanguage.icon" class="rounded object-cover icon-20" />
-  </button>
-  <mat-menu #flags="matMenu" class="cardWithShadow">
-    @for(lang of languages; track lang.language) {
-    <button mat-menu-item (click)="changeLanguage(lang)">
-      <div class="d-flex align-items-center">
-        <img [src]="lang.icon" class="rounded object-cover m-r-8 icon-20" />
-        <span class="mat-subtitle-1 f-s-14">{{ lang.language }}</span>
-      </div>
-    </button>
-    }
-  </mat-menu>
-
-  <!-- --------------------------------------------------------------- -->
-  <!-- Notification Dropdown -->
+  <!-- Help Dropdown -->
   <!-- --------------------------------------------------------------- -->
   <button
     mat-icon-button
-    [matMenuTriggerFor]="notificationmenu"
-    aria-label="Notifications"
+    aria-label="Help"
   >
-    <mat-icon
-      matBadge="1"
-      matBadgeOverlap="false"
-      matBadgeColor="warn"
-      class="header-badge"
-      >message</mat-icon
-    >
+  <img
+    src="./assets/images/icons/header/help.svg"
+  />
   </button>
-  <mat-menu #notificationmenu="matMenu" class="topbar-dd cardWithShadow">
-    <div class="d-flex align-items-center p-x-32 p-y-16">
-      <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">Notifications</h6>
-      <span class="m-l-auto">
-        <span class="bg-primary text-white p-x-8 p-y-4 f-w-500 rounded f-s-12"
-          >5 new</span
-        >
-      </span>
-    </div>
-    @for(notification of notifications; track notification.title) {
-    <button mat-menu-item class="p-x-32 p-y-16">
-      <div class="d-flex align-items-center">
-        <img [src]="notification.img" class="rounded-circle" width="48" />
-        <div class="m-l-16">
-          <h5 class="f-s-14 f-w-600 m-0 mat-subtitle-1">
-            {{ notification.title }}
-          </h5>
-          <span>{{ notification.subtitle }}</span>
-        </div>
-      </div>
-    </button>
-    }
-
-    <div class="p-y-12 p-x-32">
-      <button mat-stroked-button color="primary" class="w-100">
-        See all notifications
-      </button>
-    </div>
-  </mat-menu>
-
   <!-- --------------------------------------------------------------- -->
-  <!-- Messages Dropdown -->
+  <!-- Notifications Dropdown -->
   <!-- --------------------------------------------------------------- -->
-  <button mat-icon-button [matMenuTriggerFor]="msgmenu" aria-label="Messages">
-    <mat-icon
-      matBadge="2"
-      matBadgeOverlap="false"
-      matBadgeColor="warn"
-      class="header-badge"
-      >email</mat-icon
-    >
+  <button
+  mat-icon-button
+  aria-label="Notifications"
+  >
+  <img
+    src="./assets/images/icons/header/notifications.svg"
+  />
   </button>
-  <mat-menu #msgmenu="matMenu" class="topbar-dd cardWithShadow">
-    <div class="d-flex align-items-center p-x-32 p-y-16">
-      <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">Messages</h6>
-      <span class="m-l-auto">
-        <span class="bg-primary text-white p-x-8 p-y-4 f-w-500 rounded f-s-12"
-          >5 new</span
-        >
-      </span>
-    </div>
-
-    @for(msg of msgs; track msg.title) {
-    <button mat-menu-item class="p-x-32 p-y-16">
-      <div class="d-flex align-items-center">
-        <img [src]="msg.img" class="rounded-circle" width="48" />
-        <div class="m-l-16">
-          <h5 class="f-s-14 f-w-600 m-0 mat-subtitle-1">
-            {{ msg.title }}
-          </h5>
-          <span>{{ msg.subtitle }}</span>
-        </div>
-      </div>
-    </button>
-    }
-
-    <div class="p-y-12 p-x-32">
-      <button mat-stroked-button color="primary" class="w-100">
-        See all messages
-      </button>
-    </div>
-  </mat-menu>
-
   <!-- --------------------------------------------------------------- -->
-  <!-- profile Dropdown -->
+  <!-- Settings Dropdown -->
   <!-- --------------------------------------------------------------- -->
+  <button
+  mat-icon-button
+  aria-label="Notifications"
+  >
+  <img
+    src="./assets/images/icons/header/settings.svg"
+  />
+  </button>
+  <!-- --------------------------------------------------------------- -->
+  <!-- Profile Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+
   <button
     mat-icon-button
     [matMenuTriggerFor]="profilemenu"
-    aria-label="Notifications"
+    aria-label="Profile"
   >
     <img
-      src="/assets/images/profile/profile.png"
-      class="rounded-circle object-cover icon-35 profile-dd"
-      width="35"
+      src="./assets/images/icons/header/profile.svg"
     />
   </button>
   <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">

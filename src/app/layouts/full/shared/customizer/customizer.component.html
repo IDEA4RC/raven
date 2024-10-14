@@ -3,7 +3,10 @@
     <h3 class="mat-subtitle-1 f-s-21 f-w-600">Settings</h3>
   </div>
   <mat-divider></mat-divider>
-  <ng-scrollbar class="position-relative" style="height: calc(100vh - 145px)">
+  <ng-scrollbar
+    class="position-relative"
+    style="height: calc(100vh - 145px)"
+  >
     <div class="p-24">
       <h6 class="f-s-16 f-w-600 mat-subtitle-1 f-s-16 m-b-16">Theme Option</h6>
       <mat-button-toggle-group
@@ -130,39 +133,35 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
 
-      @if(!options.horizontal) {
-      <div>
-        <h6 class="f-s-16 f-w-600 mat-subtitle-1 f-s-16 m-b-16 m-t-24 p-t-16">
-          Sidebar type
-        </h6>
+      <h6 class="f-s-16 f-w-600 mat-subtitle-1 f-s-16 m-b-16 m-t-24 p-t-16">
+        Sidebar type
+      </h6>
 
-        <mat-button-toggle-group
-          #group="matButtonToggleGroup"
-          [(ngModel)]="options.sidenavCollapsed"
-          (change)="setSidebar()"
-          class="customizer-button-group gap-16"
-        >
-          <mat-button-toggle [value]="false">
-            <div class="d-flex align-items-center f-w-500">
-              <i-tabler
-                name="layout-sidebar-right"
-                class="d-flex m-r-8 fill-icon"
-              ></i-tabler>
-              Full
-            </div>
-          </mat-button-toggle>
-          <mat-button-toggle [value]="true">
-            <div class="d-flex align-items-center f-w-500">
-              <i-tabler
-                name="layout-sidebar"
-                class="d-flex m-r-8 fill-icon"
-              ></i-tabler>
-              Minisidebar
-            </div>
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-      }
+      <mat-button-toggle-group
+        #group="matButtonToggleGroup"
+        [(ngModel)]="options.sidenavCollapsed"
+        (change)="setSidebar()"
+        class="customizer-button-group gap-16"
+      >
+        <mat-button-toggle [value]="false">
+          <div class="d-flex align-items-center f-w-500">
+            <i-tabler
+              name="layout-sidebar-right"
+              class="d-flex m-r-8 fill-icon"
+            ></i-tabler>
+            Full
+          </div>
+        </mat-button-toggle>
+        <mat-button-toggle [value]="true">
+          <div class="d-flex align-items-center f-w-500">
+            <i-tabler
+              name="layout-sidebar"
+              class="d-flex m-r-8 fill-icon"
+            ></i-tabler>
+            Minisidebar
+          </div>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
 
       <h6 class="f-s-16 f-w-600 mat-subtitle-1 f-s-16 m-b-16 m-t-24 p-t-16">
         Layout type

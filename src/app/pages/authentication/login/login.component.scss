@@ -1,0 +1,35 @@
+.raven-title {
+    color: #255E87;
+    opacity: 0.6; /* 60% transparency */
+
+}
+.text-grey {
+    color: #99ABB4;
+}
+.bold-underline {
+    font-weight: 600;
+    text-decoration: underline;
+}
+/* metadata-search.component.css */
+.background-container {
+    height: 100vh;
+    background-image: url('/assets/images/backgrounds/login/login_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+::ng-deep .mat-form-field.mat-focused {
+    .mat-form-field-label {
+        color: green;
+    }
+    .mat-form-field-ripple {
+        background-color: green;
+    }
+    .mat-form-field-required-marker {
+        color: green;
+    }
+    .mat-input-element {
+        color: green;
+    }
+}
+  

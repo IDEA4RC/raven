@@ -6,24 +6,14 @@ import { FullComponent } from './layouts/full/full.component';
 const routes: Routes = [
   {
     path: '',
-    component: FullComponent,
+    component: BlankComponent,
     children: [
       {
         path: '',
-        redirectTo: '/starter',
+        redirectTo: '/authentication/login',
         pathMatch: 'full',
+
       },
-      {
-        path: 'starter',
-        loadChildren: () =>
-          import('./pages/pages.module').then((m) => m.PagesModule),
-      },
-    ],
-  },
-  {
-    path: '',
-    component: BlankComponent,
-    children: [
       {
         path: 'authentication',
         loadChildren: () =>
@@ -33,6 +23,25 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: '',
+    component: FullComponent,
+    children: [
+      // {
+      //   path: 'starter',
+      //   loadChildren: () =>
+      //     import('./pages/pages.module').then((m) => m.PagesModule),
+      // },
+      {
+        path: 'discovery',
+        loadChildren: () =>
+          import('./pages/data-discovery/data-discovery.module').then(
+            (m) => m.DataDiscoveryModule
+          ),
+      },
+    ],
+  },
+  
   {
     path: '**',
     redirectTo: 'authentication/error',

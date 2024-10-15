@@ -17,6 +17,7 @@ import { AuthenticationRoutes } from './authentication.routing';
 import { AppErrorComponent } from './error/error.component';
 import { AppSideLoginComponent } from './side-login/side-login.component';
 import { AppSideRegisterComponent } from './side-register/side-register.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { AppSideRegisterComponent } from './side-register/side-register.componen
     AppErrorComponent,
     AppSideLoginComponent,
     AppSideRegisterComponent,
+    LoginComponent
   ],
 })
 export class AuthenticationModule {}

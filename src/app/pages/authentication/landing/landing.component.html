@@ -1,0 +1,98 @@
+<div class="app-container">
+    <div class="content-card">
+      <div class="logo-section">
+        <img
+                src="./assets/images/logos/raven_logo_blue.svg"
+                class="align-middle m-2"
+                alt="logo"
+              />
+        <div class="raven-title"><strong>R</strong>are Cancer <strong>A</strong>I <strong>V</strong>irtual <strong>E</strong>xploration <strong>N</strong>avigator</div>
+
+        
+      </div>
+      <div class="scrollable-content" id="scrollbar1">
+        <p class="text">
+            {{'authentification.landing_page.welcome_text' | translate}}
+        </p>
+
+        <!-- ABOUT IDEA4RC -->
+        <h3 class="text-title1">{{'authentification.landing_page.about_idea' | translate}}</h3>
+        <p class="text">{{'authentification.landing_page.about_idea_descripcion' | translate}}</p>
+        <!-- Project Highlights -->
+        <h4 class="text-title2">{{'authentification.landing_page.project_highlights' | translate}}:</h4>
+        <ul class="text">
+          <li>{{'authentification.landing_page.federated_data_access' | translate}}</li>
+          <li>{{'authentification.landing_page.interoperability' | translate}}</li>
+          <li>{{'authentification.landing_page.fair_principles' | translate}}</li>
+        </ul>
+        <!-- How it works -->
+        <h4 class="text-title2">{{'authentification.landing_page.how_it_works' | translate}}:</h4>
+        <ol class="text" type="i">
+          <li>{{'authentification.landing_page.explore_datasets' | translate}}</li>
+          <li>{{'authentification.landing_page.register_login' | translate}}</li>
+          <ol class="abc">
+            <li>{{'authentification.landing_page.select_cohort' | translate}}</li>
+            <li>{{'authentification.landing_page.analyze_cohort' | translate}}</li>
+            <li>{{'authentification.landing_page.collaborate' | translate}}</li>
+          </ol>
+
+        </ol>
+        
+        
+        <!-- ABOUT THE DATA -->
+
+        <h3 class="text-title1">{{'authentification.landing_page.about_data' | translate}}</h3>
+        <!-- Data Sources -->
+        <h4 class="text-title2">{{'authentification.landing_page.data_sources' | translate}}</h4>
+        <p class="text">{{'authentification.landing_page.data_sources_description' | translate}}</p>
+
+        <!-- Data Collection -->
+        <h4 class="text-title2">{{'authentification.landing_page.data_collection' | translate}}</h4>
+        <p class="text">
+            {{'authentification.landing_page.data_collection_description' | translate}}:
+        </p>
+        <ul class="text">
+            <li>{{'authentification.landing_page.ehr' | translate}}</li>
+            <li>{{'authentification.landing_page.nlp' | translate}}</li>
+        </ul>
+
+        <!-- Data Standardization and Interoperability -->
+        <h4 class="text-title2">{{'authentification.landing_page.data_standardization' | translate}}</h4>
+        <p class="text">{{'authentification.landing_page.data_standardization_description' | translate}}</p>
+        <ul class="text">
+            <li>{{'authentification.landing_page.omop' | translate}}</li>
+            <li>{{'authentification.landing_page.fhir' | translate}}</li>
+        </ul>
+
+        <!-- Data Security and Privacy -->
+        <h4 class="text-title2">{{'authentification.landing_page.data_security_privacy' | translate}}</h4>
+        <p class="text">
+            {{'authentification.landing_page.data_security_privacy_description' | translate}}
+        </p>
+
+        <!-- Data Security and Privacy -->
+        <h4 class="text-title2">{{'authentification.landing_page.types_data' | translate}}</h4>
+        <p class="text">
+            {{'authentification.landing_page.types_data_description' | translate}}
+        </p>
+        <ul class="text">
+            <li>{{'authentification.landing_page.patient_demographics' | translate}}</li>
+            <li>{{'authentification.landing_page.medical_history' | translate}}</li>
+            <li>{{'authentification.landing_page.diagnosis_information' | translate}}</li>
+            <li>{{'authentification.landing_page.treatment_data' | translate}}</li>
+            <li>{{'authentification.landing_page.follow_up_data' | translate}}</li>
+            <li>{{'authentification.landing_page.quality_indicators' | translate}}</li>
+        </ul>
+
+       
+      </div>
+      <!-- Footer card buttons -->
+      <div class="button-section">
+        <!-- Access Metadata without login button -->
+        <button  mat-stroked-button
+        color="primary" class="metadata-search-btn" [routerLink]="['/discovery/metadata-search']">Access to <span class="medatata-search-text">"Metadata Search"</span> without Login</button>
+        <!-- Login button -->
+        <button class="login-btn" [routerLink]="['/authentication/login']">{{'authentification.landing_page.login' | translate}}</button>
+      </div>
+    </div>
+  </div>

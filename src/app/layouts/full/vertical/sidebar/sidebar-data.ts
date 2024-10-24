@@ -7,7 +7,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'My Projects',
     iconName: 'layout-grid',
-    route: '/starter',
+    route: '/discovery/metadata-search',
   },
   
   

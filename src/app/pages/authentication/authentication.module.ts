@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 // icons
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -18,6 +19,7 @@ import { AppErrorComponent } from './error/error.component';
 import { AppSideLoginComponent } from './side-login/side-login.component';
 import { AppSideRegisterComponent } from './side-register/side-register.component';
 import { LoginComponent } from './login/login.component';
+import { LandingComponent } from './landing/landing.component';
 
 @NgModule({
   imports: [
@@ -31,12 +33,14 @@ import { LoginComponent } from './login/login.component';
     FormsModule,
     ReactiveFormsModule,
     TablerIconsModule.pick(TablerIcons),
+    TranslateModule
   ],
   declarations: [
     AppErrorComponent,
     AppSideLoginComponent,
     AppSideRegisterComponent,
-    LoginComponent
+    LoginComponent,
+    LandingComponent
   ],
 })
 export class AuthenticationModule {}

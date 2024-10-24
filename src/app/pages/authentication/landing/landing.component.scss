@@ -1,0 +1,188 @@
+
+  /// /* Basic resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  
+  .app-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background-image: url('/assets/images/backgrounds/login/login_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .raven-title {
+    color: #255E87;
+    opacity: 0.6; /* 60% transparency */
+
+    }
+    .text-grey {
+        color: #99ABB4;
+    }
+  
+  .login-header {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .content-card {
+    background-color: white;
+    border-radius: 12px;
+    min-width: 50vw;
+    max-width: 50vw;
+
+    padding: 35px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logo-section {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .logo-section .logo {
+    width: 100px;
+    height: auto;
+  }
+  
+  
+  .scrollable-content {
+    width: 100%;
+    max-height: 65vh; /* Set a maximum height to make it scrollable */
+    overflow-y: auto;
+    // border-radius: var(--Corner-Radius-md, 8px);
+    border: 1px solid var(--Raven-Azul, #255E87);
+    padding: 23px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+
+    
+
+    // scrollbar-color: #255E87 #DBE1E6;
+  }
+  
+/*       ScrollBar 1        */
+
+#scrollbar1::-webkit-scrollbar {
+    width: 8px;
+
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: #DBE1E6;
+    margin: 1px; /* space around the track */
+    // padding-right: 10px; /* additional space on the right */
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #255E87;
+}
+
+  
+  .scrollable-content p, .scrollable-content h3, .scrollable-content ul, .scrollable-content ol {
+    margin-bottom: 16px;
+  }
+  
+  .scrollable-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+  
+  .scrollable-content ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+  }
+  
+  .button-section {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+  
+  .metadata-search-btn, .login-btn {
+    padding: 0px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .metadata-search-btn {
+    border-radius: var(--Corner-Radius-md, 8px);
+    border: 1px solid var(--Raven-Azul, #255E87);
+
+    color: var(--Raven-Azul, #255E87);
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .medatata-search-text {
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: normal;
+  }
+  
+  .login-btn {
+    border-radius: var(--Corner-Radius-md, 8px);
+    border: 1px solid var(--Raven-Azul, #255E87);
+    background: var(--Raven-Azul, #255E87);
+    color: var(--Primary-Colors-primary-white, #FFF);
+
+    /* Medium Captions/Med Cap 3 */
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  .text {
+    color: var(--negro, #3A4752);
+    text-align: justify;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px; /* 146.667% */
+  }
+  .text-title1 {
+    color: var(--negro, #3A4752);
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 22px;
+  }
+  .text-title2 {
+    color: var(--negro, #3A4752);
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 22px;
+    margin-bottom: 10px;
+  }
+  ol.abc {list-style-type: lower-alpha;}
+
+  

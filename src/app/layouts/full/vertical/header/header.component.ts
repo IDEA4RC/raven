@@ -53,7 +53,7 @@ export class HeaderComponent {
   @Output() toggleCollapsed = new EventEmitter<void>();
 
   showFiller = false;
-
+  without_login = true;
   public selectedLanguage: any = {
     language: 'English',
     code: 'en',
@@ -91,6 +91,11 @@ export class HeaderComponent {
     private translate: TranslateService
   ) {
     translate.setDefaultLang('en');
+    // Check if there is a token to know if the user has accessed with the login
+    if(localStorage.getItem("token") != undefined){
+      this.without_login = false;
+    }
+
   }
 
   openDialog() {

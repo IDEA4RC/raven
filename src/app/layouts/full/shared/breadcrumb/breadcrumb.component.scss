@@ -1,0 +1,30 @@
+.page-title {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+
+    /* title */
+    font-family: Poppins;
+    font-size: 22px !important;
+    font-style: normal;
+    font-weight: 500 !important;
+    line-height: normal;
+}
+.breadcrumb-sub-title a {
+    color: var(--grey-colors-Text-Subheading-Color, #99ABB4) !important;
+
+    /* Regular captions/reg cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.breadcrumb-sub-title {
+    color: var(--grey-colors-Text-Subheading-Color, #99ABB4) !important;
+
+    /* Regular captions/reg cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}

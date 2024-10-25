@@ -12,16 +12,16 @@
             @for (url of pageInfo?.['urls']; track url.url;let index = $index,last
             = $last ) { @if(!last){
 
-            <li class="breadcrumb-item" [routerLink]="url.url">
+            <li class="breadcrumb-item breadcrumb-sub-title" [routerLink]="url.url">
               <a [routerLink]="url.url">{{ url.title }}</a>
             </li>
             }@else {
-            <li class="breadcrumb-item active text-primary">{{ url.title }}</li>
+            <li class="breadcrumb-item active breadcrumb-sub-title">{{ url.title }}</li>
             } }
           </ul>
         </div>
       </div>
-      <div
+      <!-- <div
         class="col-lg-4 col-sm-6 text-right position-relative align-items-center justify-content-end gap-20 d-none d-sm-flex"
       >
         <div class="d-flex align-items-center">
@@ -46,7 +46,6 @@
             </apx-chart>
           </div>
         </div>
-        <!-- 2 -->
         <div class="d-flex align-items-center">
           <div>
             <span class="text-uppercase f-s-12">Last Month</span>
@@ -69,7 +68,7 @@
             </apx-chart>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

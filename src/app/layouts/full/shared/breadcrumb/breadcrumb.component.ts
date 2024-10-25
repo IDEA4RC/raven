@@ -42,7 +42,7 @@ export interface breadcrumbOption {
   standalone: true,
   imports: [NgApexchartsModule, RouterModule],
   templateUrl: './breadcrumb.component.html',
-  styleUrls: [],
+  styleUrl: './breadcrumb.component.scss'
 })
 export class AppBreadcrumbComponent {
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
@@ -61,105 +61,7 @@ export class AppBreadcrumbComponent {
     private activatedRoute: ActivatedRoute,
     private titleService: Title
   ) {
-    this.breadcrumbOption = {
-      series: [
-        {
-          name: '',
-          data: [1.1, 1.4, 1.1, 0.9, 1.9, 1, 0.3, 1.1],
-        },
-      ],
-      chart: {
-        type: 'bar',
-        height: 35,
-        width: 60,
-        fontFamily: 'Poppins,sans-serif',
-        sparkline: {
-          enabled: true,
-        },
-      },
-      grid: {
-        borderColor: 'rgba(0,0,0,.2)',
-        strokeDashArray: 3,
-      },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '60%',
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent'],
-      },
-      xaxis: {
-        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-      },
-
-      legend: {
-        show: false,
-      },
-      fill: {
-        colors: ['#1e88e5'],
-        opacity: 1,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    };
-
-    this.breadcrumb2Option = {
-      series: [
-        {
-          name: '',
-          data: [1.1, 1.4, 1.1, 0.9, 1.9, 1, 0.3, 1.1],
-        },
-      ],
-      chart: {
-        type: 'bar',
-        height: 35,
-        width: 60,
-        fontFamily: 'Poppins,sans-serif',
-        sparkline: {
-          enabled: true,
-        },
-      },
-      grid: {
-        borderColor: 'rgba(0,0,0,.2)',
-        strokeDashArray: 3,
-      },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '60%',
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent'],
-      },
-      xaxis: {
-        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-      },
-
-      legend: {
-        show: false,
-      },
-      fill: {
-        colors: ['#26c6da'],
-        opacity: 1,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    };
+   
 
 
     // for breadcrumb

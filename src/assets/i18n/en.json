@@ -38,6 +38,15 @@
       "login": "Login"
     }
 
+  },
+  "pages": {
+    "metadata_search": {
+      "select_cancer_type": "Select the type of cancer",
+      "select_both": "(you can select both)",
+      "continue": "Continue"
+    }
   }
+
+  
     
 }

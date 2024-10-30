@@ -1,1 +1,60 @@
-<p>metadata-search works!</p>
+<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper>
+  <mat-step [stepControl]="firstFormGroup">
+    <ng-template matStepLabel class="stepper-label">Cancer Type</ng-template>
+
+    <div class="app-container">
+      <div class="content-card">
+
+        <!-- Card Header -->
+        <div class="header-div">
+          <div class="header-title">
+            <h4>{{'pages.metadata_search.select_cancer_type' | translate}}</h4>
+            <h5>{{'pages.metadata_search.select_both' | translate}}</h5>
+
+          </div>
+        </div>
+        <!-- Select Cancer Type Form -->
+        <div [formGroup]="cancer_type" class="form-div">
+
+          <!-- Head and neck cancer checkbox-->
+          <div class="checkbox">
+            <mat-checkbox formControlName="hnc" color="primary"
+              >Head and Neck Cancer (HNC)</mat-checkbox
+            >
+            <p class="checkbox-subtitle">- 300 cases</p>
+          </div>
+          <!-- Sarcoma checkbox-->
+          <div class="checkbox">
+            <mat-checkbox formControlName="sarcoma" color="primary"
+              >Sarcoma</mat-checkbox
+            >
+            <p class="checkbox-subtitle">- 300 cases</p>
+          </div>
+          
+          
+        </div>
+        <!-- Card Footer -->
+        <div class="footer-div">
+          <button
+            mat-flat-button
+            matStepperNext
+            color="primary"
+            class="continue-btn"
+            >{{'pages.metadata_search.continue' | translate}}</button
+          >
+        </div>
+      
+      </div>
+    </div>
+
+    
+  </mat-step>
+
+  <mat-step [stepControl]="secondFormGroup">
+    <ng-template matStepLabel>Variables</ng-template>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup">
+    <ng-template matStepLabel>Clinical Centers</ng-template>
+  </mat-step>
+  
+</mat-stepper>

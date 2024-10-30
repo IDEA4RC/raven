@@ -1,0 +1,134 @@
+
+  /// /* Basic resets */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  
+  .app-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  
+  
+  .login-header {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .content-card {
+    background-color: white;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+
+    /* background shadow */
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.10), 0px 3px 4px 0px rgba(0, 0, 0, 0.03);
+  }
+  .header-div {
+    border-radius: 10px 10px var(--Corner-Radius-zero, 0px) var(--Corner-Radius-zero, 0px);
+    border-bottom: 1px solid var(--grey-colors-border, #DBE1E6);
+    background: var(--Raven-Azul, #255E87);
+    padding: 10px var(--xxl, 30px);
+    width: 100%;
+  }
+  .header-title {
+    color: #FFF;
+    font-family: Poppins;
+    font-style: normal;
+    line-height: normal;
+    display: flex;
+}
+.header-title h4 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-right: 5px;
+  }
+.header-title h5 {
+    color: rgba(255, 255, 255, 0.50);
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+}
+.form-div {
+    padding: 20px var(--xxl, 30px);
+    width: 100%;
+}
+.checkbox {
+    display: flex;
+    align-content: center;
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.checkbox-subtitle {
+    align-content: center;
+    color: var(--grey-colors-Text-Subheading-Color, #99ABB4);
+    margin-left: 5px;
+}
+.footer-div {
+    width: 100%;
+    padding: 20px var(--xxl, 30px);
+}
+.continue-btn {
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border-radius: var(--Corner-Radius-md, 8px);
+    float: inline-end;
+    padding: var(--zero, 0px) var(--md, 16px);
+
+}
+
+
+// Styling for stepper
+::ng-deep .mat-step-header .mat-step-label.mat-step-label-active {
+    color: var(--Raven-Azul, #255E87) !important;
+}
+/* Remove background from stepper container */
+::ng-deep .mat-stepper-vertical, .mat-stepper-horizontal {
+  background: transparent !important;
+  box-shadow: none; /* Optional: Remove any shadow if present */
+}
+
+/* Remove background from each step header */
+::ng-deep .mat-step-header {
+  background: transparent;
+}
+
+/* Remove hover effect background on step header */
+::ng-deep .mat-step-header:hover {
+  background: transparent;
+}
+/* Remove padding of the stepper content */
+::ng-deep .mat-stepper-header-position-bottom .mat-horizontal-content-container {
+    padding: 0px !important;
+}
+::ng-deep .mat-horizontal-stepper-wrapper{
+    height: 70vh !important;
+}
+::ng-deep .mat-stepper-header-position-bottom .mat-horizontal-stepper-header-container {
+    margin-top: auto !important;
+}
+
+  
+
+

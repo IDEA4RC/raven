@@ -5,7 +5,7 @@ import { StarterComponent } from './starter/starter.component';
 import { PagesRoutes } from './pages.routing.module';
 import { MaterialModule } from '../material.module';
 import { FormsModule } from '@angular/forms';
-
+import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
   declarations: [StarterComponent],
   imports: [
@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
     MaterialModule,
     FormsModule,
     RouterModule.forChild(PagesRoutes),
+    TranslateModule
   ],
 })
 export class PagesModule {}

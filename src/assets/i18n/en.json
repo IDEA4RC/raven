@@ -41,9 +41,26 @@
   },
   "pages": {
     "metadata_search": {
+      "variables_preselection": "Variables Pre-selection",
+      "cancer_type": "Cancer Type",
       "select_cancer_type": "Select the type of cancer",
-      "select_both": "(you can select both)",
-      "continue": "Continue"
+      "single_selection": "(single selection)",
+      "continue": "Continue",
+      "search_variables": "Search for the Variables",
+      "search_variable": "Search Variable",
+      "csv": "CSV",
+      "all": "ALL",
+      "patient": "PATIENT",
+      "hospital_data": "HOSPITAL DATA",
+      "hospital_patient": "HOSPITAL PATIENT RECORD",
+      "patient_flow": "PATIENT FLOW UP",
+      "cancer_episode": "CANCER EPISODE",
+      "episode_event": "EPISODE EVENT",
+      "genetic_test_expresion": "GENETIC TEST EXPRESION",
+      "all_variables": "All Variables",
+      "description": "Description",
+      "data_type": "Data Type",
+      "values": "Values"
     }
   }
 

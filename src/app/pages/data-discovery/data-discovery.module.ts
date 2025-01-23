@@ -5,10 +5,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { MatNativeDateModule } from '@angular/material/core';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { DiscoveryRoutes } from './data-discovery.routing';
 
 import { MetadataSearchComponent } from './metadata-search/metadata-search.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [MetadataSearchComponent],
@@ -19,7 +23,11 @@ import { MetadataSearchComponent } from './metadata-search/metadata-search.compo
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    MatNativeDateModule
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatNativeDateModule,
+    NgApexchartsModule,
   ]
 })
 export class DataDiscoveryModule { }

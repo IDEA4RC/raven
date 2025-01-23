@@ -19,6 +19,9 @@ import { FilterPipe } from './pipe/filter.pipe';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 
 export function HttpLoaderFactory(http: HttpClient): any {
@@ -39,6 +42,9 @@ export function HttpLoaderFactory(http: HttpClient): any {
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     TablerIconsModule.pick(TablerIcons),
     NgApexchartsModule,
     TablerIconsModule,

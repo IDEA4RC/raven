@@ -1,6 +1,8 @@
 <mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper>
-  <mat-step [stepControl]="firstFormGroup">
-    <ng-template matStepLabel class="stepper-label">Cancer Type</ng-template>
+
+  <!-- Cancer Type Selection -->
+  <mat-step [stepControl]="cancerTypeFormGroup">
+    <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.cancer_type' | translate}}</ng-template>
 
     <div class="app-container">
       <div class="content-card">
@@ -9,40 +11,46 @@
         <div class="header-div">
           <div class="header-title">
             <h4>{{'pages.metadata_search.select_cancer_type' | translate}}</h4>
-            <h5>{{'pages.metadata_search.select_both' | translate}}</h5>
+            <h5>{{'pages.metadata_search.single_selection' | translate}}</h5>
 
           </div>
         </div>
         <!-- Select Cancer Type Form -->
-        <div [formGroup]="cancer_type" class="form-div">
+        
+        
+        <form [formGroup]="cancerTypeFormGroup" class="form-div" #userlogin = "ngForm" (ngSubmit) = "selectedCancerType(userlogin.value)">
 
-          <!-- Head and neck cancer checkbox-->
-          <div class="checkbox">
-            <mat-checkbox formControlName="hnc" color="primary"
-              >Head and Neck Cancer (HNC)</mat-checkbox
-            >
-            <p class="checkbox-subtitle">- 300 cases</p>
-          </div>
-          <!-- Sarcoma checkbox-->
-          <div class="checkbox">
-            <mat-checkbox formControlName="sarcoma" color="primary"
-              >Sarcoma</mat-checkbox
-            >
-            <p class="checkbox-subtitle">- 300 cases</p>
-          </div>
+          <mat-radio-group [formControl]="firstCtrl">
+            <!-- Head and neck cancer checkbox-->
+            <div class="checkbox">
+              <mat-radio-button value="H&N" color="primary"
+                >Head and Neck Cancer (HNC)</mat-radio-button
+              >
+              <p class="checkbox-subtitle">- 300 cases</p>
+            </div>
+            <!-- Sarcoma checkbox-->
+            <div class="checkbox">
+              <mat-radio-button value="Sarc." color="primary"
+                >Sarcoma</mat-radio-button
+              >
+              <p class="checkbox-subtitle">- 300 cases</p>
+            </div>
+          </mat-radio-group>
           
-          
-        </div>
-        <!-- Card Footer -->
-        <div class="footer-div">
-          <button
-            mat-flat-button
-            matStepperNext
-            color="primary"
-            class="continue-btn"
-            >{{'pages.metadata_search.continue' | translate}}</button
-          >
-        </div>
+          <!-- Card Footer -->
+          <div class="footer-div">
+            <button
+              mat-flat-button
+              matStepperNext
+              color="primary"
+              class="continue-btn btn"
+              type="submit"
+              [disabled]="firstCtrl.invalid"
+              
+              >{{'pages.metadata_search.continue' | translate}}</button
+            >
+          </div>
+        </form>
       
       </div>
     </div>
@@ -50,11 +58,101 @@
     
   </mat-step>
 
-  <mat-step [stepControl]="secondFormGroup">
-    <ng-template matStepLabel>Variables</ng-template>
+  <!-- Variables pre-selection -->
+  <mat-step [stepControl]="variablesFormGroup">
+    <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.variables_preselection' | translate}}</ng-template>
+    <div class="app-container">
+      <div class="content-card">
+
+        <!-- Card Header -->
+        <div class="header-div">
+          <div class="header-title">
+            <h4>{{'pages.metadata_search.search_variables' | translate}}</h4>
+          </div>
+        </div>
+
+        <!-- Card body -->
+  
+  
+        <div class="div-search-csv">
+          <!-- Search variables -->
+          <div class="div-search">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput placeholder="{{'pages.metadata_search.search_variable' | translate}}" #input>
+              <mat-icon matPrefix class="my-icon">search</mat-icon>
+              </mat-form-field>
+          </div>
+          <!-- Download variables in CSV format -->
+          <div class="div-csv">
+            <button
+              mat-flat-button
+              color="primary"
+              class="download-btn btn"
+              
+              >
+              <!-- <img src="./assets/images/icons/metadata-seach/download.svg"/> -->
+              <mat-icon>download</mat-icon>
+              {{'pages.metadata_search.csv' | translate}}
+            </button>
+          </div>
+  
+        </div>
+
+        <mat-tab-group class="variables-tabs">
+
+          <!-- All variables -->
+          <mat-tab label="{{'pages.metadata_search.all' | translate}}">
+             {{'pages.metadata_search.all' | translate}}
+
+             
+             
+             
+          </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.patient' | translate}}"> {{'pages.metadata_search.patient' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.hospital_data' | translate}}"> {{'pages.metadata_search.hospital_data' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.hospital_patient' | translate}}"> {{'pages.metadata_search.hospital_patient' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.patient_flow' | translate}}"> {{'pages.metadata_search.patient_flow' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.cancer_episode' | translate}}"> {{'pages.metadata_search.cancer_episode' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.episode_event' | translate}}"> {{'pages.metadata_search.episode_event' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.genetic_test_expresion' | translate}}"> {{'pages.metadata_search.genetic_test_expresion' | translate}} </mat-tab>
+    
+        </mat-tab-group>
+      </div>
+    </div>
   </mat-step>
-  <mat-step [stepControl]="secondFormGroup">
-    <ng-template matStepLabel>Clinical Centers</ng-template>
+  <mat-step [stepControl]="thirdFormGroup">
+    <ng-template matStepLabel>Availability per Center</ng-template>
+    <div class="app-container">
+      <div class="content-card">
+  
+        <!-- Card Header -->
+        <div class="header-div">
+          <div class="header-title">
+            <h4>{{'pages.metadata_search.search_variables' | translate}}</h4>
+  
+          </div>
+        </div>
+        
+       <!-- Tabs of variables -->
+       <div>
+        <mat-tab-group>
+          <mat-tab label="{{'pages.metadata_search.all' | translate}}"> {{'pages.metadata_search.all' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.patient' | translate}}"> {{'pages.metadata_search.patient' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.hospital_data' | translate}}"> {{'pages.metadata_search.hospital_data' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.hospital_patient' | translate}}"> {{'pages.metadata_search.hospital_patient' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.patient_flow' | translate}}"> {{'pages.metadata_search.patient_flow' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.cancer_episode' | translate}}"> {{'pages.metadata_search.cancer_episode' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.episode_event' | translate}}"> {{'pages.metadata_search.episode_event' | translate}} </mat-tab>
+          <mat-tab label="{{'pages.metadata_search.genetic_test_expresion' | translate}}"> {{'pages.metadata_search.genetic_test_expresion' | translate}} </mat-tab>
+  
+        </mat-tab-group>
+       </div>
+  
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="fourthFormGroup">
+    <ng-template matStepLabel>Detail Analysis</ng-template>
   </mat-step>
   
 </mat-stepper>

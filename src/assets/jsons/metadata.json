@@ -1,0 +1,77 @@
+[
+    {
+        "variable_name": "Sex",
+        "variable_description": "Describes biological sex as recorded in the patient's identity document or in the hospital record. In the absence of documentation, the one declared by the patient will be recorded",
+        "datatype": "Label",
+        "entity": "Patient",
+        "values": [
+            "Male",
+            "Female"
+        ],
+        "dataset": [
+            "H&N",
+            "Sarc."
+        ]
+    },
+    {
+        "variable_name": "Race",
+        "variable_description": "Describes race as recorded in  the hospital record, the one declared by the patient,, otherwise, the onerecognized by the observer",
+        "datatype": "Label",
+        "entity": "Patient",
+        "values": [
+            "White",
+            "Black",
+            "Asian/Pacific Islanders",
+            "American Indian/Alaska Native"
+        ],
+        "dataset": [
+            "H&N"
+        ]
+    },
+    {
+        "variable_name": "Birth Year",
+        "variable_description": "Year of birth of the patient.",
+        "datatype": "Number",
+        "entity": "Patient",
+        "values": [],
+        "dataset": [
+            "H&N",
+            "Sarc."
+        ]
+    },
+    {
+        "variable_name": "Country of Residence",
+        "variable_description": "Country of residence at the time of diagnosis",
+        "datatype": "Label",
+        "entity": "Patient",
+        "values": [],
+        "dataset": [
+            "H&N",
+            "Sarc."
+        ]
+    },
+    {
+        "variable_name": "Smoking",
+        "variable_description": "Describes tobacco smoker habits within the options proposed",
+        "datatype": "Label",
+        "entity": "Patient",
+        "values": [
+            "Current smoker",
+            "Former smoker",
+            "Never smoker"
+        ],
+        "dataset": [
+            "H&N"
+        ]
+    },
+    {
+        "variable_name": "Cigarettes pack years smoked during life",
+        "variable_description": "The amount of cigarette pack smoked during life",
+        "datatype": "Number",
+        "entity": "Patient",
+        "values": [],
+        "dataset": [
+            "H&N"
+        ]
+    }
+]

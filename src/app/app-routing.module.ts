@@ -27,18 +27,18 @@ const routes: Routes = [
     path: '',
     component: FullComponent,
     children: [
-      // {
-      //   path: 'starter',
-      //   loadChildren: () =>
-      //     import('./pages/pages.module').then((m) => m.PagesModule),
-      // },
       {
-        path: 'discovery',
+        path: 'material-table',
         loadChildren: () =>
-          import('./pages/data-discovery/data-discovery.module').then(
-            (m) => m.DataDiscoveryModule
-          ),
+          import('./pages/pages.module').then((m) => m.PagesModule),
       },
+      // {
+      //   path: 'discovery',
+      //   loadChildren: () =>
+      //     import('./pages/data-discovery/data-discovery.module').then(
+      //       (m) => m.DataDiscoveryModule
+      //     ),
+      // },
     ],
   },
   

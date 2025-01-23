@@ -86,16 +86,33 @@
     width: 100%;
     padding: 20px var(--xxl, 30px);
 }
+
+.blue-button {
+  font-family: Poppins;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border-radius: var(--Corner-Radius-md, 8px);
+}
 .continue-btn {
-    font-family: Poppins;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-    border-radius: var(--Corner-Radius-md, 8px);
     float: inline-end;
     padding: var(--zero, 0px) var(--md, 16px);
+}
 
+// Styling for the section of the search bar and csv button
+.div-search-csv {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 20px;
+}
+
+.download-btn {
+  padding: var(--zero, 0px) var(--md, 16px);
+}
+.variables-tabs {
+  width: 90%;
 }
 
 

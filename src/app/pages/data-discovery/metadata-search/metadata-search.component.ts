@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild, inject} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren, inject} from '@angular/core';
 import {FormBuilder, Validators, FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,26 +8,8 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MetadataSearchService } from './metadata-search.service';
 import { MetadataVariables } from './metadata.model';
 import {MatTableModule} from '@angular/material/table';
+import { SelectionModel } from '@angular/cdk/collections';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
 
 @Component({
   selector: 'app-metadata-search',
@@ -35,24 +17,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrl: './metadata-search.component.scss'
 })
 // implements OnInit
-export class MetadataSearchComponent {
-
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  // dataSource = ELEMENT_DATA;
-  dataSource = new MatTableDataSource([
-    {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-    // Add more rows here
-  ]);
-
+export class MetadataSearchComponent implements OnInit {
 
 
   // Form groups
@@ -82,46 +47,78 @@ export class MetadataSearchComponent {
   // Observables
   observable_metadata_variables$ : Observable<any> | undefined;
 
-  // Tables columns
-  // displayedColumns = [
-  //   "variable_name",
-  //   "variable_description",
-  //   "datatype",
-  //   "values"
-  // ];
+  // Tables Paginator, Sort and Filter
+  @ViewChild("filter", { static: true }) filter: ElementRef;
 
+  
+  public dataSourceAll = new MatTableDataSource<MetadataVariables>();
   // Cancer type selected
   cancerType: string = "";
 
+  entities: any[] = []
+  filteredDataByCancerType: any = []
+  dataFiltered: any = []
+  filteredDataSources: { [key: string]: MatTableDataSource<any> } = {};
+  selection = new SelectionModel<any>(true, []);
 
+  filterSearcher:any = "";
 
-  // constructor(
-  //   public metadataService: MetadataSearchService,
-  // ) {}
-  // ngOnInit(): void {
+  constructor(
+    public metadataService: MetadataSearchService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  ngOnInit(): void {
 
-  //   // Get observables variables
-  //   this.observable_metadata_variables$ = this.metadataService.variablesMetadata;
+    // Get observables variables
+    this.observable_metadata_variables$ = this.metadataService.variablesMetadata;
 
-  //   // Subscribe to the observables
-  //   this.observable_metadata_variables$.subscribe((data) => {
+    // Subscribe to the observables
+    this.observable_metadata_variables$.subscribe((data) => {
+
+      // Filter data by the cancer type selected on the first form group (Cancer Type)
+      this.filteredDataByCancerType = data.filter((item: any) => item.dataset.includes(this.cancerType));
+      this.dataFiltered = this.filteredDataByCancerType;
       
-  //     this.dataSource.data = data as any[];
-  //     this.ngAfterViewInit()
-  //   })
+      // Get unique entities
+      this.entities = [...new Set(this.filteredDataByCancerType.filter((variable: any) => variable.entity != null).map((item: any) => item.entity))];
+      this.entities.unshift("All");
+    })
 
 
-  //   // Get metadata variables
-  //   this.metadataService.getVariablesMetadata()
+    
 
 
+  }
+ 
+  // applyFilterAll(event: Event) {
+    
+  //   const filterValue = (event.target as HTMLInputElement).value;
+  //   this.filterSearcher = filterValue.trim().toLowerCase()
+    
+  //   // this.filteredDataByCancerType = filterValue.trim().toLowerCase();
   // }
-  
+  // applyFilterAll(event: Event) {
+  //   const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    
+  //   this.dataFiltered = this.filteredDataByCancerType.filter((item: { variable_name: string; }) =>
+  //     item.variable_name.toLowerCase().includes(filterValue) // Adjust according to your data structure
+  //   );
+  // }
+  applyFilterAll(filterValue: string) {
+    this.dataFiltered = this.filteredDataByCancerType.filter((item: { variable_name: string; }) =>
+      item.variable_name.toLowerCase().includes(filterValue.toLowerCase()) // Adjust based on your data structure
+    );    
+    this.cdr.detectChanges(); // Force change detection
+
+  }
   
   
   // Submit function for cancer type selection (HNC or Sarcoma)
   selectedCancerType(value: any) {
     this.cancerType = value.firstCtrl;
+
+    // Get metadata variables
+    this.metadataService.getVariablesMetadata()
     
     console.log(this.cancerType);
  }

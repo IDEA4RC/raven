@@ -1,0 +1,62 @@
+/* Table Section */
+.table-container {
+    // max-height: 300px; /* Optional: Set the height of the table */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+
+  /*    TABLE STYLES   */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+  }
+  
+  table th, table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #DBE1E6;
+  }
+  
+  /* Table Header */
+  table th {
+    background-color: #255E8726;
+    font-weight: 500;
+    color: #3A4752;
+  }
+  /* Table Body */
+  table td {
+    font-family: Poppins;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 22.5px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+  /* Table Row, mause hover */
+  table tr:hover {
+    background-color: #f1f1f1;
+  }
+
+
+  /*       ScrollBar 1        */
+
+#scrollbar1::-webkit-scrollbar {
+    width: 8px;
+
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: #DBE1E6;
+    margin: 1px; /* space around the track */
+    // padding-right: 10px; /* additional space on the right */
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #255E87;
+}

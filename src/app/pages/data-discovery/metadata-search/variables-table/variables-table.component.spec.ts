@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MaterialTableComponent } from './material-table.component';
+import { VariablesTableComponent } from './variables-table.component';
 
-describe('MaterialTableComponent', () => {
-  let component: MaterialTableComponent;
-  let fixture: ComponentFixture<MaterialTableComponent>;
+describe('VariablesTableComponent', () => {
+  let component: VariablesTableComponent;
+  let fixture: ComponentFixture<VariablesTableComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MaterialTableComponent]
+      imports: [VariablesTableComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(MaterialTableComponent);
+    fixture = TestBed.createComponent(VariablesTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

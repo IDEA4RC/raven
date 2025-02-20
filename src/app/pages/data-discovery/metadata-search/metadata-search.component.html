@@ -1,57 +1,20 @@
-<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper>
 
-  <!-- Cancer Type Selection -->
+<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper>
+  <!-- STEPPER 1: Cancer type -->
   <mat-step [stepControl]="cancerTypeFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.cancer_type' | translate}}</ng-template>
+    <mat-card class="container">
 
-    <div class="app-container">
-      <div class="content-card">
-
-        <!-- Card Header -->
-        <div class="header-div">
-          <div class="header-title">
-            <h4>{{'pages.metadata_search.select_cancer_type' | translate}}</h4>
-            <h5>{{'pages.metadata_search.single_selection' | translate}}</h5>
-
-          </div>
+      <!-- Card Header -->
+      <div class="header-div">
+        <div class="header-title">
+          <h4>{{'pages.metadata_search.select_cancer_type' | translate}}</h4>
+          <h5>{{'pages.metadata_search.single_selection' | translate}}</h5>
         </div>
-        <!-- Select Cancer Type Form -->
-        
-        
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      </div>
 
-          <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
-        
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-          </ng-container>
-        
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
-        
-          <!-- Weight Column -->
-          <ng-container matColumnDef="weight">
-            <th mat-header-cell *matHeaderCellDef> Weight </th>
-            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-          </ng-container>
-        
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="symbol">
-            <th mat-header-cell *matHeaderCellDef> Symbol </th>
-            <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-          </ng-container>
-        
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        
-        <form [formGroup]="cancerTypeFormGroup" class="form-div" #userlogin = "ngForm" (ngSubmit) = "selectedCancerType(userlogin.value)">
+      <mat-card-content style="padding-top: 24px;">
+        <form [formGroup]="cancerTypeFormGroup" class="form-div" #userlogin = "ngForm" >
 
           <mat-radio-group [formControl]="firstCtrl">
             <!-- Head and neck cancer checkbox-->
@@ -70,51 +33,36 @@
             </div>
           </mat-radio-group>
           
-          <!-- Card Footer -->
-          <div class="footer-div">
-            <button
-              mat-flat-button
-              matStepperNext
-              color="primary"
-              class="continue-btn btn"
-              type="submit"
-              [disabled]="firstCtrl.invalid"
-              
-              >{{'pages.metadata_search.continue' | translate}}</button
-            >
-          </div>
+          <!-- Card Footer Continue button-->
+          <mat-card-actions class="footer" style="justify-content: right;">
+            <button mat-raised-button matStepperNext color="primary" class="continue-button" 
+            type="submit"
+              [disabled]="firstCtrl.invalid" (click)="selectedCancerType(userlogin.value)"
+            >{{'pages.metadata_search.continue' | translate}}</button>
+          </mat-card-actions>
         </form>
-      
-      </div>
-    </div>
-
-    
+      </mat-card-content>
+    </mat-card>
   </mat-step>
-
-  <!-- Variables pre-selection -->
+  <!-- STEPPER 2: Variables pre-selection -->
   <mat-step [stepControl]="variablesFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.variables_preselection' | translate}}</ng-template>
-    <div class="app-container">
-      <div class="content-card">
 
-        <!-- Card Header -->
-        <div class="header-div">
-          <div class="header-title">
-            <h4>{{'pages.metadata_search.search_variables' | translate}}</h4>
-          </div>
+    <mat-card class="container">
+
+      <!-- Card Header -->
+      <div class="header-div">
+        <div class="header-title">
+          <h4>{{'pages.metadata_search.search_variables' | translate}}</h4>
         </div>
-
-        <!-- Card body -->
-  
-  
-        <div class="div-search-csv">
-          <!-- Search variables -->
-          <div class="div-search">
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput placeholder="{{'pages.metadata_search.search_variable' | translate}}" #input>
-              <mat-icon matPrefix class="my-icon">search</mat-icon>
-              </mat-form-field>
+      </div>
+      <mat-card-header class="header">
+        <div class="header-actions">
+          <!-- Table searcher -->
+          <div class="search-container">
+            <app-searcher (search)="applyFilterAll($event)"></app-searcher>
           </div>
+          
           <!-- Download variables in CSV format -->
           <div class="div-csv">
             <button
@@ -128,31 +76,34 @@
               {{'pages.metadata_search.csv' | translate}}
             </button>
           </div>
-  
         </div>
+      </mat-card-header>
 
-        <mat-tab-group class="variables-tabs">
+      <mat-card-content>
+        <mat-tab-group >
 
-          <!-- All variables -->
-          <mat-tab label="{{'pages.metadata_search.all' | translate}}">
-             {{'pages.metadata_search.all' | translate}}
-
-             
-             
-             
-          </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.patient' | translate}}"> {{'pages.metadata_search.patient' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.hospital_data' | translate}}"> {{'pages.metadata_search.hospital_data' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.hospital_patient' | translate}}"> {{'pages.metadata_search.hospital_patient' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.patient_flow' | translate}}"> {{'pages.metadata_search.patient_flow' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.cancer_episode' | translate}}"> {{'pages.metadata_search.cancer_episode' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.episode_event' | translate}}"> {{'pages.metadata_search.episode_event' | translate}} </mat-tab>
-          <mat-tab label="{{'pages.metadata_search.genetic_test_expresion' | translate}}"> {{'pages.metadata_search.genetic_test_expresion' | translate}} </mat-tab>
-    
+          <!-- Create a tab for each of the entities of the data-->
+          <div class="table-container" id="scrollbar1">
+            <mat-tab *ngFor="let entity of entities; let i = index" [label]="entity">
+              <app-variables-table [variableData]=dataFiltered [entity]=entity
+                ></app-variables-table>
+              
+            </mat-tab>
+          </div>
+          
+      
+          
+          <!-- Add additional tabs as needed -->
         </mat-tab-group>
-      </div>
-    </div>
+      </mat-card-content>
+
+      <mat-card-actions class="footer">
+        <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
+        <button mat-raised-button color="primary" matStepperNext class="continue-button"> {{'pages.metadata_search.continue' | translate}} </button>
+      </mat-card-actions>
+    </mat-card>
   </mat-step>
+  <!-- STEPPER 3: Variables selection -->
   <mat-step [stepControl]="thirdFormGroup">
     <ng-template matStepLabel>Availability per Center</ng-template>
     <div class="app-container">
@@ -184,8 +135,21 @@
       </div>
     </div>
   </mat-step>
+  <!-- STEPPER 4: Detail Analysis -->
   <mat-step [stepControl]="fourthFormGroup">
     <ng-template matStepLabel>Detail Analysis</ng-template>
   </mat-step>
-  
 </mat-stepper>
+
+
+
+
+
+      
+      
+
+    
+
+
+
+

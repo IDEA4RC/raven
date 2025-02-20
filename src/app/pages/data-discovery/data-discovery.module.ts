@@ -10,12 +10,14 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { DiscoveryRoutes } from './data-discovery.routing';
 
 import { MetadataSearchComponent } from './metadata-search/metadata-search.component';
+import { VariablesTableComponent } from './metadata-search/variables-table/variables-table.component';
+import { VariablesSearcherComponent } from './metadata-search/variables-searcher/variables-searcher.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
-  declarations: [MetadataSearchComponent],
+  declarations: [MetadataSearchComponent, VariablesTableComponent, VariablesSearcherComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(DiscoveryRoutes),

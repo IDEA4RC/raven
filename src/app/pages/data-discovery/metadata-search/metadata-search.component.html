@@ -1,5 +1,5 @@
 
-<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper>
+<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper >
   <!-- STEPPER 1: Cancer type -->
   <mat-step [stepControl]="cancerTypeFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.cancer_type' | translate}}</ng-template>
@@ -99,7 +99,7 @@
 
       <mat-card-actions class="footer">
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
-        <button mat-raised-button color="primary" matStepperNext class="continue-button"> {{'pages.metadata_search.continue' | translate}} </button>
+        <button mat-raised-button color="primary" matStepperNext class="continue-button" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>
     </mat-card>
   </mat-step>

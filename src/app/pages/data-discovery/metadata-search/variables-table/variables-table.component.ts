@@ -4,7 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from '@angular/material/sort';
 import { BreakpointObserver } from '@angular/cdk/layout';
-// import { MetadataSearchService } from './metadata-search.service';
 import {MatTableModule} from '@angular/material/table';
 import { MetadataVariables } from '../metadata.model';
 
@@ -36,12 +35,27 @@ export class VariablesTableComponent implements OnInit, OnChanges{
     this.dataSourceAll.data = this.variableData.filter((variable: { entity: any; }) => {
       return this.entity === "All" || variable.entity === this.entity;
     }) as MetadataVariables[];
-    this.selectionService.saveData(this.dataSourceAll.data);
+
+    // Subscribe to selection changes
+    this.selectionService.selectedData$.subscribe(updtedRow => {
+      if(updtedRow.length === 0) {
+        this.selection.clear();
+      } else if(updtedRow[0] == true ||  updtedRow[0] == false) {
+        this.updateSelection(updtedRow[0], updtedRow[1]);
+        
+      } else {
+        updtedRow.forEach((row) => 
+          this.selection.select(row)
+      );
+    }
+
+    
+    });
   }
 
-  // Detects when the seach has been applied
+  // Detects when the search has been applied
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['variableData']) {
+    if (changes['variableData']) {      
       this.dataSourceAll.data = this.variableData.filter((variable: { entity: any; }) => {
         return this.entity === "All" || variable.entity === this.entity;
       }) as MetadataVariables[]; // Re-assign to trigger update
@@ -54,37 +68,21 @@ export class VariablesTableComponent implements OnInit, OnChanges{
     this.dataSourceAll.paginator = this.paginator;
   }
 
-  // /** Whether the number of selected elements matches the total number of rows. */
-  // isAllSelected(): boolean {
-  //   const numSelected = this.selectionService.selection.selected.length;
-  //   const numRows = this.dataSourceAll.data.length;
-  //   return numSelected === numRows;
-  // }
+  /** Updates the selection state when changes occur */
+  updateSelection(isSelected:any, row:any) {
+    if(isSelected) {
+      this.selection.select(row);
+    } else {
+      this.selection.deselect(row);
+    }
+  }
 
-  // masterToggle(): void {
-  //   this.isAllSelected()
-  //     ? this.selectionService.clearSelection()
-  //     : this.selectionService.selectAll(this.dataSourceAll.data);
-  // }
-
-  // toggleRow(row: MetadataVariables): void {
-  //   this.selectionService.toggleSelection(row);
-  // }
-
-  // checkboxLabel(row?: MetadataVariables): string {
-  //   console.log(row);
-    
-  //   if (!row) {
-  //     return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-  //   }
-  //   return `${
-  //     this.selectionService.isSelected(row) ? 'deselect' : 'select'
-  //   } row ${row.variable_name + 1}`;
-  // }
+  /** Toggle selection and update the service */
+  action(row: any) {
+    this.selectionService.toggleSelection(row);
+  }
 
 
-
-  // WORKS
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected(): any {
@@ -94,24 +92,26 @@ export class VariablesTableComponent implements OnInit, OnChanges{
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle(): void {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSourceAll.data.forEach((row) => this.selection.select(row));
-      
-      console.log(this.selectionService.getData());
+  masterToggle(): void {    
+    if(this.isAllSelected()) {
+      this.selection.clear();
+      this.selectionService.clearSelection(this.dataSourceAll.data);
+    } else {
+      this.dataSourceAll.data.forEach((row) => this.selection.select(row));
+      this.selectionService.selectAll(this.dataSourceAll.data);
+    }
       
   }
 
   /** The label for the checkbox on the passed row */
   checkboxLabel(row?: MetadataVariables): string {
-    
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
+    } 
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
       row.variable_name + 1
     }`;
   }
+
 
 }

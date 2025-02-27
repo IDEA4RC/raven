@@ -9,7 +9,7 @@ import { MetadataSearchService } from './metadata-search.service';
 import { MetadataVariables } from './metadata.model';
 import {MatTableModule} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-
+import { SelectionService } from './selection.service';
 
 @Component({
   selector: 'app-metadata-search',
@@ -65,6 +65,7 @@ export class MetadataSearchComponent implements OnInit {
 
   constructor(
     public metadataService: MetadataSearchService,
+    public selectionService: SelectionService,
     private cdr: ChangeDetectorRef
   ) {}
   ngOnInit(): void {
@@ -84,9 +85,7 @@ export class MetadataSearchComponent implements OnInit {
       this.entities.unshift("All");
     })
 
-
     
-
 
   }
  
@@ -121,6 +120,15 @@ export class MetadataSearchComponent implements OnInit {
     this.metadataService.getVariablesMetadata()
     
     console.log(this.cancerType);
+ }
+
+ onTabChange(event: any) {
+  console.log(event);
+  }
+
+
+ continue() {
+  console.log("continue",this.selectionService.getDataSelected());
  }
 }
 

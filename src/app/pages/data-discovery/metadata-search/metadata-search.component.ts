@@ -24,12 +24,16 @@ export class MetadataSearchComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
   readonly firstCtrl = new FormControl('', Validators.required);
   readonly secondCtrl = new FormControl('', Validators.required);
+  readonly thirdCtrll = new FormControl('', Validators.required);
 
   cancerTypeFormGroup = this._formBuilder.group({
     firstCtrl: this.firstCtrl,
   });
   variablesFormGroup = this._formBuilder.group({
-    secondCtrl: this.secondCtrl,
+    // secondCtrl: this.secondCtrl,
+  });
+  availabilityFormGroup = this._formBuilder.group({
+    thirdCtrll: this.thirdCtrll,
   });
   // secondFormGroup = this._formBuilder.group({
   //   secondCtrl: ['', Validators.required],
@@ -63,6 +67,14 @@ export class MetadataSearchComponent implements OnInit {
 
   filterSearcher:any = "";
 
+  jsonData: any;
+  centers: any[] = [];
+  variables: any[] = [];
+  displayedColumns: string[] = ['variable']; // Start with 'variable' column
+
+  availableData: any[] = [];
+    
+
   constructor(
     public metadataService: MetadataSearchService,
     public selectionService: SelectionService,
@@ -85,24 +97,32 @@ export class MetadataSearchComponent implements OnInit {
       this.entities.unshift("All");
     })
 
-    
+    // Availability per center
+    this.jsonData = {
+      centers: [
+        { id: 'int', name: 'INT', years: '2014-2020' },
+        { id: 'iss', name: 'ISS-FJD', years: '2012-2021' },
+        { id: 'aphp', name: 'APHP', years: '2016-2022' },
+        { id: 'vgr', name: 'VGR', years: '2015-2020' },
+        { id: 'msci', name: 'MSCI', years: '2018-' }
+      ],
+      variables: [
+        { name: 'Sex', availability: { int: '✔️', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
+        { name: 'Birth Year', availability: { int: '✔️', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
+        { name: 'Histology group', availability: { int: '✔️', iss: '❌', aphp: '⬤', vgr: '⬤', msci: '✔️' } },
+        { name: 'Topography', availability: { int: '✔️', iss: '✔️', aphp: '⬤', vgr: '⬤', msci: '✔️' } },
+        { name: 'Loco-regional stage', availability: { int: '❌', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
+        { name: 'Treatment response', availability: { int: '✔️', iss: '✔️', aphp: '❌', vgr: '❌', msci: '✔️' } }
+      ]
+    };
+
+    this.centers = this.jsonData.centers;
+    this.variables = this.jsonData.variables;
+    // Generate displayed columns dynamically
+    this.displayedColumns = ['variable', ...this.centers.map(c => c.id)];
 
   }
- 
-  // applyFilterAll(event: Event) {
-    
-  //   const filterValue = (event.target as HTMLInputElement).value;
-  //   this.filterSearcher = filterValue.trim().toLowerCase()
-    
-  //   // this.filteredDataByCancerType = filterValue.trim().toLowerCase();
-  // }
-  // applyFilterAll(event: Event) {
-  //   const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    
-  //   this.dataFiltered = this.filteredDataByCancerType.filter((item: { variable_name: string; }) =>
-  //     item.variable_name.toLowerCase().includes(filterValue) // Adjust according to your data structure
-  //   );
-  // }
+
   applyFilterAll(filterValue: string) {
     this.dataFiltered = this.filteredDataByCancerType.filter((item: { variable_name: string; }) =>
       item.variable_name.toLowerCase().includes(filterValue.toLowerCase()) // Adjust based on your data structure
@@ -129,6 +149,7 @@ export class MetadataSearchComponent implements OnInit {
 
  continue() {
   console.log("continue",this.selectionService.getDataSelected());
+  this.availableData = this.selectionService.getDataSelected();
  }
 }
 

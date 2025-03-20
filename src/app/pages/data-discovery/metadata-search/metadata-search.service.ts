@@ -21,11 +21,24 @@ export class MetadataSearchService {
     //TODO: Change the URL to the correct one and add filter
   getVariablesMetadata() {
     // const url = `${environment.apiBaseUrl}/variables?...`;
-    const url = './assets/jsons/metadata.json';
+    const url = './assets/jsons/metadata_v0.2.json';
     this.getRequest(url).subscribe((data) => {
         this.variablesMetadata.next(data);
     });
   }
+
+   /**
+     * Function to get the metadata variables of a cancer type
+     * @returns 
+     */
+    //TODO: Change the URL to the correct one and add filter
+    getVariablesMetadataAvailability() {
+      // const url = `${environment.apiBaseUrl}/variables?...`;
+      const url = './assets/jsons/metadata_v0.2.json';
+      this.getRequest(url).subscribe((data) => {
+          this.variablesMetadata.next(data);
+      });
+    }
 
 
 

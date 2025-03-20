@@ -42,12 +42,16 @@
   "pages": {
     "metadata_search": {
       "variables_preselection": "Variables Pre-selection",
+      "availability_cancer": "Availability per Center",
       "cancer_type": "Cancer Type",
       "select_cancer_type": "Select the type of cancer",
       "single_selection": "(single selection)",
       "continue": "Continue",
       "back": "Back",
       "search_variables": "Search for the Variables",
+      "select_clinical_centers": "Select Clinical Centers based on variables availability",
+      "availability_cancer_description_1": "Years indicated in brackets in each CoE indicates the period in which each center have collected/updated their data.",
+      "availability_cancer_description_2": "The abbreviations D, P, and R stand for Diagnosis, Progression, and Recurrence.",
       "search_variable": "Search Variable",
       "csv": "CSV",
       "all": "ALL",
@@ -61,7 +65,8 @@
       "all_variables": "All Variables",
       "description": "Description",
       "data_type": "Data Type",
-      "values": "Values"
+      "values": "Values",
+      "availability": "Availability"
     }
   }
 

@@ -2,20 +2,34 @@
     <table mat-table [dataSource]="dataSourceAll" matSort class="mat-elevation-z8">
       <!-- Checkbox Column -->
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef class="p-l-0">
-          <mat-checkbox
-            (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            color="#99ABB4"
-            [indeterminate]="selection.hasValue() && !isAllSelected()"
-            [aria-label]="checkboxLabel()">
-          </mat-checkbox>
+        <th mat-header-cell *matHeaderCellDef class="p-l-0" style="padding: 0px !important;">
+          <div style="display: flex; flex-direction: column;">
+            <div class="header-all-centers">
+              <mat-checkbox
+              (change)="$event ? masterToggleCenters() : null"
+              [checked]="selectionCenters.hasValue() && isAllSelectedCenters()"
+              color="#99ABB4"
+              [indeterminate]="selectionCenters.hasValue() && !isAllSelectedCenters()"
+              [aria-label]="checkboxLabelCenters()">
+            </mat-checkbox>
+            </div>
+            <div class="header-all-variables">
+              <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="selectionVariables.hasValue() && isAllSelected()"
+              color="#99ABB4"
+              [indeterminate]="selectionVariables.hasValue() && !isAllSelected()"
+              [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+            </div>
+          </div>
+          
         </th>
         <td mat-cell *matCellDef="let row" class="p-l-0">
           <mat-checkbox
             (click)="$event.stopPropagation()"
             (change)="action(row)" 
-            [checked]="selection.isSelected(row)"
+            [checked]="selectionVariables.isSelected(row)"
             [aria-label]="checkboxLabel(row)">
           </mat-checkbox>
         </td>
@@ -24,9 +38,18 @@
 
       <!-- Variable Name Column -->
       <ng-container matColumnDef="variable_name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th mat-header-cell *matHeaderCellDef style="padding: 0px !important;">
             
-              {{'pages.metadata_search.all_variables' | translate}}
+              <div style="display: flex; flex-direction: column;">
+
+                <div class="header-all-centers centers-text">
+                  {{'pages.metadata_search.all_centers' | translate}}
+                </div>
+                <div class="header-all-variables variables-text">
+                  {{'pages.metadata_search.all_variables_c' | translate}}
+  
+                </div>
+              </div>
             
           </th>
           <td mat-cell *matCellDef="let element"> {{element.variable_name}} </td>
@@ -36,13 +59,19 @@
         <th mat-header-cell *matHeaderCellDef style="min-width: 150px; padding: 2px !important"> 
           <div class="header-center">
             <div class="center-name">
+              <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="actionCenter(center.center)" 
+              [checked]="selectionCenters.isSelected(center.center)"
+              [aria-label]="checkboxLabelCenters(center.center)">
+            </mat-checkbox>
               {{ center.center }} 
             </div>
             <div class="center-years">
               ({{ center.years }})
             </div>
           </div>
-          <div class="header-availability">
+          <div class="header-availability" style="margin-top: 5px">
             <div class="availability-text">
               {{'pages.metadata_search.availability' | translate}}
             </div>

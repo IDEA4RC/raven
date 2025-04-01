@@ -111,7 +111,7 @@
       <!-- Card Header -->
       <div class="header-div">
         <div class="header-title">
-          <h4>{{'pages.metadata_search.search_variables' | translate}}</h4>
+          <h4>{{'pages.metadata_search.select_clinical_centers_availability' | translate}}</h4>
         </div>
       </div>
       <mat-card-header class="header">
@@ -163,13 +163,73 @@
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
        <!-- Continue button -->
         <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
-        [disabled]="selectionService.getDataSelected().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
+        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>
     </mat-card>
   </mat-step>
   <!-- STEPPER 4: Detail Analysis -->
-  <mat-step [stepControl]="fourthFormGroup">
-    <ng-template matStepLabel>Detail Analysis</ng-template>
+  <mat-step [stepControl]="detailAnalysisFormGroup">
+    <ng-template matStepLabel>{{'pages.metadata_search.detail_analysis' | translate}}</ng-template>
+    <mat-card class="container">
+
+      <!-- Card Header -->
+      <div class="header-div">
+        <div class="header-title">
+          <h4>{{'pages.metadata_search.select_clinical_centers' | translate}}</h4>
+        </div>
+      </div>
+      <mat-card-header class="header">
+        <div class="header-actions">
+          <!-- Table searcher -->
+          <div class="search-container">
+            <app-searcher (search)="applyFilterAll($event)"></app-searcher>
+          </div>
+          
+          <!-- Download variables in CSV format -->
+          <div class="div-csv">
+            <button
+              mat-flat-button
+              color="primary"
+              class="download-btn btn"
+              >
+              <mat-icon>download</mat-icon>
+              {{'pages.metadata_search.csv' | translate}}
+            </button>
+          </div>
+        </div>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="info-text">
+          <div class="info-icon">
+            <mat-icon class="material-icons-outlined">info</mat-icon>
+          </div>
+          <div>
+            {{'pages.metadata_search.availability_cancer_description_1' | translate}}<br>
+            {{'pages.metadata_search.availability_cancer_description_2' | translate}}
+
+          </div>
+        </div>
+
+        <!-- Create a tab for each of the entities of the data-->
+        <div class="table-container" id="scrollbar1">
+            <app-availability-table [variableData]=availableData
+              ></app-availability-table>
+            
+        </div>
+        
+        
+        
+      </mat-card-content>
+
+      <mat-card-actions class="footer">
+        <!-- Back button -->
+        <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
+       <!-- Continue button -->
+        <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
+        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
+      </mat-card-actions>
+    </mat-card>
   </mat-step>
 </mat-stepper>
 

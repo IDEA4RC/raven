@@ -7,9 +7,16 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class SelectionService {
-  selection = new SelectionModel<MetadataVariables>(true, []);
-  private selectedDataSubject = new BehaviorSubject<any[]>([]);
-  selectedData$ = this.selectedDataSubject.asObservable();
+
+  // Selection of the variables
+  selectionVariables = new SelectionModel<MetadataVariables>(true, []);
+  private selectedVariablesSubject = new BehaviorSubject<any[]>([]);
+  selectedVariables$ = this.selectedVariablesSubject.asObservable();
+
+  // Selection of the centers
+  selectionCenters = new SelectionModel<MetadataVariables>(true, []);
+  private selectedCentersSubject = new BehaviorSubject<any[]>([]);
+  selectedCenters$ = this.selectedCentersSubject.asObservable();
 
   data: any[] = [];
   dataSelected: any[] = [];
@@ -19,30 +26,54 @@ export class SelectionService {
 
 
   getDataSelected(): any[] {
-      return this.selection.selected;
+      return this.selectionVariables.selected;
   }
 
 
   selectAll(data: any[]): void {
 
-    data.forEach((row) => this.selection.select(row));
+    data.forEach((row) => this.selectionVariables.select(row));
     
-    this.selectedDataSubject.next(data);
+    this.selectedVariablesSubject.next(data);
   }
 
   toggleSelection(row: any): void {
-    this.selection.toggle(row);
+    this.selectionVariables.toggle(row);
 
-    this.selectedDataSubject.next([this.selection.isSelected(row), row]); // Emit updated data
+    this.selectedVariablesSubject.next([this.selectionVariables.isSelected(row), row]); // Emit updated data
   }
 
   clearSelection(data: any[]): void {
-    data.forEach((row: MetadataVariables) => this.selection.deselect(row));
+    data.forEach((row: MetadataVariables) => this.selectionVariables.deselect(row));
 
-    this.selectedDataSubject.next([]);
+    this.selectedVariablesSubject.next([]);
   }
 
   getData(): any[] {
-    return this.selectedDataSubject.value;
+    return this.selectedVariablesSubject.value;
   }
+
+  /**
+   *  Selection of the centers
+   * */ 
+
+  // Select all centers
+  selectAllCenters(centers: any[]): void {
+
+    centers.forEach((center) => this.selectionCenters.select(center));
+    
+  }
+  // Toggle selection of a center
+  toggleSelectionCenters(center: any): void {
+    this.selectionCenters.toggle(center);
+  }
+  // Clear selection of centers
+  clearSelectionCenters(centers: any[]): void {
+    centers.forEach((center: any) => this.selectionCenters.deselect(center));
+  }
+  // Get selected centers
+  getSelectedCenters(): any[] {
+    return this.selectionCenters.selected;
+  }
+
 }

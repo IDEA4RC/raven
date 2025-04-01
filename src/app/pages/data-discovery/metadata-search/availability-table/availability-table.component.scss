@@ -26,17 +26,47 @@
     // font-weight: 500;
     // color: #3A4752;
   }
+  .header-all-centers {
+    font-family: Poppins;
+    font-weight: 600;
+    font-size: 14.12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #3A4752;
+  }
+  .header-all-variables {
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 13.18px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #3A4752;
+    background-color: #255E8726;
+    
+  }
   .header-center {
     text-align: center;
     display: flex;
     justify-content: center;
     background-color: #255E8726;
-    width: 190px;
+    width: 210px;
     height: 38px;
     gap: 9.41px;
-    padding: 10px;
-    border-bottom: 0.94px solid #DBE1E6;    width: 190px;
+    border-bottom: 0.94px solid #DBE1E6;
+    margin-left: -10px;
     
+  }
+  .centers-text {
+    width: 185px;
+    height: 38px;
+    padding-top: 12px;
+
+  }
+  .variables-text {
+    width: 185px;
+    height: 40px;
+    padding-top: 12px;
+    margin-top: 2px
   }
   .center-name {
     font-family: Poppins;
@@ -53,6 +83,7 @@
     line-height: 100%;
     letter-spacing: 0%;
     color: #6C757D;
+    padding-top: 11px;
   }
   .header-availability {
     display: flex;

@@ -10,7 +10,6 @@ import { MetadataVariables } from './metadata.model';
 import {MatTableModule} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SelectionService } from './selection.service';
-
 @Component({
   selector: 'app-metadata-search',
   templateUrl: './metadata-search.component.html',
@@ -25,7 +24,8 @@ export class MetadataSearchComponent implements OnInit {
   readonly firstCtrl = new FormControl('', Validators.required);
   readonly secondCtrl = new FormControl('', Validators.required);
   readonly thirdCtrll = new FormControl('', Validators.required);
-
+  readonly fourthCtrll = new FormControl('', Validators.required);
+  
   cancerTypeFormGroup = this._formBuilder.group({
     firstCtrl: this.firstCtrl,
   });
@@ -33,18 +33,14 @@ export class MetadataSearchComponent implements OnInit {
     // secondCtrl: this.secondCtrl,
   });
   availabilityFormGroup = this._formBuilder.group({
-    thirdCtrll: this.thirdCtrll,
+    // thirdCtrll: this.thirdCtrll,
   });
-  // secondFormGroup = this._formBuilder.group({
-  //   secondCtrl: ['', Validators.required],
-  // });
+  detailAnalysisFormGroup = this._formBuilder.group({
+    // fourthCtrl: this.fourthCtrll,
+  });
+
   
-  thirdFormGroup = this._formBuilder.group({
-    thirdCtrl: ['', Validators.required],
-  });
-  fourthFormGroup = this._formBuilder.group({
-    fourthCtrl: ['', Validators.required],
-  });
+
 
   isLinear = false;
 
@@ -73,6 +69,7 @@ export class MetadataSearchComponent implements OnInit {
   displayedColumns: string[] = ['variable']; // Start with 'variable' column
 
   availableData: any[] = [];
+  selectedCenters: any[] = [];
     
 
   constructor(
@@ -148,8 +145,9 @@ export class MetadataSearchComponent implements OnInit {
 
 
  continue() {
-  console.log("continue",this.selectionService.getDataSelected());
+  console.log("continue",this.selectionService.getSelectedCenters());
   this.availableData = this.selectionService.getDataSelected();
+  this.selectedCenters = this.selectionService.getSelectedCenters();
  }
 }
 

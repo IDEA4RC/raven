@@ -68,12 +68,21 @@ body {
     color: var(--grey-colors-Text-Subheading-Color, #99ABB4);
     margin-left: 5px;
 }
-  .header-actions {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin: auto;
-  }
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: auto;
+}
+.search-container {
+  width: 40%;
+}
+
+.div-csv {
+  display: flex;
+  width: 60%;
+  justify-content: right;
+}
   
 .blue-button {
   font-family: Poppins;
@@ -104,6 +113,11 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 15px 24px !important;
+}
+.footer-workspace {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 35px !important;
 }
   
 .back-button, .continue-button {
@@ -141,18 +155,6 @@ body {
   padding: 10px
 }
 
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-
 .sticky-header {
   position: sticky;
   top: 0;
@@ -184,20 +186,90 @@ th, td {
   font-weight: bold;
 }
 
+.phase-disease-filter {
+  border-radius: 6px;
+  border: 1px solid #DBE1E6;
+  background: #FFF;
+  margin-right: 20px;
+  // padding: 7px;
+}
+.phase-disease-filter-header {
+  color: var(--grey-colors-Text-Heading-Color, #3A4752);
+  font-family: Poppins;
+  font-size: 14.075px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  padding: 6px 10px;
+}
+.phase-disease-filter-text {
+  color: var(--grey-colors-Text-Heading-Color, #3A4752);
+  font-family: Poppins;
+  font-size: 14.075px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding: 6px 10px;
+}
+.border-right-line {
+  border-right: 0.938px solid #DBE1E6;
 
+}
+.workspace-form {
+  padding: 30px 10px;
+}
+.workspace-form-fields {
+  width: 100%;
+  margin-top: 10px;display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: var(--grey-colors-Text-Heading-Color, #3A4752);
+}
+
+.required {
+  color: var(--rojo, #F8285A);
+  margin-left: 0.25rem;
+}
+.workspace-form-title {
+  color: var(--grey-colors-Text-Heading-Color, #3A4752);
+
+  /* Regular captions/reg cap 3 */
+  font-family: Poppins;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.name-input {
+  color: var(--grey-colors-sub-heading-2, #6C757D) !important;
+  font-family: Poppins !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+}
+.description-textarea {
+  height: 159px !important;
+  color: var(--grey-colors-sub-heading-2, #6C757D) !important;
+  font-family: Poppins !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+}
 
 
 /*       STEPPER        */
 // Styling for stepper
 ::ng-deep .mat-step-header .mat-step-label.mat-step-label-active {
     color: var(--Raven-Azul, #255E87) !important;
+    
 }
 /* Remove background from stepper container */
 ::ng-deep .mat-stepper-vertical, .mat-stepper-horizontal {
   background: transparent !important;
   box-shadow: none; /* Optional: Remove any shadow if present */
 }
-
 /* Remove background from each step header */
 ::ng-deep .mat-step-header {
   background: transparent;

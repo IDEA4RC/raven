@@ -87,7 +87,7 @@
     }
 
     <!-- ============================================================== -->
-    <!-- Main Content -->
+    <!-- Main Content // maxWidth: options.boxed -->
     <!-- ============================================================== -->
     <mat-sidenav-content class="contentWrapper">
       @if(options.horizontal) {
@@ -97,12 +97,13 @@
       <main
         class="pageWrapper"
         [ngClass]="{
-          maxWidth: options.boxed
+          maxWidth: false
         }"
       >
+      
         <app-breadcrumb></app-breadcrumb>
         <!-- ============================================================== -->
-        <!-- Outlet -->
+        <!-- Outlet --> 
         <!-- ============================================================== -->
         <router-outlet></router-outlet>
         <div class="customizerBtn">

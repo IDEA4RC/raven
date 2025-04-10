@@ -1,0 +1,194 @@
+/* Table Section */
+.table-container {
+    // max-height: 300px; /* Optional: Set the height of the table */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  .expand-column {
+    width: 50px; /* Adjust the width as needed */
+  }
+
+
+/**
+  * STYLES TABLEEE
+  */
+  table {
+    width: 100%;
+  }
+  
+  tr.expanded-detail-row {
+    height: 0;
+  }
+  
+  tr.expanded-element-row {
+    cursor: pointer;
+  }
+  
+  tr.expanded-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  
+  tr.expanded-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+  
+  .expanded-element-row td {
+    border-bottom-width: 0;
+  }
+  
+  .expanded-element-detail-wrapper {
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 0fr;
+    grid-template-columns: 100%;
+    transition: grid-template-rows 225ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .expanded-element-detail-wrapper-expanded {
+    grid-template-rows: 1fr;
+  }
+  
+  .expanded-element-detail {
+    display: flex;
+    min-height: 0;
+  }
+  
+  .example-element-diagram {
+    min-width: 80px;
+    border: 2px solid black;
+    padding: 8px;
+    font-weight: lighter;
+    margin: 8px 0;
+    height: 104px;
+  }
+  
+  .example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+  }
+  
+  .example-element-description {
+    padding: 16px;
+  }
+  
+  .example-element-description-attribution {
+    opacity: 0.5;
+  }
+  
+  .example-toggle-button {
+    transition: transform 225ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .example-toggle-button-expanded {
+    transform: rotate(180deg);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+  }
+  /* Table Header */
+  table th {
+    background-color: #255E8726;
+    font-weight: 500;
+    color: #3A4752;
+  }
+  /* Table Row, mause hover */
+  table tr:hover {
+    background-color: #f1f1f1;
+  }
+  table th, table td {
+    text-align: left;
+    border-bottom: 1px solid #DBE1E6;
+  }
+  /* Table Body */
+  table td {
+    font-family: Poppins;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 22.5px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  /* Styles expanded content */
+  .expanded-content {
+    display: flex;
+    margin: auto;
+    gap: 24px;
+    padding: 16px;
+    margin-top: 12px;
+    border-radius: 6px;
+  }
+  
+  .expanded-content-group {
+    flex: 1;
+    border-radius: 6px;
+    background: #EBEBEB;
+    padding: 14px;
+    height: auto; /* Adjust to content */
+    min-height: fit-content; /* Ensures it's at least as tall as content */
+    overflow: visible; /* Prevents content from being cut off */
+    width: fit-content; /* Adjust width to content */
+    white-space: nowrap; /* Prevents text from wrapping */
+    min-width: min-content; /* Ensures minimal width based on content */
+  }
+  
+  .badge {
+    background: #d1d5db;
+    // padding: 2px 6px;
+    height: 20px;
+    padding: 2px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    border-radius: 10px;
+    margin-left: 5px;
+    background: var(--grey-colors-dark-grey, #455A64);
+    color: var(--Primary-Colors-primary-white, #FFF);
+  }
+  .expand-label {
+    color: var(--grey-colors-sub-heading-2, #6C757D);
+
+    /* Regular captions/reg cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .expand-value {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    margin-left: 5px;
+    /* Regular captions/reg cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+    
+
+
+  /*       ScrollBar 1        */
+
+#scrollbar1::-webkit-scrollbar {
+    width: 8px;
+
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: #DBE1E6;
+    margin: 1px; /* space around the track */
+    // padding-right: 10px; /* additional space on the right */
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #255E87;
+}

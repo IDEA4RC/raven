@@ -88,9 +88,9 @@ export class AvailabilityTableComponent implements OnInit, OnChanges{
       // Extract the centers and years to define the columns
       if(this.variableData.length > 0) {
         let centersData = this.variableData[0].centers;
+        
         this.centers = this.extractCentersYears(centersData);
         this.displayedColumns = ['select', 'variable_name', ... this.centers.map(center => center.center)];
-        console.log(centersData.filter((center: any) => Object.keys(center)[0] == 'INT')[0]['INT']);
         
       }
       
@@ -165,11 +165,14 @@ masterToggleCenters(): void {
   if(this.isAllSelectedCenters()) {
     // If all are selected, clear the selection
     this.selectionCenters.clear();
-    this.selectionService.clearSelectionCenters(this.centers);
+    this.selectionService.clearSelectionCenters();
   } else {
     // If not all are selected, select all
-    this.centers.forEach((center) => this.selectionCenters.select(center.center));
+    this.centers.forEach((center) => 
+      this.selectionCenters.select(center.center),
+    );
     this.selectionService.selectAllCenters(this.centers);
+
   }
     
 }

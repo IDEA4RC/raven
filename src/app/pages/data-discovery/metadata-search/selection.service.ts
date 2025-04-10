@@ -60,7 +60,7 @@ export class SelectionService {
   // Select all centers
   selectAllCenters(centers: any[]): void {
 
-    centers.forEach((center) => this.selectionCenters.select(center));
+    centers.forEach((center) => this.selectionCenters.select(center.center));
     
   }
   // Toggle selection of a center
@@ -68,8 +68,8 @@ export class SelectionService {
     this.selectionCenters.toggle(center);
   }
   // Clear selection of centers
-  clearSelectionCenters(centers: any[]): void {
-    centers.forEach((center: any) => this.selectionCenters.deselect(center));
+  clearSelectionCenters(): void {
+    this.selectionCenters.clear();
   }
   // Get selected centers
   getSelectedCenters(): any[] {

@@ -1,5 +1,5 @@
 
-<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper >
+<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper *ngIf="!metadataSearchFinished">
   <!-- STEPPER 1: Cancer type -->
   <mat-step [stepControl]="cancerTypeFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.metadata_search.cancer_type' | translate}}</ng-template>
@@ -69,9 +69,9 @@
               mat-flat-button
               color="primary"
               class="download-btn btn"
+              (click)="downloadPreSelection()"
               
               >
-              <!-- <img src="./assets/images/icons/metadata-seach/download.svg"/> -->
               <mat-icon>download</mat-icon>
               {{'pages.metadata_search.csv' | translate}}
             </button>
@@ -99,7 +99,7 @@
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
        <!-- Continue button -->
         <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
-        [disabled]="selectionService.getDataSelected().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
+        [disabled]="selectionService.getDataSelected().length == 0" (click)="continueVariables()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>
     </mat-card>
   </mat-step>
@@ -127,6 +127,7 @@
               mat-flat-button
               color="primary"
               class="download-btn btn"
+              (click)="downloadAvailabilityPerCenter()"
               >
               <mat-icon>download</mat-icon>
               {{'pages.metadata_search.csv' | translate}}
@@ -154,16 +155,15 @@
             
         </div>
         
-        
-        
       </mat-card-content>
 
+      <!-- Card Footer -->
       <mat-card-actions class="footer">
         <!-- Back button -->
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
        <!-- Continue button -->
         <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
-        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
+        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continueAvailability()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>
     </mat-card>
   </mat-step>
@@ -187,51 +187,117 @@
           
           <!-- Download variables in CSV format -->
           <div class="div-csv">
+            
+            <div class="phase-disease-filter">
+              <span class="phase-disease-filter-header border-right-line">
+                
+                <img style="vertical-align: middle;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+                {{'pages.metadata_search.phase_disease_filter' | translate}}:</span>
+          
+              <span class="phase-disease-filter-text border-right-line">
+                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
+                {{'pages.metadata_search.diagnosis' | translate}}
+              </span>
+              <span class="phase-disease-filter-text border-right-line">
+                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
+                {{'pages.metadata_search.progression' | translate}}
+              </span>
+              <span class="phase-disease-filter-text">
+                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
+                {{'pages.metadata_search.recurrence' | translate}}
+
+              </span>
+            </div>
             <button
               mat-flat-button
               color="primary"
               class="download-btn btn"
+              
               >
               <mat-icon>download</mat-icon>
               {{'pages.metadata_search.csv' | translate}}
             </button>
+            
           </div>
         </div>
       </mat-card-header>
       
       <mat-card-content>
-        <div class="info-text">
-          <div class="info-icon">
-            <mat-icon class="material-icons-outlined">info</mat-icon>
-          </div>
-          <div>
-            {{'pages.metadata_search.availability_cancer_description_1' | translate}}<br>
-            {{'pages.metadata_search.availability_cancer_description_2' | translate}}
+        <mat-tab-group >
 
+          <!-- Create a tab for each of the entities of the data-->
+          <div class="table-container" id="scrollbar1">
+            <mat-tab class="detailed-variables" *ngFor="let center of selectedCenters; let i = index">
+              <ng-template mat-tab-label>
+                <div class="tab-label-with-checkbox">
+                  <mat-checkbox
+                    (click)="$event.stopPropagation()"
+                    (change)="actionCenter(center.center)" 
+                    [checked]="selectionCenters.isSelected(center.center)"
+                    [aria-label]="checkboxLabelCenters(center.center)">
+                  </mat-checkbox>
+                  <span>{{center}}</span>
+                </div>
+              </ng-template>
+              <app-detail-analysis-table [variableData]=selectedVariables [centersData]=selectedCenters></app-detail-analysis-table>
+            </mat-tab>
           </div>
-        </div>
-
-        <!-- Create a tab for each of the entities of the data-->
-        <div class="table-container" id="scrollbar1">
-            <app-availability-table [variableData]=availableData
-              ></app-availability-table>
-            
-        </div>
-        
-        
+          
+        </mat-tab-group>
         
       </mat-card-content>
 
+      <!-- Card Footer -->
       <mat-card-actions class="footer">
         <!-- Back button -->
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
        <!-- Continue button -->
-        <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
-        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continue()"> {{'pages.metadata_search.continue' | translate}} </button>
+        <button mat-raised-button color="primary" class="continue-button" type="submit"
+        [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continueDetailAnalysis()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>
     </mat-card>
   </mat-step>
 </mat-stepper>
+<div *ngIf="metadataSearchFinished">
+  <mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+      <div class="header-title">
+        <h4>{{'pages.metadata_search.create_new_workspace' | translate}}</h4>
+      </div>
+    </div>
+
+    <!-- Form to create a workspace-->
+    <mat-card-content>
+      <form class="workspace-form" [formGroup]="workspaceFormGroup">
+
+        <!-- Fill workspace name -->
+        <mat-label class="workspace-form-title">{{'pages.metadata_search.workspace_name' | translate}}<span class="required">*</span></mat-label>
+        <mat-form-field class="workspace-form-fields" appearance="outline" >
+          <input class="name-input" matInput [formControl]="workspaceNameCtrl" required>
+        </mat-form-field>
+
+        <!-- Fill workspace description-->
+        <mat-label class="workspace-form-title">{{'pages.metadata_search.workspace_brief_description' | translate}}<span class="required">*</span></mat-label>
+        <mat-form-field class="workspace-form-fields" appearance="outline">
+          <textarea class="description-textarea" matInput [formControl]="workspaceDescriptionCtrl" required></textarea>
+        </mat-form-field>
+      </form>
+      
+    </mat-card-content>
+
+    <!-- Card Footer -->
+    <mat-card-actions class="footer-workspace">
+      <!-- Back button -->
+      <button mat-button class="back-button" (click)="backWorkspace()">{{'pages.metadata_search.back' | translate}}</button>
+     <!-- Continue button -->
+      <button mat-raised-button color="primary" class="continue-button" type="submit"
+      [disabled]="workspaceNameCtrl.invalid || workspaceDescriptionCtrl.invalid" (click)="continueWorkspace()"
+      > {{'pages.metadata_search.continue' | translate}} </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
 
 
 

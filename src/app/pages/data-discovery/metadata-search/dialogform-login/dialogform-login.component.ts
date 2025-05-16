@@ -30,7 +30,7 @@ export class DialogformLoginComponent implements OnInit {
 
   showLoginForm:boolean = false;
   showWorkspaceForm:boolean = false;
-
+  loginError:boolean = false;
   ngOnInit(): void {
     // Initialization logic can go here
   }
@@ -48,10 +48,17 @@ export class DialogformLoginComponent implements OnInit {
   }
 
   login() {
-    // Handle login action
-    console.log('Login action triggered');
-    this.showLoginForm = false;
-    this.showWorkspaceForm = true;
+    const userInput = this.form.get('uname')?.value;
+    const passwordInput = this.form.get('password')?.value;
+    
+    if (userInput === 'research_team_pi@iti.gr' && passwordInput === '123456') {
+      console.log('Login action triggered');
+      this.showLoginForm = false;
+      this.showWorkspaceForm = true;
+    } else {
+      this.loginError = true
+    }
+      
   }
 
   onCancel() {
@@ -63,7 +70,7 @@ export class DialogformLoginComponent implements OnInit {
   continueLater() {
     // Handle continue later action
     console.log('Continue later action triggered');
-    // this.goToPage('workspace');
+    this.goToPage('workspace');
     this.dialogRef.close();
 
   }

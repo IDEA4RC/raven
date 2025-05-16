@@ -63,7 +63,11 @@
           }
         </mat-hint>
         }
-      </mat-form-field>
+
+    </mat-form-field>
+    @if(loginError) {
+          <div class="text-error">Username or password incorrect</div>
+          }
 
       <div class="d-flex align-items-center ">
         <!-- <mat-checkbox color="primary">Remember this Device</mat-checkbox> -->
@@ -81,8 +85,9 @@
         <button mat-button class="cancel-button" (click)="onCancel()">{{'pages.metadata_search.cancel' | translate}}</button>
         <!-- Continue button -->
         <button mat-raised-button color="primary" class="login-button"
-        (click)="login()"
-        > {{'pages.metadata_search.login' | translate}} </button>
+            [disabled]="form.get('uname')?.invalid || form.get('password')?.invalid"
+            (click)="login()"
+            > {{'pages.metadata_search.login' | translate}} </button>
     </div>
     </form>
     

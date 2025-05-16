@@ -1,0 +1,77 @@
+.content-containers {
+    width: 100%;
+    padding: 20px;
+    border-radius: 5px;
+    background: #FFF;
+    margin-bottom: 15px;
+}
+.wokspace-name {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+.wokspace-description {
+    color: var(--grey-colors-sub-heading-2, #6C757D);
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.workspace-status {
+    display: flex;
+    flex-direction: row;
+}
+.blue-box {
+    color: var(--Raven-Azul, #255E87);
+
+    /* Medium Captions/Med Cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border-radius: 2px;
+    background: var(--light-action-colors-primary-light, rgba(30, 136, 229, 0.14));
+    margin-right: 10px;
+    padding: 5px;
+}
+.history-filter {
+    border-radius: 6px;
+    border: 1px solid #DBE1E6;
+    background: #FFF;
+    margin-right: 20px;
+    // padding: 7px;
+    width: 30%;
+  }
+  .history-filter-header {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 14.075px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    padding: 6px 10px;
+  }
+  .history-filter-text {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 14.075px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding: 6px 10px;
+  }
+  .border-right-line {
+    border-right: 0.938px solid #DBE1E6;
+  
+  }
+  .history-form {
+    height: 38px;
+    // display: flex;    ;
+    // flex-direction: row;
+    // justify-content: space-between;
+  }

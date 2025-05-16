@@ -97,6 +97,17 @@
       "continue_later": "Continue later",
       "proceed": "Proceed to Data Access"
 
+    },
+    "workspace": {
+      "status": "Status",
+      "last_modification": "Last Modification",
+      "filter": "Filter",
+      "date": "Date",
+      "time": "Time",
+      "action": "Action",
+      "phase": "Phase / Subphase",
+      "details": "Details"
+
     }
   }
 

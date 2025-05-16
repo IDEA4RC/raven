@@ -234,79 +234,79 @@ export class MetadataSearchComponent implements OnInit {
   }
   // Filter function of the disease checkbox (diagnosis, progression and recurrence)
   filterByPhase() {
-    const selectedPhases = this.getSelectedPhases();
-    console.log('Selected phases:', selectedPhases);
+  //   const selectedPhases = this.getSelectedPhases();
+  //   console.log('Selected phases:', selectedPhases);
 
-    let filteredData = this.selectedVariablesBlock;
-    console.log('Filtered data:', filteredData);
+  //   let filteredData = this.selectedVariablesBlock;
+  //   console.log('Filtered data:', filteredData);
     
-    if (selectedPhases.length > 0) {
-      if (selectedPhases.includes('diagnosis')) {
-        console.log('Filtering by diagnosis');
+  //   if (selectedPhases.length > 0) {
+  //     if (selectedPhases.includes('diagnosis')) {
+  //       console.log('Filtering by diagnosis');
         
-        filteredData = filteredData
-        .map((item: any) => {
-          // Filter the centers based on availability_d
-          const filteredCenters = item.centers.filter((centerObj: any) => {
-            const centerName = Object.keys(centerObj)[0];
-            const center = centerObj[centerName];
-            return center.availability_d === 'True';
-          });
-      
-          // Only include the item if it has at least one matching center
-          if (filteredCenters.length > 0) {
-            return {
-              ...item,
-              centers: filteredCenters,
-            };
-          }
-          return null;
-        })
-        .filter((item: null) => item !== null);
-      
-      console.log(filteredData);
-  // .filter((item) => item !== null);
-  // .filter((item: null) => item !== null);
-        
-  //       filteredData = filteredData.filter((item: any) => 
-  //         item.centers.forEach((centerObj: any) => {
-  //           const centerName = Object.keys(centerObj);
+  //       filteredData = filteredData
+  //       .map((item: any) => {
+  //         // Filter the centers based on availability_d
+  //         const filteredCenters = item.centers.filter((centerObj: any) => {
+  //           const centerName = Object.keys(centerObj)[0];
   //           const center = centerObj[centerName];
-  //           return center.availability_d === "True";
-  //         })
-        // some((centerObj: any) => {
-        //     const centerName = Object.keys(centerObj)[0];
-        //     const center = centerObj[centerName];
-        //     return center.availability_d === "True";
-        //   })
+  //           return center.availability_d === 'True';
+  //         });
+      
+  //         // Only include the item if it has at least one matching center
+  //         if (filteredCenters.length > 0) {
+  //           return {
+  //             ...item,
+  //             centers: filteredCenters,
+  //           };
+  //         }
+  //         return null;
+  //       })
+  //       .filter((item: null) => item !== null);
+      
+  //     console.log(filteredData);
+  // // .filter((item) => item !== null);
+  // // .filter((item: null) => item !== null);
+        
+  // //       filteredData = filteredData.filter((item: any) => 
+  // //         item.centers.forEach((centerObj: any) => {
+  // //           const centerName = Object.keys(centerObj);
+  // //           const center = centerObj[centerName];
+  // //           return center.availability_d === "True";
+  // //         })
+  //       // some((centerObj: any) => {
+  //       //     const centerName = Object.keys(centerObj)[0];
+  //       //     const center = centerObj[centerName];
+  //       //     return center.availability_d === "True";
+  //       //   })
 
-        // );
-      }
+  //       // );
+  //     }
       
-      // if (selectedPhases.includes('progression')) {
-      //   filteredData = filteredData.filter((item: any) => 
-      //     item.centers.some((centerObj: any) => {
-      //       const centerName = Object.keys(centerObj)[0];
-      //       const center = centerObj[centerName];
-      //       return center.availability_p === "True";
-      //     })
-      //   );
-      // }
+  //     // if (selectedPhases.includes('progression')) {
+  //     //   filteredData = filteredData.filter((item: any) => 
+  //     //     item.centers.some((centerObj: any) => {
+  //     //       const centerName = Object.keys(centerObj)[0];
+  //     //       const center = centerObj[centerName];
+  //     //       return center.availability_p === "True";
+  //     //     })
+  //     //   );
+  //     // }
       
-      // if (selectedPhases.includes('recurrence')) {
-      //   filteredData = filteredData.filter((item: any) => 
-      //     item.centers.some((centerObj: any) => {
-      //       const centerName = Object.keys(centerObj)[0];
-      //       const center = centerObj[centerName];
-      //       return center.availability_r === "True";
-      //     })
-      //   );
-      // }
-      console.log('Filtered data after applying phase filter:', filteredData);
+  //     // if (selectedPhases.includes('recurrence')) {
+  //     //   filteredData = filteredData.filter((item: any) => 
+  //     //     item.centers.some((centerObj: any) => {
+  //     //       const centerName = Object.keys(centerObj)[0];
+  //     //       const center = centerObj[centerName];
+  //     //       return center.availability_r === "True";
+  //     //     })
+  //     //   );
+  //     // }
+  //     console.log('Filtered data after applying phase filter:', filteredData);
       
-      // this.selectedVariables = filteredData;
-      this.cdrDetailAnalysis.detectChanges(); // Force change detection
-    }
+  //     // this.selectedVariables = filteredData;
+  //     this.cdrDetailAnalysis.detectChanges(); // Force change detection
+  //   }
   }
 
   // Submit function for cancer type selection (HNC or Sarcoma)

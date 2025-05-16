@@ -34,6 +34,12 @@
       <td mat-cell *matCellDef="let element"> {{element.variable_description}} </td>
     </ng-container>
 
+    <!-- Variable Entity -->
+    <ng-container matColumnDef="group" *ngIf="this.entity == 'All'">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.metadata_search.group' | translate}}</th>
+      <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.entity}} </td>
+    </ng-container>
+
     <!-- Data Type Column -->
     <ng-container matColumnDef="datatype">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.metadata_search.data_type' | translate}}</th>

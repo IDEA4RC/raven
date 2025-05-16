@@ -13,6 +13,8 @@ import { SelectionService } from './selection.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogformLoginComponent } from './dialogform-login/dialogform-login.component';
 
 @Component({
   selector: 'app-metadata-search',
@@ -83,6 +85,7 @@ export class MetadataSearchComponent implements OnInit {
   isLinear = false;
 
   // Observables
+  observable_patients$ : Observable<any> | undefined;
   observable_metadata_variables$ : Observable<any> | undefined;
 
   // Tables Paginator, Sort and Filter
@@ -92,6 +95,8 @@ export class MetadataSearchComponent implements OnInit {
   public dataSourceAll = new MatTableDataSource<MetadataVariables>();
   // Cancer type selected
   cancerType: string = "";
+  numberOfPatientsHNC: number = 0;
+  numberOfPatientsSarcoma: number = 0;
 
   entities: any[] = []
   filteredDataByCancerType: any = []
@@ -108,9 +113,11 @@ export class MetadataSearchComponent implements OnInit {
 
   // Data selected on the variables pre-selection
   availableData: any[] = [];
+  availaveDataBlock: any[] = [];
 
   // Data selected on the availability pre-selection
   selectedVariables: any[] = [];
+  selectedVariablesBlock: any[] = [];
   selectedCenters: any[] = [];
   selectionCenters = new SelectionModel<any>(true, []);
 
@@ -122,21 +129,44 @@ export class MetadataSearchComponent implements OnInit {
 
   // Add animation state property
   animationState = 'stepper';
+
+  // Disease phase filter (Detailed analysis screen)
+  diagnosisChecked = false;
+  progressionChecked = false;
+  recurrenceChecked = false;
+
+  phaseFilterForm = this._formBuilder.group({
+    diagnosis: [false],
+    progression: [false],
+    recurrence: [false]
+  });
   
 
   constructor(
     public metadataService: MetadataSearchService,
     public selectionService: SelectionService,
-    private cdr: ChangeDetectorRef,
+    private cdrVariables: ChangeDetectorRef,
+    private cdrAvailability: ChangeDetectorRef,
+    private cdrDetailAnalysis: ChangeDetectorRef,
     private snackBar: MatSnackBar,
+    private dialogModel: MatDialog,
+
 
   ) {}
   ngOnInit(): void {
 
     // Get observables variables
+    this.observable_patients$ = this.metadataService.patients;
     this.observable_metadata_variables$ = this.metadataService.variablesMetadata;
 
-    // Subscribe to the observables
+    // Subscribe to the observable patients
+    this.observable_patients$.subscribe((data) => {
+      this.numberOfPatientsHNC = data.HNC
+      this.numberOfPatientsSarcoma = data.Sarcoma
+      
+    });
+
+    // Subscribe to the observable of metadata variables
     this.observable_metadata_variables$.subscribe((data) => {
 
       // Filter data by the cancer type selected on the first form group (Cancer Type)
@@ -148,17 +178,137 @@ export class MetadataSearchComponent implements OnInit {
       this.entities.unshift("All");
     })
 
+    // Escucha cambios en el formulario
+    this.phaseFilterForm.valueChanges.subscribe(() => {
+      this.filterByPhase();
+    });
+
+    this.metadataService.getCancerPatients();
+
   }
 
-  applyFilterAll(filterValue: string) {
+  /**
+   * Filter function for the variables pre-selection table
+   * @param filterValue text to filter from the search engine
+   */
+  applyFilterVariables(filterValue: string) {
     this.dataFiltered = this.filteredDataByCancerType.filter((item: { variable_name: string; }) =>
       item.variable_name.toLowerCase().includes(filterValue.toLowerCase()) // Adjust based on your data structure
     );    
-    this.cdr.detectChanges(); // Force change detection
+    this.cdrVariables.detectChanges(); // Force change detection
 
   }
+
+  /**
+   * Filter function for the availability per center table
+   * @param filterValue text to filter from the search engine
+   */
+  applyFilterAvailability(filterValue: string) {    
+    this.availableData = this.availaveDataBlock.filter((item: { variable_name: string; }) =>
+      item.variable_name.toLowerCase().includes(filterValue.toLowerCase()) // Adjust based on your data structure
+    );
+    this.cdrAvailability.detectChanges(); // Force change detection
+  }
+
+  /**
+   * Filter function for the detail analysis table
+   * @param filterValue text to filter from the search engine
+   */
+  applyFilterDetailAnalysis(filterValue: string) {
+    this.selectedVariables = this.selectedVariablesBlock.filter((item: { variable_name: string; }) =>
+      item.variable_name.toLowerCase().includes(filterValue.toLowerCase()) // Adjust based on your data structure
+    );
+    this.cdrDetailAnalysis.detectChanges(); // Force change detection
+  }
   
-  
+  // Method to get the selected phases from the checkboxes
+  getSelectedPhases() {
+    const formValues = this.phaseFilterForm.value;
+    const selectedPhases: string[] = [];
+    
+    if (formValues.diagnosis) selectedPhases.push('diagnosis');
+    if (formValues.progression) selectedPhases.push('progression');
+    if (formValues.recurrence) selectedPhases.push('recurrence');
+    
+    return selectedPhases;
+  }
+  // Filter function of the disease checkbox (diagnosis, progression and recurrence)
+  filterByPhase() {
+    const selectedPhases = this.getSelectedPhases();
+    console.log('Selected phases:', selectedPhases);
+
+    let filteredData = this.selectedVariablesBlock;
+    console.log('Filtered data:', filteredData);
+    
+    if (selectedPhases.length > 0) {
+      if (selectedPhases.includes('diagnosis')) {
+        console.log('Filtering by diagnosis');
+        
+        filteredData = filteredData
+        .map((item: any) => {
+          // Filter the centers based on availability_d
+          const filteredCenters = item.centers.filter((centerObj: any) => {
+            const centerName = Object.keys(centerObj)[0];
+            const center = centerObj[centerName];
+            return center.availability_d === 'True';
+          });
+      
+          // Only include the item if it has at least one matching center
+          if (filteredCenters.length > 0) {
+            return {
+              ...item,
+              centers: filteredCenters,
+            };
+          }
+          return null;
+        })
+        .filter((item: null) => item !== null);
+      
+      console.log(filteredData);
+  // .filter((item) => item !== null);
+  // .filter((item: null) => item !== null);
+        
+  //       filteredData = filteredData.filter((item: any) => 
+  //         item.centers.forEach((centerObj: any) => {
+  //           const centerName = Object.keys(centerObj);
+  //           const center = centerObj[centerName];
+  //           return center.availability_d === "True";
+  //         })
+        // some((centerObj: any) => {
+        //     const centerName = Object.keys(centerObj)[0];
+        //     const center = centerObj[centerName];
+        //     return center.availability_d === "True";
+        //   })
+
+        // );
+      }
+      
+      // if (selectedPhases.includes('progression')) {
+      //   filteredData = filteredData.filter((item: any) => 
+      //     item.centers.some((centerObj: any) => {
+      //       const centerName = Object.keys(centerObj)[0];
+      //       const center = centerObj[centerName];
+      //       return center.availability_p === "True";
+      //     })
+      //   );
+      // }
+      
+      // if (selectedPhases.includes('recurrence')) {
+      //   filteredData = filteredData.filter((item: any) => 
+      //     item.centers.some((centerObj: any) => {
+      //       const centerName = Object.keys(centerObj)[0];
+      //       const center = centerObj[centerName];
+      //       return center.availability_r === "True";
+      //     })
+      //   );
+      // }
+      console.log('Filtered data after applying phase filter:', filteredData);
+      
+      // this.selectedVariables = filteredData;
+      this.cdrDetailAnalysis.detectChanges(); // Force change detection
+    }
+  }
+
   // Submit function for cancer type selection (HNC or Sarcoma)
   selectedCancerType(value: any) {
     this.cancerType = value.firstCtrl;
@@ -223,11 +373,14 @@ actionCenter(row: any) {
 
   // Submit function for variables selection
  continueVariables() {
+  // Get the selected variables data from the selection service
+  this.availaveDataBlock = this.selectionService.getDataSelected(); // This variable is going to be used for the searcher, to get the variables selected
   this.availableData = this.selectionService.getDataSelected();
   this.detailedDataMapped = this.mapDetailedInformation(this.availableData);
  }
  // Submit function for availability selection
  continueAvailability() {
+  this.selectedVariablesBlock = this.selectionService.getDataSelected();
   this.selectedVariables = this.selectionService.getDataSelected();
   this.selectedCenters = this.selectionService.getSelectedCenters();
   // Clear the selection and mark as selected the centers selected
@@ -389,6 +542,18 @@ showNotification(colorName: string, text: string, placementFrom: any, placementA
   }, 400); // Match this with the animation duration
 }
 
+
+openDialogLogin(): void {
+  console.log("openDialogLogin");
+  
+  
+  const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
+    // width: "740px",
+    disableClose: true,
+    
+  });
+  // dialogRef.afterClosed().subscribe(() => this.loadData());
+}
 // Method to handle workspace creation from form data (by clicking continue button)
 continueWorkspace() {
     // Get values from the form

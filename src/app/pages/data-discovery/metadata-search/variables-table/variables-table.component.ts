@@ -37,6 +37,10 @@ export class VariablesTableComponent implements OnInit, OnChanges{
       return this.entity === "All" || variable.entity === this.entity;
     }) as MetadataVariables[];
 
+    if(this.entity === "All") {
+      this.displayedColumns = ['select', 'variable_name', 'variable_description', 'group', 'datatype', 'values'];
+    }
+
     // Subscribe to variables selection changes
     this.selectionService.selectedVariables$.subscribe(updtedRow => {
       if(updtedRow.length === 0) {

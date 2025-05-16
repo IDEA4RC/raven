@@ -148,8 +148,16 @@
     font-size: 13px;
     border-radius: 10px;
     margin-left: 5px;
-    background: var(--grey-colors-dark-grey, #455A64);
     color: var(--Primary-Colors-primary-white, #FFF);
+  }
+  .badge-yes {
+    background: #64C062;
+  }
+  .badge-no {
+    background: #E6294B;
+  }
+  .badge-not-available {
+    background: #455A64;
   }
   .expand-label {
     color: var(--grey-colors-sub-heading-2, #6C757D);
@@ -171,7 +179,14 @@
     font-weight: 400;
     line-height: normal;
   }
-    
+  .expand-label-subclass {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .info-icon {
+    padding: 0px 5px;
+  }
 
 
   /*       ScrollBar 1        */

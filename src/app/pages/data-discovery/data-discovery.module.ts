@@ -18,8 +18,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
+import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+  MatDialogModule,
+  } from '@angular/material/dialog';
+import { DialogformLoginComponent } from './metadata-search/dialogform-login/dialogform-login.component';
+
 @NgModule({
-  declarations: [MetadataSearchComponent, VariablesTableComponent, AvailabilityTableComponent, DetailAnalysisTableComponent, VariablesSearcherComponent],
+  declarations: [MetadataSearchComponent, VariablesTableComponent, AvailabilityTableComponent, DetailAnalysisTableComponent, VariablesSearcherComponent, DialogformLoginComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(DiscoveryRoutes),
@@ -32,6 +43,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatSortModule,
     MatNativeDateModule,
     NgApexchartsModule,
+    MatDialogModule
   ]
 })
 export class DataDiscoveryModule { }

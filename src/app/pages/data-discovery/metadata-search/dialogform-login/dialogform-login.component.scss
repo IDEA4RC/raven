@@ -1,0 +1,132 @@
+.modal-content {
+  width: 100%;
+  padding: 60px 0px;
+}
+.modal-content-login {
+    width: 100%;
+    padding: 40px 0px;
+  }
+.please-login-container {
+    width: 60%;
+    margin: auto;
+    display: flex;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+
+    /* Regular captions/reg cap 3 */
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.buttons-container {
+    width: 70%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.login-button, .cancel-button, .continue-later-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: Poppins;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 22.5px;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    min-width: 100px;
+}
+
+.cancel-button {
+    color: var(--Primary-Colors-primary-white, #FFF);
+    background: var(--Primary-Colors-black, #52585D);
+}
+
+.dont-have-account-container {
+    width: 60%;
+    margin-top: 20px;
+    margin: auto;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    color: #99ABB4;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+}
+.text-grey {
+    color: #99ABB4;
+}
+.bold-underline {
+    font-weight: 600;
+    text-decoration: underline;
+}
+.logo {
+    width: 168px;
+    height: 32.48px;
+    flex-shrink: 0;
+}
+.login-form-container {
+    min-width: 400px;
+    margin-bottom: 20px;
+    padding: 0px 30px;
+    margin-bottom: 20px;
+}
+.mat-field {
+    padding-top: 30px;
+}
+.forgot-password-text {
+    margin-top: 10px
+}
+.buttons-container-login {
+    width: 70%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+.modal-content-workspace-saved {
+    width: 100%;
+  padding: 40px 0px;
+}
+.workspace-saved-container {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    text-align: center;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    width: 600px;
+    padding: 0px 50px;
+    margin: auto;
+}
+.buttons-container-login {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.continue-later-button {
+    border-radius: 8px;
+    border: 1px solid var(--Raven-Azul, #255E87);
+    color: var(--Raven-Azul, #255E87);
+
+}

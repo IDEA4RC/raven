@@ -20,16 +20,16 @@
             <!-- Head and neck cancer checkbox-->
             <div class="checkbox">
               <mat-radio-button value="H&N" color="primary"
-                >Head and Neck Cancer (HNC)</mat-radio-button
+                >{{'pages.metadata_search.head_and_neck' | translate}}</mat-radio-button
               >
-              <p class="checkbox-subtitle">- 300 cases</p>
+              <p class="checkbox-subtitle">- {{numberOfPatientsHNC}} {{'pages.metadata_search.cases' | translate}}</p>
             </div>
             <!-- Sarcoma checkbox-->
             <div class="checkbox">
               <mat-radio-button value="Sarc." color="primary"
-                >Sarcoma</mat-radio-button
+                >{{'pages.metadata_search.sarcoma' | translate}}</mat-radio-button
               >
-              <p class="checkbox-subtitle">- 300 cases</p>
+              <p class="checkbox-subtitle">- {{numberOfPatientsSarcoma}} {{'pages.metadata_search.cases' | translate}}</p>
             </div>
           </mat-radio-group>
           
@@ -60,7 +60,7 @@
         <div class="header-actions">
           <!-- Table searcher -->
           <div class="search-container">
-            <app-searcher (search)="applyFilterAll($event)"></app-searcher>
+            <app-searcher (search)="applyFilterVariables($event)"></app-searcher>
           </div>
           
           <!-- Download variables in CSV format -->
@@ -118,7 +118,7 @@
         <div class="header-actions">
           <!-- Table searcher -->
           <div class="search-container">
-            <app-searcher (search)="applyFilterAll($event)"></app-searcher>
+            <app-searcher (search)="applyFilterAvailability($event)"></app-searcher>
           </div>
           
           <!-- Download variables in CSV format -->
@@ -182,31 +182,31 @@
         <div class="header-actions">
           <!-- Table searcher -->
           <div class="search-container">
-            <app-searcher (search)="applyFilterAll($event)"></app-searcher>
+            <app-searcher (search)="applyFilterDetailAnalysis($event)"></app-searcher>
           </div>
           
           <!-- Download variables in CSV format -->
           <div class="div-csv">
             
             <div class="phase-disease-filter">
-              <span class="phase-disease-filter-header border-right-line">
+              <form [formGroup]="phaseFilterForm">
+                <span class="phase-disease-filter-header border-right-line">
                 
-                <img style="vertical-align: middle;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
-                {{'pages.metadata_search.phase_disease_filter' | translate}}:</span>
-          
-              <span class="phase-disease-filter-text border-right-line">
-                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
-                {{'pages.metadata_search.diagnosis' | translate}}
-              </span>
-              <span class="phase-disease-filter-text border-right-line">
-                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
-                {{'pages.metadata_search.progression' | translate}}
-              </span>
-              <span class="phase-disease-filter-text">
-                <mat-checkbox style="height: 35px !important;"></mat-checkbox>
-                {{'pages.metadata_search.recurrence' | translate}}
-
-              </span>
+                  <img style="vertical-align: middle;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+                  {{'pages.metadata_search.phase_disease_filter' | translate}}:</span>
+                <span class="phase-disease-filter-text border-right-line">
+                  <mat-checkbox formControlName="diagnosis" style="height: 35px !important;"></mat-checkbox>
+                  {{'pages.metadata_search.diagnosis' | translate}}
+                </span>
+                <span class="phase-disease-filter-text border-right-line">
+                  <mat-checkbox formControlName="progression" style="height: 35px !important;"></mat-checkbox>
+                  {{'pages.metadata_search.progression' | translate}}
+                </span>
+                <span class="phase-disease-filter-text">
+                  <mat-checkbox formControlName="recurrence" style="height: 35px !important;"></mat-checkbox>
+                  {{'pages.metadata_search.recurrence' | translate}}
+                </span>
+              </form>
             </div>
             <button
               mat-flat-button
@@ -239,7 +239,7 @@
                   <span>{{center}}</span>
                 </div>
               </ng-template>
-              <app-detail-analysis-table [variableData]=selectedVariables [centersData]=selectedCenters></app-detail-analysis-table>
+              <app-detail-analysis-table [variableData]=selectedVariables [center]=center></app-detail-analysis-table>
             </mat-tab>
           </div>
           
@@ -293,7 +293,7 @@
       <button mat-button class="back-button" (click)="backWorkspace()">{{'pages.metadata_search.back' | translate}}</button>
      <!-- Continue button -->
       <button mat-raised-button color="primary" class="continue-button" type="submit"
-      [disabled]="workspaceNameCtrl.invalid || workspaceDescriptionCtrl.invalid" (click)="continueWorkspace()"
+      [disabled]="workspaceNameCtrl.invalid || workspaceDescriptionCtrl.invalid" (click)="openDialogLogin()"
       > {{'pages.metadata_search.continue' | translate}} </button>
     </mat-card-actions>
   </mat-card>

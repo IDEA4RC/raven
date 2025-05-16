@@ -5,6 +5,7 @@ import { FullComponent } from './layouts/full/full.component';
 import { DataDiscoveryModule
   
  } from './pages/data-discovery/data-discovery.module';
+import { WorkspaceModule } from './pages/workspace/workspace.module';
 const routes: Routes = [
   {
     path: '',
@@ -39,6 +40,19 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/data-discovery/data-discovery.module').then(
             (m) => m.DataDiscoveryModule
+          ),
+      },
+    ],
+  },
+  {
+    path: '',
+    component: FullComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./pages/workspace/workspace.module').then(
+            (m) => m.WorkspaceModule
           ),
       },
     ],

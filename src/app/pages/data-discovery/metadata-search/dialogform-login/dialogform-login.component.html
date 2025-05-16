@@ -1,0 +1,111 @@
+
+<div class="modal-content" *ngIf="!showLoginForm && !showWorkspaceForm">
+    <div class="please-login-container">
+        <p>{{'pages.metadata_search.please_login_1' | translate }} <strong>{{'pages.metadata_search.please_login_2' | translate }}</strong> {{'pages.metadata_search.please_login_3' | translate }}</p>
+    </div>
+
+    
+    <div class="buttons-container">
+        <!-- Cancel button -->
+        <button mat-button class="cancel-button" (click)="onCancel()">{{'pages.metadata_search.cancel' | translate}}</button>
+        <!-- Continue button -->
+        <button mat-raised-button color="primary" class="login-button"
+        (click)="loginForm()"
+        > {{'pages.metadata_search.login' | translate}} </button>
+    </div>
+    <div class="dont-have-account-container">
+        <p style="cursor: pointer;">{{'pages.metadata_search.dont_account' | translate}}</p>
+    </div>
+</div>
+
+
+<!-- Login form -->
+ 
+<div class="modal-content-login" *ngIf="showLoginForm">
+    <div class="text-center">
+      
+      <!-- TODO add a link in the logo?
+      <a [routerLink]="['/dashboards/dashboard1']">
+      </a> -->
+      <img
+        src="./assets/images/logos/raven_logo_blue.svg"
+        class="align-middle m-2 logo"
+        alt="logo"
+      />
+      
+    </div>
+
+    <!-- Login form -->
+
+    <form class="login-form-container" [formGroup]="form" (ngSubmit)="login()">
+      <!-- Username Input form -->
+      <mat-form-field appearance="outline" class="w-100 mat-field" color="primary">
+        <mat-label class="text-grey">Username</mat-label>
+        <input matInput formControlName="uname" />
+        @if(f['uname'].touched && f['uname'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          @if(f['uname'].errors && f['uname'].errors['required']) {
+          <div class="text-error">Username is required.</div>
+          } @if(f['uname'].errors && f['uname'].errors['minlength']) {
+          <div class="text-error">Username should be 6 character.</div>
+          }
+        </mat-hint>
+        }
+      </mat-form-field>
+      <!-- Password Input form -->
+      <mat-form-field appearance="outline" class="w-100 mat-field" color="primary">
+        <mat-label class="text-grey">Password</mat-label>
+        <input matInput type="password" formControlName="password" />
+        @if(f['password'].touched && f['password'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          @if(f['password'].errors && f['password'].errors['required']) {
+          <div class="text-error">Password is required.</div>
+          }
+        </mat-hint>
+        }
+      </mat-form-field>
+
+      <div class="d-flex align-items-center ">
+        <!-- <mat-checkbox color="primary">Remember this Device</mat-checkbox> -->
+        <!-- Forgot password link -->
+        <a
+          [routerLink]="['/authentication/boxed-forgot-pwd']"
+          class="text-grey f-s-14 forgot-password-text"
+          >{{'pages.metadata_search.forgot_password' | translate}}</a
+        >
+        
+      </div>
+     
+      <div class="buttons-container-login">
+        <!-- Cancel button -->
+        <button mat-button class="cancel-button" (click)="onCancel()">{{'pages.metadata_search.cancel' | translate}}</button>
+        <!-- Continue button -->
+        <button mat-raised-button color="primary" class="login-button"
+        (click)="login()"
+        > {{'pages.metadata_search.login' | translate}} </button>
+    </div>
+    </form>
+    
+</div>
+
+<!-- Workspace saved -->
+<div class="modal-content-workspace-saved" *ngIf="showWorkspaceForm">
+
+    
+    <div class="workspace-saved-container">
+        <p><strong>{{'pages.metadata_search.workspace_saved' | translate }}</strong></p>
+    </div>
+    <div class="workspace-saved-container">
+        <p>{{'pages.metadata_search.workspace_saved_description' | translate }}</p>
+    </div>
+   
+    <div class="buttons-container-login">
+        <!-- Cancel button -->
+        <button mat-button class="continue-later-button" (click)="continueLater()">{{'pages.metadata_search.continue_later' | translate}}</button>
+        <!-- Continue button -->
+        <button mat-raised-button color="primary" class="login-button"
+        (click)="dataAccess()"
+        > {{'pages.metadata_search.proceed' | translate}} </button>
+    </div>
+    
+</div>

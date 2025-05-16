@@ -29,7 +29,8 @@ import { SelectionService } from '../selection.service';
 export class DetailAnalysisTableComponent implements OnInit, OnChanges{
 
   @Input() variableData: any;
-  @Input() centersData: any;
+  @Input() center: any;
+
 
   constructor(public selectionService: SelectionService) { }
 
@@ -72,15 +73,38 @@ export class DetailAnalysisTableComponent implements OnInit, OnChanges{
   
 ngOnInit() {    
 
-  this.dataSourceAll.data = this.variableData;
+  // this.dataSourceAll.data = this.variableData;
 
+  
+
+  this.variableData = this.variableData
+  .map((item: any) => {
+    // Filter the centers based on availability_d
+    const filteredCenters = item.centers.filter((centerObj: any) => {
+      const centerName = Object.keys(centerObj)[0];
+      return centerName == this.center;
+    });
+
+    // Only include the item if it has at least one matching center
+    if (filteredCenters.length > 0) {
+      return {
+        ...item,
+        centers: filteredCenters[0][this.center],
+      };
+    }
+    return null;
+  })
+  .filter((item: null) => item !== null);
+
+  
   // Mark all variables as selected
   this.variableData.forEach((variable: any) => {
     this.selectionVariables.select(variable);
     
   })
-
-  this.centers = this.centersData  
+  
+  this.dataSourceAll.data = this.variableData;
+  
 
 }
 
@@ -143,9 +167,9 @@ checkboxLabel(row?: MetadataVariables): string {
 
 
 // Function to check the availability of a variable for a center and for field (D, P, R)
-checkAvailability(variable: any, centerColumn: any, field:any) {
-  return variable.centers.filter((center: any) => Object.keys(center)[0] == centerColumn)[0][centerColumn][field];
-}
+// checkAvailability(variable: any, centerColumn: any, field:any) {
+//   return variable.centers.filter((center: any) => Object.keys(center)[0] == centerColumn)[0][centerColumn][field];
+// }
 
 }
 

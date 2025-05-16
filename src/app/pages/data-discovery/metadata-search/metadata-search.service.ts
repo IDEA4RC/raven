@@ -8,11 +8,26 @@ import { HttpClient} from "@angular/common/http";
 })
 export class MetadataSearchService {
 
-    // Metadata variables information observables
+  // Cancer patients information observables
+  patients = new Subject<any>();
+  patients$ = this.patients.asObservable();
+    
+  // Metadata variables information observables
   variablesMetadata = new Subject<any>();
   variablesMetadata$ = this.variablesMetadata.asObservable();
   
   constructor(private httpClient: HttpClient) {}
+
+  /**
+   * Function to get the number of patients of each cancer type
+   * @returns
+   */
+  getCancerPatients() {
+    const url = './assets/jsons/patients.json';
+    this.getRequest(url).subscribe((data) => {
+        this.patients.next(data);
+    });
+  }
 
     /**
      * Function to get the metadata variables of a cancer type
@@ -21,7 +36,7 @@ export class MetadataSearchService {
     //TODO: Change the URL to the correct one and add filter
   getVariablesMetadata() {
     // const url = `${environment.apiBaseUrl}/variables?...`;
-    const url = './assets/jsons/metadata_v0.2.json';
+    const url = './assets/jsons/metadata_v0.3.json';
     this.getRequest(url).subscribe((data) => {
         this.variablesMetadata.next(data);
     });

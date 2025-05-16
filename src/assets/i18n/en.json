@@ -46,6 +46,9 @@
       "cancer_type": "Cancer Type",
       "select_cancer_type": "Select the type of cancer",
       "single_selection": "(single selection)",
+      "head_and_neck": "Head and Neck Cancer (HNC)",
+      "cases": "cases",
+      "sarcoma": "Sarcoma",
       "continue": "Continue",
       "back": "Back",
       "search_variables": "Search for the Variables",
@@ -57,6 +60,7 @@
       "all": "ALL",
       "all_variables": "All Variables",
       "description": "Description",
+      "group": "Data Group",
       "data_type": "Data Type",
       "values": "Values",
       "availability": "Availability",
@@ -80,7 +84,18 @@
       "recurrence": "Recurrence",
       "create_new_workspace": "Create a new workspace for your access request",
       "workspace_name": "Workspace Name",
-      "workspace_brief_description": "Brief description of the workspace"
+      "workspace_brief_description": "Brief description of the workspace",
+      "cancel": "Cancel",
+      "login": "Login",
+      "please_login_1": "Before you continue, please ",
+      "please_login_2": "log in",
+      "please_login_3": "to your account to ensure secure access.",
+      "dont_account": "Don’t have an account?",
+      "forgot_password": "Forgot my Password?",
+      "workspace_saved": "Workspace Saved Successfully",
+      "workspace_saved_description": "Your workspace has been saved! Would you like to proceed directly to “Data Permit” now, or continue later?",
+      "continue_later": "Continue later",
+      "proceed": "Proceed to Data Access"
 
     }
   }

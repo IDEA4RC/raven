@@ -66,32 +66,36 @@
 
           <div class="expanded-content">
             <div class="expanded-content-group">
-              <p><span class="expand-label">{{'pages.metadata_search.exists_primary_disease' | translate}}:</span><span class="badge">does not apply</span></p>
-              <p><span class="expand-label"> {{'pages.metadata_search.exists_recurrence' | translate}}:</span> <span class="badge">does not apply</span></p>
-              <p><span class="expand-label">{{'pages.metadata_search.exists_progression' | translate}}:</span> <span class="badge">does not apply</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.exists_primary_disease' | translate}}:</span>
+                <span class="badge" [ngClass]="{'badge-yes': element.centers.availability_d == 'True', 'badge-no': element.centers.availability_d == 'False', 'badge-not-available': element.centers.availability_d == 'Not available'}">
+                  {{element.centers.availability_d}}</span></p>
+              <p><span class="expand-label"> {{'pages.metadata_search.exists_recurrence' | translate}}:</span> 
+                <span class="badge" [ngClass]="{'badge-yes': element.centers.availability_p == 'True', 'badge-no': element.centers.availability_p == 'False', 'badge-not-available': element.centers.availability_p == 'Not available'}">
+                  {{element.centers.availability_p}}</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.exists_progression' | translate}}:</span> 
+                <span class="badge" [ngClass]="{'badge-yes': element.centers.availability_r == 'True', 'badge-no': element.centers.availability_r == 'False', 'badge-not-available': element.centers.availability_r == 'Not available'}">
+                  {{element.centers.availability_r}}</span></p>
             </div>
             <div class="expanded-content-group">
-              <p><span class="expand-label">{{'pages.metadata_search.datasource_name' | translate}}:</span> <span class="expand-value">National registry</span></p>
-              <p><span class="expand-label">{{'pages.metadata_search.datasource_information' | translate}}:</span> <span class="expand-value">lorem ipsum</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.datasource_name' | translate}}:</span> <span class="expand-value">
+                {{element.centers.datasource_name}}
+              </span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.datasource_information' | translate}}:</span> <span class="expand-value">
+                {{element.centers.datasource_information}}
+              </span></p>
             </div>
             <div class="expanded-content-group">
-              <p><span class="expand-label">{{'pages.metadata_search.number_of_cases' | translate}}:</span> <span class="expand-value">200</span></p>
-              <p><span class="expand-label">{{'pages.metadata_search.missing' | translate}}:</span> <span class="value-strong">5 cases</span> | <span class="percentage">2.5%</span> <span class="grade">(A)</span></p>
-              <p><span class="label-italic">{{'pages.metadata_search.plausability_score' | translate}}:</span> <span class="expand-value">does not apply</span></p>
-              <p><span class="label-italic">{{'pages.metadata_search.overall_quality_score' | translate}}:</span> <span class="percentage">95%</span> <span class="grade">(A)</span></p>
-              <p><span class="expand-label">{{'pages.metadata_search.values' | translate}}:</span> <span class="expand-value">Male, Female</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.number_of_cases' | translate}}:</span> <span class="expand-value">{{element.centers.n_cases}}</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.missing' | translate}}:</span> <span class="expand-value">{{element.centers.m_cases}}</span> | <span class="percentage">2.5%</span> <span class="grade">(A)</span></p>
+              <p class="expand-label-subclass"><span class="expand-label">
+                <img class="info-icon" src="./assets/images/icons/metadata-seach/detailed-info.svg"/></span>
+                <span class="expand-label"> {{'pages.metadata_search.plausability_score' | translate}}:</span> <span class="expand-value">{{element.centers.plausability_score}}</span></p>
+              <p class="expand-label-subclass"><span class="expand-label"><img class="info-icon" src="./assets/images/icons/metadata-seach/detailed-info.svg"/></span>
+                <span class="expand-label"> {{'pages.metadata_search.overall_quality_score' | translate}}:</span> <span class="percentage">{{element.centers.overall_score}}</span> <span class="grade">(A)</span></p>
+              <p><span class="expand-label">{{'pages.metadata_search.values' | translate}}:</span> <span class="expand-value">{{element.values}}</span></p>
             </div>
           </div>
-          <!-- <div class="example-element-diagram">
-            <div class="example-element-position">{{element.position}}</div>
-            <div class="example-element-symbol">{{element.symbol}}</div>
-            <div class="example-element-name">{{element.name}}</div>
-            <div class="example-element-weight">{{element.weight}}</div>
-          </div>
-          <div class="example-element-description">
-            {{element.description}}
-            <span class="example-element-description-attribution"> -- Wikipedia </span>
-          </div> -->
+          
         </div>
       </div>
     </td>

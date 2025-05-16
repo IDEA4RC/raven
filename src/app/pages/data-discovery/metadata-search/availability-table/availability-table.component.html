@@ -84,18 +84,24 @@
         <td mat-cell *matCellDef="let element"> 
           <div style="display: flex; justify-content: center;">
             <div>
-              <img *ngIf="this.checkAvailability(element, center.center, 'availability_d')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
-              <img *ngIf="!this.checkAvailability(element, center.center, 'availability_d')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_d') == 'True'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_d') == 'False'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_d') == 'Not available'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+            
             </div>
             <img style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icons-bar.svg"/>
             <div>
-              <img *ngIf="this.checkAvailability(element, center.center, 'availability_p')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
-              <img *ngIf="!this.checkAvailability(element, center.center, 'availability_p')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_p') == 'True'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_p') == 'False'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_p') == 'Not available'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+
             </div>
             <img style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icons-bar.svg"/>
             <div>
-              <img *ngIf="this.checkAvailability(element, center.center, 'availability_r')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
-              <img *ngIf="!this.checkAvailability(element, center.center, 'availability_r')" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_r') == 'True'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_r') == 'False'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+              <img *ngIf="this.checkAvailability(element, center.center, 'availability_r') == 'Not available'" style="padding: 5px;" src="./assets/images/icons/metadata-seach/no-available-icon.svg"/>
+
             </div>
           </div>
         </td>

@@ -13,10 +13,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { WorkspaceComponent } from './workspace.component';
+import { IndividualWokspaceComponent } from './individual-wokspace/individual-wokspace.component';
 import { WorkspaceHistoryTableComponent } from './workspace-history-table/workspace-history-table.component';
 
 @NgModule({
-  declarations: [WorkspaceComponent, WorkspaceHistoryTableComponent],
+  declarations: [WorkspaceComponent, WorkspaceHistoryTableComponent, IndividualWokspaceComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(WorkspaceRoutes),

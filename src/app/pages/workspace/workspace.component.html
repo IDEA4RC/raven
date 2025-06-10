@@ -1,52 +1,63 @@
-<div >
-    <!--    WORKSPACE INFORMATION    -->
-    <div class="content-containers">
-        <!-- Workspace name-->
-        <p class="wokspace-name">{{workspaceData.name}}</p>
-        <!-- Workspace description-->
-        <p class="wokspace-description">{{workspaceData.description}}</p>
-        <div class="workspace-status">
-            <p class="blue-box"><strong>{{'pages.workspace.status' | translate}}</strong> {{workspaceData.status}}</p>
-            <p class="blue-box"><strong>{{'pages.workspace.last_modification' | translate}}</strong> {{workspaceData.formatted_date}}</p>
-        </div>
-    </div>
-    <!--    WORKSPACE statuses    -->
 
-    <div class="content-containers" style="text-align: center;">
+<div class="filter-container">
+  <!-- Search Engine -->
+    <!-- <input matInput (keyup)="applyFilter($event)" type="text" class="search-input" placeholder="{{ 'pages.workspace.search_by_name' | translate }}"/> -->
+  <!-- Table searcher -->
+  <mat-form-field appearance="outline" class="search-field custom-search-field search-engine">
+      <!-- Search icon -->
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <!-- Input field -->
+      <input matInput (keyup)="applyFilter($event)" type="text" class="search-input" placeholder="{{ 'pages.workspace.search_by_name' | translate }}"/>
+  </mat-form-field>
+  <!-- New Workspace -->
+  <div class="new-workspace">
+    <!-- New workspace button -->
+    <button mat-button class="workspace-button"
+    (click)="newWorkspace()"
+    > 
+    <mat-icon >add</mat-icon>
+    {{'pages.workspace.new_workspace' | translate}} </button>
+  </div>
+</div>
 
-        <img style="    width: 80%;
-    max-height: 100px; margin:auto" src="./assets/images/icons/workspace/workspace-status.svg"/>
-    </div>
-    <!--    WORKSPACE HISTORY    -->
+<div class="content-containers">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    
 
-    <div class="content-containers">
-        
-        <!-- Filter -->
-        <div class="history-filter">
-            <form class="history-form" [formGroup]="historyFilterForm">
-              <span class="history-filter-header border-right-line" style="width: 60px;">
-              
-                <img  src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
-                {{'pages.workspace.filter' | translate}}:</span>
-              <span class="history-filter-text border-right-line">
-                {{'pages.workspace.date' | translate}}
-                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
-              </span>
-              <span class="history-filter-text border-right-line">
-                {{'pages.workspace.action' | translate}}
-                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
-              </span>
-              <span class="history-filter-text">
-                {{'pages.workspace.phase' | translate}}
-                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+    <!-- Workspace Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.workspace.workspace_name' | translate}}</th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
 
-              </span>
-            </form>
-          </div>
+    <!-- Last Modification Column -->
+    <ng-container matColumnDef="last_modification">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.workspace.last_modification' | translate}}</th>
+        <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.last_modification_date | date:'dd/MM/yyyy'}} </td>
+          </ng-container>
 
-          <div>
-            <app-workspace-history-table></app-workspace-history-table>
-          </div>
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.status' | translate}}</th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
 
-    </div>
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
+      <td mat-cell *matCellDef="let element"> 
+        <button mat-button class="open-button" (click)="openWorkspace(element)">
+          <mat-icon>open_in_new</mat-icon>
+          {{'pages.workspace.open' | translate}}
+        </button>
+      </td>
+
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- Pagination -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>

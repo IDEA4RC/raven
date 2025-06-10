@@ -1,0 +1,52 @@
+<div >
+    <!--    WORKSPACE INFORMATION    -->
+    <div class="content-containers">
+        <!-- Workspace name-->
+        <p class="wokspace-name">{{workspaceData.name}}</p>
+        <!-- Workspace description-->
+        <p class="wokspace-description">{{workspaceData.description}}</p>
+        <div class="workspace-status">
+            <p class="blue-box"><strong>{{'pages.workspace.status' | translate}}</strong> {{workspaceData.status}}</p>
+            <p class="blue-box"><strong>{{'pages.workspace.last_modification' | translate}}</strong> {{workspaceData.formatted_date}}</p>
+        </div>
+    </div>
+    <!--    WORKSPACE statuses    -->
+
+    <div class="content-containers" style="text-align: center;">
+
+        <img style="    width: 80%;
+    max-height: 100px; margin:auto" src="./assets/images/icons/workspace/workspace-status.svg"/>
+    </div>
+    <!--    WORKSPACE HISTORY    -->
+
+    <div class="content-containers">
+        
+        <!-- Filter -->
+        <div class="history-filter">
+            <form class="history-form" [formGroup]="historyFilterForm">
+              <span class="history-filter-header border-right-line" style="width: 60px;">
+              
+                <img  src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+                {{'pages.workspace.filter' | translate}}:</span>
+              <span class="history-filter-text border-right-line">
+                {{'pages.workspace.date' | translate}}
+                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+              </span>
+              <span class="history-filter-text border-right-line">
+                {{'pages.workspace.action' | translate}}
+                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+              </span>
+              <span class="history-filter-text">
+                {{'pages.workspace.phase' | translate}}
+                <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+
+              </span>
+            </form>
+          </div>
+
+          <div>
+            <app-workspace-history-table></app-workspace-history-table>
+          </div>
+
+    </div>
+</div>

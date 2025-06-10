@@ -27,7 +27,8 @@ import { MatSortModule } from '@angular/material/sort';
 export function HttpLoaderFactory(http: HttpClient): any {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -58,5 +59,8 @@ export function HttpLoaderFactory(http: HttpClient): any {
   ],
   exports: [TablerIconsModule],
   bootstrap: [AppComponent],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ]
 })
 export class AppModule {}

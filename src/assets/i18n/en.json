@@ -99,6 +99,10 @@
 
     },
     "workspace": {
+      "search_by_name": "Search by Name",
+      "new_workspace": "New Workspace",
+      "workspace_name": "Workspace Name",
+      "open": "Open",
       "status": "Status",
       "last_modification": "Last Modification",
       "filter": "Filter",

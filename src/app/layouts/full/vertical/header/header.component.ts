@@ -15,6 +15,8 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormsModule } from '@angular/forms';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BrandingComponent, } from '../sidebar/branding.component';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
 
 interface notifications {
   id: number;
@@ -88,7 +90,9 @@ export class HeaderComponent {
   constructor(
     private vsidenav: CoreService,
     public dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router,
+    private authService: AuthService
   ) {
     translate.setDefaultLang('en');
     // Check if there is a token to know if the user has accessed with the login
@@ -109,6 +113,11 @@ export class HeaderComponent {
   changeLanguage(lang: any): void {
     this.translate.use(lang.code);
     this.selectedLanguage = lang;
+  }
+
+  logout () {
+    this.authService.logout()
+    this.router.navigate(['/authentication/login']);
   }
 
   notifications: notifications[] = [

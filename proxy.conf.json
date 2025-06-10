@@ -1,0 +1,8 @@
+{
+    "/realms": {
+      "target": "https://idea4rc-keykloak.development-iti.com",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }

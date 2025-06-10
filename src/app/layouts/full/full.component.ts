@@ -74,6 +74,7 @@ export class FullComponent implements OnInit {
     private navService: NavService,
     private breakpointObserver: BreakpointObserver
   ) {
+    
     this.htmlElement = document.querySelector('html')!;
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])
@@ -93,7 +94,35 @@ export class FullComponent implements OnInit {
     this.receiveOptions(this.options);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+        console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
+    if(localStorage.getItem('access') === 'login') {
+      this.navItems = [
+        {
+          navCap: '',
+        },
+        {
+          displayName: 'My Workspace',
+          iconName: 'layout-grid',
+          route: '/discovery/metadata-search',
+        }
+      ]
+    } else {
+      this.navItems = [
+        {
+          navCap: '',
+        },
+        
+        {
+          displayName: 'Log In',
+          iconName: 'login',
+          route: '/authentication/login',
+        }
+      ]
+    }
+
+
+  }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();

@@ -25,12 +25,12 @@
                 <!-- Username Input form -->
                 <mat-form-field appearance="outline" class="w-100" color="primary">
                   <mat-label class="text-grey">Username</mat-label>
-                  <input matInput formControlName="uname" />
-                  @if(f['uname'].touched && f['uname'].invalid) {
+                  <input matInput formControlName="username" />
+                  @if(f['username'].touched && f['username'].invalid) {
                   <mat-hint class="m-b-16 error-msg">
-                    @if(f['uname'].errors && f['uname'].errors['required']) {
+                    @if(f['username'].errors && f['username'].errors['required']) {
                     <div class="text-error">Username is required.</div>
-                    } @if(f['uname'].errors && f['uname'].errors['minlength']) {
+                    } @if(f['username'].errors && f['username'].errors['minlength']) {
                     <div class="text-error">Username should be 6 character.</div>
                     }
                   </mat-hint>
@@ -48,6 +48,10 @@
                   </mat-hint>
                   }
                 </mat-form-field>
+
+                <!-- Login error -->
+                <div *ngIf="error" class="text-error mt-3 mb-0">{{error}}</div>
+
     
                 <div class="d-flex align-items-center m-b-12 p-10">
                   <!-- <mat-checkbox color="primary">Remember this Device</mat-checkbox> -->
@@ -84,8 +88,7 @@
                    <button
                    mat-stroked-button
                    color="primary"
-                   class="mx-auto text-center"
-                   [routerLink]="['/discovery/metadata-search']"
+                   class="mx-auto text-center" (click)="withoutLogin()"
                  >Access to <span class="bold-underline">Metadata Search</span> without Login</button>
                </div>
             </mat-card-content>

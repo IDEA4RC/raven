@@ -54,6 +54,8 @@ export class AppNavItemComponent implements OnChanges {
     if (this.depth === undefined) {
       this.depth = 0;
     }
+    console.log(`NavItemComponent initialized with item:`, this.item);
+    
   }
 
   ngOnChanges() {

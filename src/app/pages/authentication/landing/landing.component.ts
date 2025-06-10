@@ -17,4 +17,9 @@ export class LandingComponent {
     translate.setDefaultLang('en')
     
   }
+
+  withoutLogin() {
+    localStorage.setItem('access', 'without_login');
+
+  }
 }

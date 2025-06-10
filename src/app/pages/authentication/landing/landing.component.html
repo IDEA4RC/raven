@@ -90,7 +90,7 @@
       <div class="button-section">
         <!-- Access Metadata without login button -->
         <button  mat-stroked-button
-        color="primary" class="metadata-search-btn" [routerLink]="['/discovery/metadata-search']">Access to <span class="medatata-search-text">"Metadata Search"</span> without Login</button>
+        color="primary" class="metadata-search-btn" (click)="withoutLogin()" [routerLink]="['/discovery/metadata-search']">Access to <span class="medatata-search-text">"Metadata Search"</span> without Login</button>
         <!-- Login button -->
         <button class="login-btn" [routerLink]="['/authentication/login']">{{'authentification.landing_page.login' | translate}}</button>
       </div>

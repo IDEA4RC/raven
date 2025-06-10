@@ -6,18 +6,24 @@
 <mat-list-item
   (click)="onItemSelected(item)"
   [ngClass]="{
-    'mat-toolbar mat-accent activeMenu': item.route
-      ? router.isActive(item.route, true)
-      : false,
+    'mat-toolbar mat-accent activeMenu': item.route && router.isActive(item.route, true) && item.displayName !== 'Log In',
+    'login-button': item.displayName === 'Log In',
     expanded: expanded,
     disabled: item.disabled
   }"
   class="menu-list-item"
 >
+  <!-- [ngClass]="{
+    'mat-toolbar mat-accent activeMenu': item.route
+      ? router.isActive(item.route, true)
+      : false,
+    expanded: expanded,
+    disabled: item.disabled
+  }" -->
   <i-tabler
     name="{{ item.iconName }}"
     class="routeIcon"
-    matListItemIcon
+    matListItemIcon 
   ></i-tabler>
   <span class="hide-menu">{{ item.displayName | translate }}</span>
   @if(item.children && item.children.length) {

@@ -10,7 +10,28 @@
   }
 }
 
-
+.login-button {
+  background-color: white !important;
+  border: 1px solid #255E87 !important;
+  color: #255E87 !important;
+  border-radius: 4px !important;
+  
+  // Style for the icon
+  .routeIcon {
+    color: #255E87 !important;
+  }
+  
+  // Style for the text
+  .hide-menu {
+    color: #255E87 !important;
+    font-weight: 400;
+  }
+  
+  // Hover effect
+  &:hover {
+    background-color: rgba(37, 94, 135, 0.04) !important;
+  }
+}
 
 // user profile
 .user-profile {

@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-dialogform-login',
@@ -12,15 +13,19 @@ import { Router } from '@angular/router';
 })
 export class DialogformLoginComponent implements OnInit {
 
+  // Error text for login
+  error = ""
+
   constructor(public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private httpClient: HttpClient,
     public dialogRef: MatDialogRef<DialogformLoginComponent>,
     public router: Router,
+    private authService: AuthService
   ) { }
 
   form = new FormGroup({
-      uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      username: new FormControl('', [Validators.required, Validators.minLength(6)]),
       password: new FormControl('', [Validators.required]),
     });
   
@@ -39,6 +44,28 @@ export class DialogformLoginComponent implements OnInit {
     // Handle form submission
     console.log('Form submitted');
   }
+  submit() {
+    // console.log(this.form.value);
+    // this.router.navigate(['/dashboards/dashboard1']);
+    const { username, password } = this.form.value;
+    console.log('Login action triggered with:', username, password);
+    
+    this.authService.login({ 
+      username: username || '', 
+      password: password || '' 
+    }).subscribe({
+      next: () => (this.showLoginForm = false, this.showWorkspaceForm = true),
+      // this.router.navigate(['/discovery/metadata-search']),
+      error: (err: any) => {
+      console.error('Login failed', err);
+      if (err.status === 401) {
+        // Display an error message for unauthorized access
+        console.log('Unauthorized access - invalid credentials');
+        this.error = 'Invalid username or password';
+      }
+      }
+    });
+  }
 
   // Function to redirect to the login form
   loginForm() {
@@ -48,7 +75,7 @@ export class DialogformLoginComponent implements OnInit {
   }
 
   login() {
-    const userInput = this.form.get('uname')?.value;
+    const userInput = this.form.get('username')?.value;
     const passwordInput = this.form.get('password')?.value;
     
     if (userInput === 'research_team_pi@iti.gr' && passwordInput === '123456') {

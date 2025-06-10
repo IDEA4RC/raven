@@ -167,7 +167,7 @@
     <button
     mat-icon-button
     aria-label="Login"
-    [routerLink]="['/authentication/login']"
+    (click)="logout()"
     >
     <img
       src="./assets/images/icons/header/login.svg"

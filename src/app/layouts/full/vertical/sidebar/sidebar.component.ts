@@ -24,7 +24,10 @@ import { AppNavItemComponent } from './nav-item/nav-item.component';
 export class SidebarComponent implements OnInit {
   navopt = this.navService.showClass;
 
-  constructor(public navService: NavService) {}
+  constructor(public navService: NavService) {
+    console.log("navService:", this.navService);
+    
+  }
 
   ngOnInit(): void {}
 }

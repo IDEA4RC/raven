@@ -1,5 +1,5 @@
 
-<div class="modal-content" *ngIf="!showLoginForm && !showWorkspaceForm">
+<div class="modal-content" *ngIf="showLoginError">
     <div class="please-login-container">
         <p>{{'pages.metadata_search.please_login_1' | translate }} <strong>{{'pages.metadata_search.please_login_2' | translate }}</strong> {{'pages.metadata_search.please_login_3' | translate }}</p>
     </div>
@@ -55,7 +55,11 @@
       <!-- Password Input form -->
       <mat-form-field appearance="outline" class="w-100 mat-field" color="primary">
         <mat-label class="text-grey">Password</mat-label>
-        <input matInput type="password" formControlName="password" />
+        <!-- <input matInput type="password" formControlName="password" /> -->
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+          <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
         @if(f['password'].touched && f['password'].invalid) {
         <mat-hint class="m-b-16 error-msg">
           @if(f['password'].errors && f['password'].errors['required']) {
@@ -109,7 +113,7 @@
         <!-- Cancel button -->
         <button mat-button class="continue-later-button" (click)="continueLater()">{{'pages.metadata_search.continue_later' | translate}}</button>
         <!-- Continue button -->
-        <button mat-raised-button color="primary" class="login-button"
+        <button mat-button color="primary" class="login-button"
         (click)="dataAccess()"
         > {{'pages.metadata_search.proceed' | translate}} </button>
     </div>

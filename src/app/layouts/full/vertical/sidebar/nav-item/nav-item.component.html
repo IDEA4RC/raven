@@ -6,13 +6,20 @@
 <mat-list-item
   (click)="onItemSelected(item)"
   [ngClass]="{
-    'mat-toolbar mat-accent activeMenu': item.route && router.isActive(item.route, true) && item.displayName !== 'Log In',
+    'mat-toolbar mat-accent activeMenu': item.route && router.isActive(item.route, true) && item.displayName !== 'Log In', 
     'login-button': item.displayName === 'Log In',
+    'workspace-non-active': item.displayName === 'My Workspace' ,
     expanded: expanded,
     disabled: item.disabled
   }"
   class="menu-list-item"
 >
+
+<!-- && item.displayName !== 'Log In',
+    'mat-toolbar mat-accent notActiveMenu': item.route && !router.isActive(item.route, true) && item.displayName !== 'Log In',
+    'login-button': item.displayName === 'Log In', -->
+
+    
   <!-- [ngClass]="{
     'mat-toolbar mat-accent activeMenu': item.route
       ? router.isActive(item.route, true)

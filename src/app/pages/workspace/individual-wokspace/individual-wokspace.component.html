@@ -1,33 +1,64 @@
 <div >
     <!--    WORKSPACE INFORMATION    -->
     <div class="content-containers">
+        <!-- Delete button -->
+        <button class="delete-button" (click)="deleteWorkspace()">
+           <img
+            src="./assets/images/icons/workspace/delete-icon.svg"
+          />
+          <span style="margin-top: 2px;">
+            {{'pages.workspace.delete' | translate}}
+          </span>
+        </button>
+
         <!-- Workspace name-->
         <p class="wokspace-name">{{workspaceData.name}}</p>
         <!-- Workspace description-->
         <p class="wokspace-description">{{workspaceData.description}}</p>
         <div class="workspace-status">
             <p class="blue-box"><strong>{{'pages.workspace.status' | translate}}</strong> {{workspaceData.status}}</p>
-            <p class="blue-box"><strong>{{'pages.workspace.last_modification' | translate}}</strong> {{workspaceData.formatted_date}}</p>
+            <p class="blue-box"><strong>{{'pages.workspace.last_modification' | translate}}</strong> {{workspaceData.update_date | date:'dd/MM/yyyy'}}</p>
         </div>
     </div>
     <!--    WORKSPACE statuses    -->
 
     <div class="content-containers" style="text-align: center;">
 
-        <img style="    width: 80%;
-    max-height: 100px; margin:auto" src="./assets/images/icons/workspace/workspace-status.svg"/>
+    <div class="progress-container">
+      <ng-container *ngFor="let step of steps; let i = index">
+        <div class="step" [ngClass]="getStepClass(step.key)">
+          <div class="step-icon">
+                  <mat-icon>{{step.icon}}</mat-icon>
+                  {{ step.label }}
+                </div>
+          <!-- <div class="step-title">{{ step.label }}</div> -->
+          <div class="step-status">{{ getStatusLabel(step.key) }}</div>
+        </div>
+
+        <!-- Connector line between steps -->
+        <div *ngIf="i < steps.length - 1" class="step-connector" [ngClass]="getConnectorClass(i)"></div>
+      </ng-container>
     </div>
+    </div>
+
+
     <!--    WORKSPACE HISTORY    -->
 
     <div class="content-containers">
         
         <!-- Filter -->
-        <div class="history-filter">
+        <!-- <div class="history-filter">
             <form class="history-form" [formGroup]="historyFilterForm">
               <span class="history-filter-header border-right-line" style="width: 60px;">
+
+                <span>
+
+                  <img  src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+                  {{'pages.workspace.filter' | translate}}:
+                </span>
               
-                <img  src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
-                {{'pages.workspace.filter' | translate}}:</span>
+              
+              </span>
               <span class="history-filter-text border-right-line">
                 {{'pages.workspace.date' | translate}}
                 <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
@@ -41,11 +72,40 @@
                 <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
 
               </span>
-            </form>
+            </form> 
+
+          </div>-->
+          <div class="history-filter-container">
+            <div class="history-filter-item filter-header border-right-line">
+              <span>
+                <img style="margin-top: 2px;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+              </span>
+                {{'pages.workspace.filter' | translate}}
+            </div>
+            <div class="history-filter-item filter-selects border-right-line">
+              <span>
+                {{'pages.workspace.date' | translate}}
+              </span>
+              <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+            </div>
+            <div class="history-filter-item filter-selects border-right-line">
+              <span>
+                {{'pages.workspace.action' | translate}}
+              </span>
+              <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+
+            </div>
+            <div class="history-filter-item filter-selects">
+              <span>
+                {{'pages.workspace.phase' | translate}}
+              </span>
+              <img style="vertical-align: middle;" src="./assets/images/icons/workspace/filter-row.svg">
+
+            </div>
           </div>
 
           <div>
-            <app-workspace-history-table></app-workspace-history-table>
+            <app-workspace-history-table [historyData]=workspaceHistory></app-workspace-history-table>
           </div>
 
     </div>

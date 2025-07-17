@@ -47,7 +47,7 @@
       "select_cancer_type": "Select the type of cancer",
       "single_selection": "(single selection)",
       "head_and_neck": "Head and Neck Cancer (HNC)",
-      "cases": "cases",
+      "patients": "patients",
       "sarcoma": "Sarcoma",
       "continue": "Continue",
       "back": "Back",
@@ -99,9 +99,9 @@
 
     },
     "workspace": {
-      "search_by_name": "Search by Name",
       "new_workspace": "New Workspace",
       "workspace_name": "Workspace Name",
+      "search_by_name": "Search by name",
       "open": "Open",
       "status": "Status",
       "last_modification": "Last Modification",
@@ -109,8 +109,15 @@
       "date": "Date",
       "time": "Time",
       "action": "Action",
-      "phase": "Phase / Subphase",
-      "details": "Details"
+      "phase": "Phase",
+      "details": "Details",
+      "delete": "Delete",
+      "deletion_dialogform": {
+        "title": "Delete Workspace",
+        "message": "Are you sure you want to delete this workspace?",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
 
     }
   }

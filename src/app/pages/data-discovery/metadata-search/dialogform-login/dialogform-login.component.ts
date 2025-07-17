@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { MetadataSearchService } from '../metadata-search.service';
 
 @Component({
   selector: 'app-dialogform-login',
@@ -21,23 +22,41 @@ export class DialogformLoginComponent implements OnInit {
     private httpClient: HttpClient,
     public dialogRef: MatDialogRef<DialogformLoginComponent>,
     public router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private metadataSearchService: MetadataSearchService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   form = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      password: new FormControl('', [Validators.required]),
-    });
+    username: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    password: new FormControl('', [Validators.required]),
+  });
   
   get f() {
     return this.form.controls;
   }
 
+  showLoginError:boolean = false;
   showLoginForm:boolean = false;
   showWorkspaceForm:boolean = false;
   loginError:boolean = false;
+
+
+  // Variable to toggle password visibility
+  hidePassword = true;
+
+
   ngOnInit(): void {
-    // Initialization logic can go here
+    
+    let userLoogedIn = localStorage.getItem('access') == "login" ? true : false;
+    // If the user is logged in, save the workspace in the database
+    if(userLoogedIn) {
+      this.saveWorkspace();
+      // this.showLoginError = false;
+      // this.showWorkspaceForm = true;
+    } else {
+      this.showLoginError = true;
+    }
   }
 
   onSubmit() {
@@ -54,7 +73,30 @@ export class DialogformLoginComponent implements OnInit {
       username: username || '', 
       password: password || '' 
     }).subscribe({
-      next: () => (this.showLoginForm = false, this.showWorkspaceForm = true),
+      next: () => {
+      this.showLoginForm = false
+      this.showWorkspaceForm = true
+      let data = {
+          "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
+          "workspace_id":12312312,
+          "workspace_name": "A Title of Workspace",
+          "metadata": {
+              "type_cancer": "H&N",
+              "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
+              "coes_id": ["1"]
+          }
+      }
+      // this.metadataSearchService.createDataApplication(data).subscribe({
+      //   next: (response: any) => {
+      //     console.log('Data application created successfully:', response);
+      //   }
+      //   ,
+      //   error: (error: any) => {
+      //     console.error('Error creating data application:', error);
+          
+      //   }
+      // });
+      },
       // this.router.navigate(['/discovery/metadata-search']),
       error: (err: any) => {
       console.error('Login failed', err);
@@ -67,26 +109,71 @@ export class DialogformLoginComponent implements OnInit {
     });
   }
 
-  // Function to redirect to the login form
+  saveWorkspace() {
+
+    let wokspaceData = 
+      {
+        "name": this.data.workspaceName,
+        "description": this.data.workspaceDescription,
+        "metadata_search": 2,
+        "data_access": 1,
+        "data_analysis": 0,
+        "results_report": 0,
+        "status": "Data Permit",
+        "team_ids": []
+      }
+    this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
+      next: (response: any) => {
+        console.log('Workspace created successfully:', response);
+
+        // Map selected variables to their IDs
+        let variablesId = this.data.selectedVariables.map((variable: any) => variable.id);
+        // Create the data application object
+        let dataApplication = {
+          
+            "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
+            "workspace_id": response.id,
+            "workspace_name": response.name,
+            "metadata": {
+                "type_cancer": this.data.cancerType,
+                "variables_id": variablesId,
+                "coes_id": this.data.selectedCenters
+            
+            }
+        }
+        this.metadataSearchService.createDataApplication(dataApplication).subscribe({
+          next: (response: any) => {
+            console.log('Data application created successfully:', response);
+            this.showWorkspaceForm = true;
+          },
+          error: (error: any) => {
+            console.error('Error creating data application:', error);
+            this.snackBar.open('Error creating data application', 'Close', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error creating workspace:', error);
+        this.snackBar.open('Error creating workspace', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    })
+
+
+  }
+
+  // Function to show the login form
   loginForm() {
     // Handle login form submission
-    console.log('Login form submitted');
+    this.showLoginError = false;
     this.showLoginForm = true;
   }
 
-  login() {
-    const userInput = this.form.get('username')?.value;
-    const passwordInput = this.form.get('password')?.value;
-    
-    if (userInput === 'research_team_pi@iti.gr' && passwordInput === '123456') {
-      console.log('Login action triggered');
-      this.showLoginForm = false;
-      this.showWorkspaceForm = true;
-    } else {
-      this.loginError = true
-    }
-      
-  }
 
   onCancel() {
     // Handle cancel action
@@ -104,7 +191,12 @@ export class DialogformLoginComponent implements OnInit {
   
   dataAccess() {
     // Redirect to the data permit platform
-    window.location.href = 'https://idea4rc-data-permit-platform.iti.gr/';
+    window.location.href = `//idea4rc-data-permit-platform.iti.gr//auth/callback?access_token=${localStorage.getItem('access_token')}`;
+  }
+  
+  // Function to toggle password visibility
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
 
   goToPage(pageName:string):void{

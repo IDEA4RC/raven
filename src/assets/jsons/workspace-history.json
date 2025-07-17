@@ -1,0 +1,29 @@
+[
+  {
+    "id": 2,
+    "date": "2025-06-12T11:00:00",
+    "action": "Iniciated data acces application",
+    "phase": "Data Permit",
+    "details": "The data permit application has been iniciated to request data access",
+    "creator_id": "user_101",
+    "workspace_id": "1"
+  },
+  {
+    "id": 3,
+    "date": "2025-06-12T12:00:00",
+    "action": "Created workspace",
+    "phase": "Metadata Search",
+    "details": "Metadata Search has been finished and the workspace has been created",
+    "creator_id": "user_101",
+    "workspace_id": "1"
+  },
+  {
+    "id": 4,
+    "date": "2025-06-12T12:00:00",
+    "action": "Finished Metadata Search",
+    "phase": "Metadata Search",
+    "details": "Metadata Search has been finished, variables and CoEs selected",
+    "creator_id": "user_101",
+    "workspace_id": "1"
+  }
+]

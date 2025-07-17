@@ -1,17 +1,23 @@
 /* Table Section */
 .table-container {
-    // max-height: 300px; /* Optional: Set the height of the table */
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 10px;
-  }
+  border-radius: 7px;
+  border: 1.174px solid #DFDFDF;
+  overflow: hidden; /* Ensures the border radius clips inner table content */
+  margin-top: 10px;
+  overflow-y: auto;
+}
+
+/* Optional: remove default border spacing */
+.table-container {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
 
   /*    TABLE STYLES   */
   table {
     width: 100%;
     border-collapse: collapse;
-
   }
   
   table th, table td {
@@ -42,6 +48,9 @@
   /* Table Row, mause hover */
   table tr:hover {
     background-color: #f1f1f1;
+  }
+  table tr:nth-child(even) {
+  background-color: #EFEFEF;
   }
 
 

@@ -1,0 +1,20 @@
+<!-- Workspace saved -->
+<div class="modal-content-workspace-saved">
+
+    
+    <div class="workspace-saved-container">
+        <p><strong>{{'pages.workspace.deletion_dialogform.title' | translate }}</strong></p>
+    </div>
+    <div class="workspace-saved-container">
+        <p>{{'pages.workspace.deletion_dialogform.message' | translate }}</p>
+    </div>
+    <div class="buttons-container">
+        <!-- Cancel button -->
+        <button mat-button class="cancel-button" (click)="onCancel()">{{'pages.workspace.deletion_dialogform.cancel' | translate}}</button>
+        <!-- Continue button -->
+        <button mat-button color="primary" class="delete-button"
+        (click)="delete()"
+        > {{'pages.workspace.deletion_dialogform.delete' | translate}} </button>
+    </div>
+    
+</div>

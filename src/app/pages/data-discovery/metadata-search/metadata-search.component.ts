@@ -543,16 +543,19 @@ showNotification(colorName: string, text: string, placementFrom: any, placementA
 }
 
 
-openDialogLogin(): void {
-  console.log("openDialogLogin");
-  
+openDialogLogin(): void {  
   
   const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
     // width: "740px",
     disableClose: true,
-    
+    data: {
+      workspaceName: this.workspaceFormGroup.value.workspaceNameCtrl,
+      workspaceDescription: this.workspaceFormGroup.value.workspaceDescriptionCtrl,
+      cancerType: this.cancerType,
+      selectedVariables: this.selectedVariables,
+      selectedCenters: this.selectedCenters
+    }
   });
-  // dialogRef.afterClosed().subscribe(() => this.loadData());
 }
 // Method to handle workspace creation from form data (by clicking continue button)
 continueWorkspace() {
@@ -580,9 +583,7 @@ continueWorkspace() {
       centers: this.selectedCenters,
       creationDate: new Date().toISOString()
     };
-    
-    console.log('Workspace data:', workspaceData);
-    
+        
     // TODO: Send the data to a service for persistence
     // this.metadataService.createWorkspace(workspaceData).subscribe(...
     

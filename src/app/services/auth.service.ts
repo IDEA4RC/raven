@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export class AuthService {
   // private apiUrl = 'https://your-api.com/auth'; // Replace with your API
   private apiUrl = '/realms/idea4rc/protocol/openid-connect/token'; // Replace with your API endpoint
-  private tokenKey = 'auth_token';
+  private tokenKey = 'access_token';
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();

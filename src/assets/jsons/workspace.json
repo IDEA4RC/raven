@@ -3,14 +3,14 @@
     "id": "1",
     "name": "HNC Data Review",
     "description": "Review of patient ECG and imaging data.",
-    "status": 1,
+    "status": 2,
     "creation_date": "2025-01-10T08:00:00Z",
     "creator_id": "user_101",
     "last_modification_date": "2025-05-12T15:45:00Z",
     "metadata_search": 2,
     "data_access": 4,
-    "data_analysis": 2,
-    "result_report": 1,
+    "data_analysis": 1,
+    "result_report": 0,
     "v6_study_id": "study_v6_001"
   },
   {
@@ -37,8 +37,8 @@
     "last_modification_date": "2025-06-07T11:00:00Z",
     "metadata_search": 2,
     "data_access": 4,
-    "data_analysis": 2,
-    "result_report": 2,
+    "data_analysis": 1,
+    "result_report": 0,
     "v6_study_id": "study_v6_003"
   },
   {

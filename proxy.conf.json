@@ -4,5 +4,17 @@
       "secure": false,
       "changeOrigin": true,
       "logLevel": "debug"
+    },
+    "/raven-api": {
+      "target": "https://orchestrator.idea.lst.tfo.upm.es",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/api": {
+      "target": "https://idea4rc-data-permit-platform-api.iti.gr",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
     }
   }

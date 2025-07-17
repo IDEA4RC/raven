@@ -1,0 +1,274 @@
+
+.content-containers {
+    width: 100%;
+    padding: 20px;
+    border-radius: 5px;
+    background: #FFF;
+    background: #FFF;
+    margin-top: 20px;
+}
+.wokspace-name {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+.wokspace-description {
+    color: var(--grey-colors-sub-heading-2, #6C757D);
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.workspace-status {
+    display: flex;
+    flex-direction: row;
+}
+.blue-box {
+    color: var(--Raven-Azul, #255E87);
+
+    /* Medium Captions/Med Cap 4 */
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border-radius: 2px;
+    background: var(--light-action-colors-primary-light, rgba(30, 136, 229, 0.14));
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.history-filter-container {
+    display: flex;
+    flex-direction: row;
+    border-radius: 6px;
+    border: 1px solid #DBE1E6;
+    background: #FFF;
+    /* width: 30%; */
+    max-width: 500px;
+    justify-content: space-around;
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+    font-family: Poppins;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.history-filter-item {
+    width: 25%;
+}
+.filter-header {
+    display: flex;
+    justify-content: center;
+    /* vertical-align: middle; */
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+.filter-selects {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: auto;
+    cursor: pointer;
+}
+
+
+// .history-filter {
+//     border-radius: 6px;
+//     border: 1px solid #DBE1E6;
+//     background: #FFF;
+//     margin-right: 20px;
+//     // padding: 7px;
+//     width: 30%;
+//   }
+//   .history-filter-header {
+//     color: var(--grey-colors-Text-Heading-Color, #3A4752);
+//     font-family: Poppins;
+//     font-size: 14.075px;
+//     font-style: normal;
+//     font-weight: 600;
+//     line-height: normal;
+//     padding: 6px 10px;
+//   }
+//   .history-filter-text {
+//     color: var(--grey-colors-Text-Heading-Color, #3A4752);
+//     font-family: Poppins;
+//     font-size: 14.075px;
+//     font-style: normal;
+//     font-weight: 400;
+//     line-height: normal;
+//     padding: 6px 10px;
+//   }
+  .border-right-line {
+    border-right: 0.938px solid #DBE1E6;
+  }
+//   .history-form {
+//     height: 38px;
+//     // display: flex;    ;
+//     // flex-direction: row;
+//     // justify-content: space-between;
+//   }
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  gap: 0.5rem;
+  width: 85%;
+  margin: auto;
+}
+
+.step-icon {
+//   width: 50px;
+//   height: 50px;
+//   border: 2px solid #c5cdd8;
+//   border-radius: 50%;
+//   margin: 0 auto 5px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: 20px;
+    border-radius: 34px;
+    border: 1.5px solid var(--Raven-Azul, #255E87);
+    overflow: hidden;
+    color: var(--Raven-Azul, #255E87);
+    text-overflow: ellipsis;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 200px;
+    height: 40px;
+    flex-shrink: 0;
+    text-align: center;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.step.completed {
+  border-color: #55CE63;
+  color: #55CE63;
+}
+
+.step.completed .step-status {
+  background-color: #55CE63;
+  color: white;
+}
+
+.step.active {
+  border-color: #F6C000;
+  color: #F6C000;
+}
+
+.step.iniciated .step-status {
+  background-color: #8B6EFF;
+  color: white;
+}
+.step.iniciated {
+  border-color: #8B6EFF;
+  color: #8B6EFF;
+}
+
+.step.active .step-status {
+  background-color: #F6C000;
+  color: white;
+}
+.step.progress {
+  border-color: #43CED7;
+  color: #43CED7;
+}
+
+.step.progress .step-status {
+  background-color: #43CED7;
+  color: white;
+}
+.step.expired {
+  border-color: #217869;
+  color: #217869;
+}
+
+.step.expired .step-status {
+  background-color: #217869;
+  color: white;
+}
+.step.rejected {
+  border-color: #F8285A;
+  color: #F8285A;
+}
+
+.step.rejected .step-status {
+  background-color: #F8285A;
+  color: white;
+}
+
+.step.pending .step-icon {
+  border-color: #c5cdd8;
+  color: #c5cdd8;
+} 
+
+.step.pending .step-status {
+  background-color: #c5cdd8;
+  color: white;
+}
+
+.step {
+  text-align: center;
+  min-width: 100px;
+  position: relative;
+}
+
+.step-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.step-status {
+  font-size: 12px;
+  margin-top: 5px;
+  border-radius: 10px;
+  padding: 2px 6px;
+}
+
+/* Line between steps */
+.step-connector {
+  flex: 1;
+  height: 1.5px;
+  border-radius: 2px;
+  background-color: var(--Raven-Azul, #255E87);
+}
+
+.step-connector.pending {
+    background-color: #c5cdd8;
+}
+.delete-button {
+    display: flex;
+    width: 67px;
+    height: 20px;
+    padding: 2px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 5px;
+    background: var(--rojo, #F8285A);
+    color: var(--Primary-Colors-primary-white, #FFF);
+    font-family: Poppins;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border: none;
+    cursor: pointer;
+}

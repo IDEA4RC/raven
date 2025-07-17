@@ -15,9 +15,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { WorkspaceComponent } from './workspace.component';
 import { IndividualWokspaceComponent } from './individual-wokspace/individual-wokspace.component';
 import { WorkspaceHistoryTableComponent } from './workspace-history-table/workspace-history-table.component';
+import { DialogformDeleteComponent } from './dialogform-delete/dialogform-delete.component';
 
 @NgModule({
-  declarations: [WorkspaceComponent, WorkspaceHistoryTableComponent, IndividualWokspaceComponent],
+  declarations: [WorkspaceComponent, WorkspaceHistoryTableComponent, IndividualWokspaceComponent, DialogformDeleteComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(WorkspaceRoutes),

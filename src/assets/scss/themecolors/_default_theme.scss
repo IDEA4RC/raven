@@ -95,6 +95,12 @@ $darkbluetheme: mat.define-dark-theme(
 .activeMenu {
   background-color: mat.get-color-from-palette($theme-accent, 500) !important;
 }
+.notActiveMenu {
+  background-color: white !important;
+  border: 1px solid mat.get-color-from-palette($theme-accent, 500) !important;
+  color: mat.get-color-from-palette($theme-accent, 500) !important;
+  border-radius: 4px !important;
+}
 
 
 // outline button border

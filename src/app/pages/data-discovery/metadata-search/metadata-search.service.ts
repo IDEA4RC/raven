@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { forkJoin, Subject } from "rxjs";
 import { HttpClient} from "@angular/common/http";
+import { environment } from "src/environments/environment";
 // import { environment } from "src/environments/environment";
 
 @Injectable({
@@ -53,6 +54,26 @@ export class MetadataSearchService {
       this.getRequest(url).subscribe((data) => {
           this.variablesMetadata.next(data);
       });
+    }
+
+    /**
+     * Method to create a workspace
+     * @param data the data of the workspace to create
+     * @returns 
+     */
+    createWorkspace(data:any) {
+      // const url = `${environment.base_url}${environment.raven_url}/workspaces/`;
+      const url = '/raven-api/v1/workspaces/';
+      return this.postRequest(url, data);
+    }
+
+    /**
+     * Method to create a data application (send data to the data permit platform)
+     * @param data the data of the data application to create
+     *  */
+    createDataApplication(data:any) {
+      const url = '/api/workspace-application/init';
+      return this.postRequest(url)
     }
 
 

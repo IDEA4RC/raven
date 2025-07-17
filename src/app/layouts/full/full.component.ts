@@ -1,6 +1,6 @@
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { CoreService } from 'src/app/services/core.service';
 import { AppSettings } from 'src/app/app.config';
@@ -20,6 +20,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppNavItemComponent } from './vertical/sidebar/nav-item/nav-item.component';
+import { FullService } from './full.service';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -68,11 +69,18 @@ export class FullComponent implements OnInit {
     return this.resView;
   }
 
+  // Observables
+  observable_wokspace$ : Observable<any> | undefined;
+  // Subscriptions container
+  private subscriptions: Subscription = new Subscription();
+
+  
   constructor(
     private settings: CoreService,
     private mediaMatcher: MediaMatcher,
     private navService: NavService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private fullService: FullService
   ) {
     
     this.htmlElement = document.querySelector('html')!;
@@ -104,7 +112,7 @@ export class FullComponent implements OnInit {
         {
           displayName: 'My Workspace',
           iconName: 'layout-grid',
-          route: '/discovery/metadata-search',
+          route: '/workspace',
         }
       ]
     } else {
@@ -121,10 +129,87 @@ export class FullComponent implements OnInit {
       ]
     }
 
+    
+  
+    // Get observables variables
+    this.observable_wokspace$ = this.fullService.workspace;
+    
+    // Subscribe to the observable workspace and add to subscription container
+    this.subscriptions.add(
+      this.observable_wokspace$.subscribe((data) => {
+
+      
+      if (data) {
+        // Add the workspace menu to the navItems
+        this.navItems = [
+          {
+            navCap: '',
+          },
+          {
+            displayName: 'My Workspace',
+            iconName: 'layout-grid',
+            route: '/workspace',
+          },
+          {
+            navCap: '',
+          },
+          {
+            displayName: data.name,
+            iconName: 'assignment',
+            route: `/workspace/individual-workspace/${data.id}`,
+            children: [
+              {
+                displayName: 'Metadata Search',
+                iconName: 'search',
+                route: 'apps/blog/post',
+              },
+              {
+                displayName: 'Data Access',
+                iconName: 'lock_open',
+                route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
+              },
+              {
+                displayName: 'Data Analysis',
+                iconName: 'deployed_code',
+                route: 'apps/blog/post',
+              },
+              {
+                displayName: 'Result Report',
+                iconName: 'check',
+                route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
+              }
+              
+            ]
+          }
+        ];
+      }
+      
+      })
+    );
+
+    // If the user is logged in, get the workspace data from the user
+    if(localStorage.getItem('access') === 'login') {
+
+      // Get the current route
+      const currentUrl = window.location.pathname;
+      const match = currentUrl.match(/\/workspace\/individual-workspace\/(\d+)/);
+      const workspaceId = match ? match[1] : null;
+
+      // Pass the workspace ID if available
+      if (workspaceId) {
+      }
+      // Get the workspace data
+      this.fullService.getWorkspace('1');
+    }
+
 
   }
 
   ngOnDestroy() {
+    // Unsubscribe from all subscriptions
+    this.subscriptions.unsubscribe();
+    
+    // Also unsubscribe from your existing subscription
     this.layoutChangesSubscription.unsubscribe();
   }
 

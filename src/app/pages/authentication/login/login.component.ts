@@ -14,6 +14,10 @@ export class LoginComponent {
 
   // Error text for login
   error = ""
+
+  // Variable to toggle password visibility
+  hidePassword = true;
+  
   constructor(private settings: CoreService, private router: Router, private authService: AuthService) {}
 
   form = new FormGroup({
@@ -35,7 +39,8 @@ export class LoginComponent {
       username: username || '', 
       password: password || '' 
     }).subscribe({
-      next: () => this.router.navigate(['/discovery/metadata-search']),
+      next: () => this.router.navigate(['/workspace']),
+      // this.router.navigate(['/discovery/metadata-search']),
       error: (err: any) => {
       console.error('Login failed', err);
       if (err.status === 401) {
@@ -49,5 +54,10 @@ export class LoginComponent {
   withoutLogin() {
     localStorage.setItem('access', 'without_login');
     this.router.navigate(['/discovery/metadata-search']);
+  }
+  
+  // Function to toggle password visibility
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
 }

@@ -34,5 +34,9 @@ else
     exit 1
 fi
 
-echo "🎉 Deploy completado! El contenedor está listo para ser iniciado."
+echo "🔧 Configuración del contenedor completada"
+echo "🐳 Iniciando el contenedor..."
+docker start raven
+
+echo "🎉 Deploy completado!"
 

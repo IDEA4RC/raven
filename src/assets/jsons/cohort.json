@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "cohort_name": "Diabetes Patients",
+    "cohort_description": "Patients diagnosed with Type 2 Diabetes in the last year",
+    "creation_date": "2025-07-01T10:30:00Z",
+    "update_date": "2025-07-10T14:45:00Z",
+    "status": 0,
+    "cohort_query": "SELECT * FROM patients WHERE diagnosis = 'diabetes' AND diagnosis_date > NOW() - INTERVAL '1 year'",
+    "user_id": "user_001",
+    "analysis_id": 101,
+    "workspace_id": 201
+  },
+  {
+    "id": 2,
+    "cohort_name": "Control Group",
+    "cohort_description": "Matched control group for diabetes cohort",
+    "creation_date": "2025-07-02T09:00:00Z",
+    "update_date": "2025-07-10T15:00:00Z",
+    "status": 1,
+    "cohort_query": "SELECT * FROM patients WHERE diagnosis IS NULL AND age BETWEEN 40 AND 60",
+    "user_id": "user_002",
+    "analysis_id": 102,
+    "workspace_id": 202
+  },
+  {
+    "id": 3,
+    "cohort_name": "Cancer Survivors",
+    "cohort_description": "Head and neck cancer survivors 6 months post-treatment",
+    "creation_date": "2025-06-15T12:00:00Z",
+    "update_date": "2025-07-05T10:00:00Z",
+    "status": 1,
+    "cohort_query": "SELECT * FROM patients WHERE cancer_type = 'HNC' AND treatment_end_date <= NOW() - INTERVAL '6 months'",
+    "user_id": "user_003",
+    "analysis_id": 103,
+    "workspace_id": 203
+  }
+]

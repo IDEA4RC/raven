@@ -117,6 +117,7 @@ export class MetadataSearchComponent implements OnInit {
 
   // Data selected on the availability pre-selection
   selectedVariables: any[] = [];
+  selectedVariablesByCenter: any[] = [];
   selectedVariablesBlock: any[] = [];
   selectedCenters: any[] = [];
   selectionCenters = new SelectionModel<any>(true, []);
@@ -178,10 +179,6 @@ export class MetadataSearchComponent implements OnInit {
       this.entities.unshift("All");
     })
 
-    // Escucha cambios en el formulario
-    this.phaseFilterForm.valueChanges.subscribe(() => {
-      this.filterByPhase();
-    });
 
     this.metadataService.getCancerPatients();
 
@@ -231,57 +228,58 @@ export class MetadataSearchComponent implements OnInit {
     if (formValues.recurrence) selectedPhases.push('recurrence');
     
     return selectedPhases;
+    
   }
   // Filter function of the disease checkbox (diagnosis, progression and recurrence)
-  filterByPhase() {
-  //   const selectedPhases = this.getSelectedPhases();
-  //   console.log('Selected phases:', selectedPhases);
+  onPhaseFilterChange() {
+    const selectedPhases = this.getSelectedPhases();
+    console.log('Selected phases:', selectedPhases);
 
-  //   let filteredData = this.selectedVariablesBlock;
-  //   console.log('Filtered data:', filteredData);
+    let filteredData = this.selectedVariablesBlock.filter(item => item.variable_name === "Sex");
+    console.log('Filtered data:', filteredData);
     
-  //   if (selectedPhases.length > 0) {
-  //     if (selectedPhases.includes('diagnosis')) {
-  //       console.log('Filtering by diagnosis');
+    if (selectedPhases.length > 0) {
+      if (selectedPhases.includes('diagnosis')) {
+        console.log('Filtering by diagnosis');
         
-  //       filteredData = filteredData
-  //       .map((item: any) => {
-  //         // Filter the centers based on availability_d
-  //         const filteredCenters = item.centers.filter((centerObj: any) => {
-  //           const centerName = Object.keys(centerObj)[0];
+        filteredData = filteredData
+        .map((item: any) => {
+          // Filter the centers based on availability_d
+          const filteredCenters = item.centers.filter((centerObj: any) => {
+            const centerName = Object.keys(centerObj)[0];
+            const center = centerObj[centerName];
+            return center.availability_d === 'True';
+          });
+      
+          // Only include the item if it has at least one matching center
+          if (filteredCenters.length > 0) {
+            return {
+              ...item,
+              centers: filteredCenters,
+            };
+          }
+          return null;
+        })
+        .filter((item: null) => item !== null);
+      
+      console.log(filteredData);
+  // .filter((item) => item !== null);
+  // .filter((item: null) => item !== null);
+        
+  //       filteredData = filteredData.filter((item: any) => 
+  //         item.centers.forEach((centerObj: any) => {
+  //           const centerName = Object.keys(centerObj);
   //           const center = centerObj[centerName];
-  //           return center.availability_d === 'True';
-  //         });
-      
-  //         // Only include the item if it has at least one matching center
-  //         if (filteredCenters.length > 0) {
-  //           return {
-  //             ...item,
-  //             centers: filteredCenters,
-  //           };
-  //         }
-  //         return null;
-  //       })
-  //       .filter((item: null) => item !== null);
-      
-  //     console.log(filteredData);
-  // // .filter((item) => item !== null);
-  // // .filter((item: null) => item !== null);
-        
-  // //       filteredData = filteredData.filter((item: any) => 
-  // //         item.centers.forEach((centerObj: any) => {
-  // //           const centerName = Object.keys(centerObj);
-  // //           const center = centerObj[centerName];
-  // //           return center.availability_d === "True";
-  // //         })
-  //       // some((centerObj: any) => {
-  //       //     const centerName = Object.keys(centerObj)[0];
-  //       //     const center = centerObj[centerName];
-  //       //     return center.availability_d === "True";
-  //       //   })
+  //           return center.availability_d === "True";
+  //         })
+        // some((centerObj: any) => {
+        //     const centerName = Object.keys(centerObj)[0];
+        //     const center = centerObj[centerName];
+        //     return center.availability_d === "True";
+        //   })
 
-  //       // );
-  //     }
+        // );
+      }
       
   //     // if (selectedPhases.includes('progression')) {
   //     //   filteredData = filteredData.filter((item: any) => 
@@ -306,7 +304,7 @@ export class MetadataSearchComponent implements OnInit {
       
   //     // this.selectedVariables = filteredData;
   //     this.cdrDetailAnalysis.detectChanges(); // Force change detection
-  //   }
+    }
   }
 
   // Submit function for cancer type selection (HNC or Sarcoma)
@@ -383,6 +381,20 @@ actionCenter(row: any) {
   this.selectedVariablesBlock = this.selectionService.getDataSelected();
   this.selectedVariables = this.selectionService.getDataSelected();
   this.selectedCenters = this.selectionService.getSelectedCenters();
+
+
+  
+  this.selectedVariablesByCenter = this.selectedCenters.map(center => {
+    return {
+      center: center,
+      variables: this.selectedVariables.filter(variable => 
+        variable.centers.some((c: any) => c.hasOwnProperty(center))
+      )
+    };
+  });
+  console.log("selectedVariablesByCenter", this.selectedVariablesByCenter);
+  
+  
   // Clear the selection and mark as selected the centers selected
   this.selectionCenters.clear();
   this.selectedCenters.forEach((center) => {
@@ -390,6 +402,23 @@ actionCenter(row: any) {
   }
   );
  }
+
+  // flattenVariables(data: any[]) {
+  //   let result = [];
+
+  //   for (let v of data) {
+  //     for (let centerObj of v.centers) {
+  //       const [centerCode, centerData] = Object.entries(centerObj)[0];
+  //       result.push({
+  //         ...v,
+  //         center_code: centerCode,
+  //         ...centerData
+  //       });
+  //     }
+  //   }
+
+  //   return result;
+  // }
 
  /**
   * Function to download the pre-selected variables data as a CSV file (Step 2)

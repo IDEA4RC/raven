@@ -1,0 +1,67 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fc;
+    color: #333;
+}
+  
+  
+
+
+
+/*       STEPPER        */
+// Styling for stepper
+::ng-deep .mat-step-header .mat-step-label.mat-step-label-active {
+    color: var(--Raven-Azul, #255E87) !important;
+    
+}
+/* Remove background from stepper container */
+::ng-deep .mat-stepper-vertical, .mat-stepper-horizontal {
+  background: transparent !important;
+  box-shadow: none; /* Optional: Remove any shadow if present */
+}
+/* Remove background from each step header */
+::ng-deep .mat-step-header {
+  background: transparent;
+}
+
+/* Remove hover effect background on step header */
+::ng-deep .mat-step-header:hover {
+  background: transparent;
+}
+/* Remove padding of the stepper content */
+::ng-deep .mat-stepper-header-position-bottom .mat-horizontal-content-container {
+    padding: 0px !important;
+}
+::ng-deep .mat-horizontal-stepper-wrapper{
+    // height: 75vh !important; /* Optional: Set the height of the stepper */
+}
+::ng-deep .mat-stepper-header-position-bottom .mat-horizontal-stepper-header-container {
+    margin-top: auto !important;
+}
+/*       ScrollBar 1        */
+
+#scrollbar1::-webkit-scrollbar {
+    width: 8px;
+
+}
+
+#scrollbar1::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: #DBE1E6;
+    margin: 1px; /* space around the track */
+    // padding-right: 10px; /* additional space on the right */
+}
+
+#scrollbar1::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #255E87;
+}

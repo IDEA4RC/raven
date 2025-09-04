@@ -190,23 +190,23 @@
             
             <div class="phase-disease-filter">
               <form [formGroup]="phaseFilterForm">
-                <span class="phase-disease-filter-header border-right-line">
-                
-                  <img style="vertical-align: middle;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
-                  {{'pages.metadata_search.phase_disease_filter' | translate}}:</span>
-                <span class="phase-disease-filter-text border-right-line">
-                  <mat-checkbox formControlName="diagnosis" style="height: 35px !important;"></mat-checkbox>
-                  {{'pages.metadata_search.diagnosis' | translate}}
-                </span>
-                <span class="phase-disease-filter-text border-right-line">
-                  <mat-checkbox formControlName="progression" style="height: 35px !important;"></mat-checkbox>
-                  {{'pages.metadata_search.progression' | translate}}
-                </span>
-                <span class="phase-disease-filter-text">
-                  <mat-checkbox formControlName="recurrence" style="height: 35px !important;"></mat-checkbox>
-                  {{'pages.metadata_search.recurrence' | translate}}
-                </span>
-              </form>
+                      <span class="phase-disease-filter-header border-right-line">
+                      
+                        <img style="vertical-align: middle;" src="./assets/images/icons/metadata-seach/detailed-variables-filter-icon.svg"/>
+                        {{'pages.metadata_search.phase_disease_filter' | translate}}:</span>
+                      <span class="phase-disease-filter-text border-right-line">
+                        <mat-checkbox formControlName="diagnosis" (change)="onPhaseFilterChange()" style="height: 35px !important;"></mat-checkbox>
+                        {{'pages.metadata_search.diagnosis' | translate}}
+                      </span>
+                      <span class="phase-disease-filter-text border-right-line">
+                        <mat-checkbox formControlName="progression" (change)="onPhaseFilterChange()" style="height: 35px !important;"></mat-checkbox>
+                        {{'pages.metadata_search.progression' | translate}}
+                      </span>
+                      <span class="phase-disease-filter-text">
+                        <mat-checkbox formControlName="recurrence" (change)="onPhaseFilterChange()" style="height: 35px !important;"></mat-checkbox>
+                        {{'pages.metadata_search.recurrence' | translate}}
+                      </span>
+                      </form>
             </div>
             <button
               mat-flat-button
@@ -239,7 +239,7 @@
                   <span>{{center}}</span>
                 </div>
               </ng-template>
-              <app-detail-analysis-table [variableData]=selectedVariables [center]=center></app-detail-analysis-table>
+              <app-detail-analysis-table [variableData]=selectedVariablesByCenter [center]=center></app-detail-analysis-table>
             </mat-tab>
           </div>
           

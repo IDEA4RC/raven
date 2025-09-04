@@ -42,6 +42,13 @@ const routes: Routes = [
             (m) => m.DataDiscoveryModule
           ),
       },
+      {
+        path: 'data-analysis',
+        loadChildren: () =>
+          import('./pages/data-analysis/data-analysis.module').then(
+            (m) => m.DataAnalysisModule
+          ),
+      },
     ],
   },
   {

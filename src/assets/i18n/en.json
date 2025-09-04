@@ -119,6 +119,28 @@
         "delete": "Delete"
       }
 
+    },
+    "data-analysis": {
+      "data-quality": "Data Quality",
+      "data-preparation": "Data Preparation",
+      "analytic-selection": "Analytic Selection",
+      "analysis-results": "Analysis Results",
+      "search_by_name": "Search by name",
+      "go_nlp_cohort": "NLP Cohort Builder",
+      "go_cohort_manager": "Go to Cohort Manager",
+      "cohort-selection": {
+        "cohort-selection": "Cohort Selection",
+        "id": "ID",
+        "name": "Name",
+        "creation_date": "Creation Date",
+        "update_date": "Update Date",
+        "status": "Status",
+        "action": "Action",
+        "status_created": "Created",
+        "status_executed": "Executed",
+        "execute_query": "Execute Query"
+        
+      }
     }
   }
 

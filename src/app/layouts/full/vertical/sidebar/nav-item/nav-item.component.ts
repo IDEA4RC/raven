@@ -60,6 +60,7 @@ export class AppNavItemComponent implements OnChanges {
 
   ngOnChanges() {
     this.navService.currentUrl.subscribe((url: string) => {
+      
       if (this.item.route && url) {
         // console.log(`Checking '/${this.item.route}' against '${url}'`);
         this.expanded = url.indexOf(`/${this.item.route}`) === 0;
@@ -72,6 +73,8 @@ export class AppNavItemComponent implements OnChanges {
   }
 
   onItemSelected(item: NavItem) {
+    console.log('Item selected:', item);
+    
     if (!item.children || !item.children.length) {
       this.router.navigate([item.route]);
     }

@@ -18,7 +18,7 @@
                 "INT": {
                     "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "False",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -31,7 +31,7 @@
             {
                 "ISS-FJD": {
                     "availability_d": "True",
-                    "availability_p": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -58,9 +58,9 @@
             },
             {
                 "MSCI": {
-                    "availability_d": "False",
+                    "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "True",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -72,9 +72,9 @@
             },
             {
                 "VGR": {
-                    "availability_d": "False",
-                    "availability_p": "True",
-                    "availability_r": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -86,9 +86,9 @@
             },
             {
                 "MCCI": {
-                    "availability_d": "False",
+                    "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "False",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -101,7 +101,7 @@
             {
                 "UKE": {
                     "availability_d": "True",
-                    "availability_p": "False",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -114,9 +114,9 @@
             },
             {
                 "CLB": {
-                    "availability_d": "Not available",
-                    "availability_p": "True",
-                    "availability_r": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -128,9 +128,9 @@
             },
             {
                 "APHP": {
-                    "availability_d": "False",
-                    "availability_p": "True",
-                    "availability_r": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -143,8 +143,8 @@
             {
                 "OUS": {
                     "availability_d": "True",
-                    "availability_p": "False",
-                    "availability_r": "False",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -156,8 +156,8 @@
             },
             {
                 "MUH": {
-                    "availability_d": "False",
-                    "availability_p": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -191,8 +191,8 @@
             {
                 "INT": {
                     "availability_d": "True",
-                    "availability_p": "True",
-                    "availability_r": "False",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -204,9 +204,9 @@
             },
             {
                 "ISS-FJD": {
-                    "availability_d": "False",
+                   "availability_d": "False",
                     "availability_p": "Not available",
-                    "availability_r": "True",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -218,8 +218,8 @@
             },
             {
                 "FPNS": {
-                    "availability_d": "False",
-                    "availability_p": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -232,9 +232,9 @@
             },
             {
                 "MSCI": {
-                    "availability_d": "False",
-                    "availability_p": "True",
-                    "availability_r": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -246,9 +246,9 @@
             },
             {
                 "VGR": {
-                    "availability_d": "False",
-                    "availability_p": "False",
-                    "availability_r": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -275,7 +275,7 @@
             {
                 "UKE": {
                     "availability_d": "True",
-                    "availability_p": "False",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -289,7 +289,7 @@
             {
                 "CLB": {
                     "availability_d": "True",
-                    "availability_p": "False",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -302,9 +302,9 @@
             },
             {
                 "APHP": {
-                    "availability_d": "Not available",
-                    "availability_p": "True",
-                    "availability_r": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -316,8 +316,8 @@
             },
             {
                 "OUS": {
-                    "availability_d": "Not available",
-                    "availability_p": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -330,9 +330,9 @@
             },
             {
                 "MUH": {
-                    "availability_d": "Not available",
-                    "availability_p": "False",
-                    "availability_r": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -358,7 +358,7 @@
         "centers": [
             {
                 "INT": {
-                    "availability_d": "Not available",
+                    "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
@@ -372,9 +372,9 @@
             },
             {
                 "ISS-FJD": {
-                    "availability_d": "Not available",
-                    "availability_p": "True",
-                    "availability_r": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -388,7 +388,7 @@
                 "FPNS": {
                     "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "True",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -401,7 +401,7 @@
             {
                 "MSCI": {
                     "availability_d": "True",
-                    "availability_p": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -415,7 +415,7 @@
             {
                 "VGR": {
                     "availability_d": "True",
-                    "availability_p": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -428,9 +428,9 @@
             },
             {
                 "MCCI": {
-                    "availability_d": "Not available",
+                    "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "False",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -442,9 +442,9 @@
             },
             {
                 "UKE": {
-                    "availability_d": "False",
+                    "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "False",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -456,8 +456,8 @@
             },
             {
                 "CLB": {
-                    "availability_d": "False",
-                    "availability_p": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -470,9 +470,9 @@
             },
             {
                 "APHP": {
-                    "availability_d": "False",
+                    "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "True",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -485,7 +485,7 @@
             {
                 "OUS": {
                     "availability_d": "True",
-                    "availability_p": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -500,7 +500,7 @@
                 "MUH": {
                     "availability_d": "True",
                     "availability_p": "Not available",
-                    "availability_r": "False",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",

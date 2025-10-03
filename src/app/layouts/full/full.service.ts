@@ -14,6 +14,7 @@ export class FullService {
 
   constructor(private httpClient: HttpClient) {}
 
+  //TODO
   /**
    * Function to get the number of patients of each cancer type
    * @param workspaceId ID of the workspace to fetch

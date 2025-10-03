@@ -1,0 +1,39 @@
+<mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+      <div class="header-title">
+        <h4>{{'pages.data-analysis.create_analysis.title' | translate}}</h4>
+      </div>
+    </div>
+
+    <!-- Form to create a analysis-->
+    <mat-card-content>
+      <form class="analysis-form" [formGroup]="analysisFormGroup">
+
+        <!-- Fill analysis name -->
+        <mat-label class="analysis-form-title">{{'pages.data-analysis.create_analysis.analysis_name' | translate}}<span class="required">*</span></mat-label>
+        <mat-form-field class="analysis-form-fields" appearance="outline" >
+          <input class="name-input" matInput [formControl]="analysisNameCtrl" required>
+        </mat-form-field>
+
+        <!-- Fill analysis description-->
+        <mat-label class="analysis-form-title">{{'pages.data-analysis.create_analysis.analysis_description' | translate}}<span class="required">*</span></mat-label>
+        <mat-form-field class="analysis-form-fields" appearance="outline">
+          <textarea class="description-textarea" matInput [formControl]="analysisDescriptionCtrl" required></textarea>
+        </mat-form-field>
+      </form>
+      
+    </mat-card-content>
+
+    <!-- Card Footer -->
+    <mat-card-actions class="footer-analysis">
+      <!-- Back button -->
+      <button mat-button class="back-button" (click)="backAnalysis()">{{'pages.data-analysis.create_analysis.cancel' | translate}}</button>
+     <!-- Create button -->
+      <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="createAnalysis()"
+      [disabled]="analysisNameCtrl.invalid || analysisDescriptionCtrl.invalid" 
+      > {{'pages.data-analysis.create_analysis.create' | translate}} </button>
+    </mat-card-actions>
+    
+</mat-card>

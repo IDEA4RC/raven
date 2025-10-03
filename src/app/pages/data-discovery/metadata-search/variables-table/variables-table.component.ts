@@ -38,7 +38,7 @@ export class VariablesTableComponent implements OnInit, OnChanges{
     }) as MetadataVariables[];
 
     if(this.entity === "All") {
-      this.displayedColumns = ['select', 'variable_name', 'variable_description', 'group', 'datatype', 'values'];
+      this.displayedColumns = ['select', 'variable_name', 'variable_description', 'entity', 'datatype', 'values'];
     }
 
     // Subscribe to variables selection changes

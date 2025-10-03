@@ -22,22 +22,7 @@ export class AvailabilityTableComponent implements OnInit, OnChanges{
   
   dataSourceAll = new MatTableDataSource<any>();
   displayedColumns: string[] = []
-  // centers= [
-  //   { id: 'int', name: 'INT', years: '2014-2020' },
-  //   { id: 'iss', name: 'ISS-FJD', years: '2012-2021' },
-  //   { id: 'aphp', name: 'APHP', years: '2016-2022' },
-  //   { id: 'vgr', name: 'VGR', years: '2015-2020' },
-  //   { id: 'msci', name: 'MSCI', years: '2018-' }
-  // ]
   centers: any[] = [];
-  // variables= [
-  //   { name: 'Sex', availability: { int: '✔️', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
-  //   { name: 'Birth Year', availability: { int: '✔️', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
-  //   { name: 'Histology group', availability: { int: '✔️', iss: '❌', aphp: '⬤', vgr: '⬤', msci: '✔️' } },
-  //   { name: 'Topography', availability: { int: '✔️', iss: '✔️', aphp: '⬤', vgr: '⬤', msci: '✔️' } },
-  //   { name: 'Loco-regional stage', availability: { int: '❌', iss: '✔️', aphp: '✔️', vgr: '✔️', msci: '✔️' } },
-  //   { name: 'Treatment response', availability: { int: '✔️', iss: '✔️', aphp: '❌', vgr: '❌', msci: '✔️' } }
-  // ]
 
 
   filteredDataSources: { [key: string]: MatTableDataSource<any> } = {};
@@ -56,6 +41,8 @@ export class AvailabilityTableComponent implements OnInit, OnChanges{
 
     // Extract the centers and years to define the columns of the table
     if(this.variableData.length > 0) {
+      console.log(this.variableData);
+      
       let centersData = this.variableData[0].centers;
       this.centers = this.extractCentersYears(centersData);
       this.displayedColumns = ['select', 'variable_name', ... this.centers.map(center => center.center)];

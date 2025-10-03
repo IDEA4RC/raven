@@ -52,6 +52,18 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   constructor(private cohortSelectionService: CohortSelectionService) { }
 
+  // Search engine function to filter the table based on user input
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filterPredicate = (data: Cohort, filter: string) =>
+      data.cohort_name.toLowerCase().includes(filter.trim().toLowerCase());
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  // Functions for buttons
   goToCohortManager() {
     // Logic to navigate to the cohort manager
     console.log('Navigating to Cohort Manager');

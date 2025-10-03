@@ -1,27 +1,88 @@
-<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper >
-  <!-- STEPPER 1: Cohort Selection -->
-  <mat-step [stepControl]="cohortSelectionFormGroup" >
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.cohort-selection.cohort-selection' | translate}}</ng-template>
-    <app-cohort-selection></app-cohort-selection>
-  </mat-step>
-  <!-- STEPPER 2: Data Quality -->
-  <mat-step [stepControl]="dataQualityFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-quality' | translate}}</ng-template>
-    <app-data-quaity></app-data-quaity>
-  </mat-step>
-  <!-- STEPPER 3: Data Preparation -->
-    <mat-step [stepControl]="dataPreparationFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-preparation' | translate}}</ng-template>
-    <app-data-preparation></app-data-preparation>
-  </mat-step>
-  <!-- STEPPER 4: Analytic Selection -->
-  <mat-step [stepControl]="analyticSelectionFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analytic-selection' | translate}}</ng-template>
-    <app-analytic-selection></app-analytic-selection>
-  </mat-step>
-  <!-- STEPPER 5: Analysis Results -->
-  <mat-step [stepControl]="analysisResultsFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analysis-results' | translate}}</ng-template>
-    <app-analysis-results></app-analysis-results>
-  </mat-step>
-</mat-stepper>
+<mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+    <div class="header-title">
+        <h4>{{'pages.data-analysis.data_analysis' | translate}}</h4>
+    </div>
+    </div>
+
+    <mat-card-content style="padding-top: 24px; padding-bottom: 50px; min-height: 60vh;">
+        <div class="filter-container">
+            <!-- Table searcher -->
+            <mat-form-field appearance="outline" class="search-field custom-search-field search-engine">
+                <!-- Search icon -->
+                <mat-icon matPrefix class="search-icon">search</mat-icon>
+                <!-- Input field -->
+                <input matInput (keyup)="applyFilter($event)" type="text" class="search-input" placeholder="{{ 'pages.data-analysis.search_by_name' | translate }}"/>
+            </mat-form-field>
+            <!-- New Analysis -->
+            <div class="new-workspace">
+                <!-- New analysis button -->
+                <button mat-button class="analysis-button"
+               (click)="newAnalysis()"
+                > 
+                <mat-icon >add</mat-icon>
+                {{'pages.data-analysis.new_analysis' | translate}} </button>
+            </div>
+        </div>
+
+        <div class="cohort-table-container">
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+            <!-- Analysis ID Column -->
+            <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.analysis_table.id' | translate}}</th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <!-- Analysis Name Column -->
+            <ng-container matColumnDef="analysis_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.analysis_table.name' | translate}}</th>
+            <td mat-cell *matCellDef="let element"> {{element.analysis_name}} </td>
+            </ng-container>
+
+            <!-- Creation Date Column -->
+            <ng-container matColumnDef="creation_date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.analysis_table.creation_date' | translate}}</th>
+            <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.creation_date | date:'dd/MM/yyyy'}} </td>
+            </ng-container>
+
+            <!-- Update Date Column -->
+            <ng-container matColumnDef="update_date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.analysis_table.update_date' | translate}}</th>
+                <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.update_date | date:'dd/MM/yyyy'}} </td>
+            </ng-container>
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>{{'pages.data-analysis.analysis_table.action' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> 
+                    <!-- Open Analysis button -->
+                    <button mat-button class="open-button" (click)="openAnalysis(element.id)">
+                        <mat-icon>open_in_new</mat-icon>
+                        {{'pages.workspace.open' | translate}}
+                        </button>
+                        <!-- Delete button -->
+                        <button class="delete-button" (click)="deleteAnalysis(element.id)">
+                        <img
+                            src="./assets/images/icons/workspace/delete-icon.svg"
+                            alt="delete-icon"
+                            
+                        />
+                    
+                    </button>
+                </td>
+
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Pagination -->
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+    
+    </mat-card-content>
+</mat-card>

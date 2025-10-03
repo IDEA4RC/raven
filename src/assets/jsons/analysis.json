@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "analysis_name": "HNC Patients - 2025 Cohort",
+    "analysis_description": "Patients diagnosed with HNC in the last year across 3 hospitals",
+    "creation_date": "2025-07-01T10:30:00Z",
+    "update_date": "2025-07-10T14:45:00Z",
+    "expiring_date": null,
+    "user_id": "user_001",
+    "workspace_id": 201
+  },
+  {
+    "id": 2,
+    "analysis_name": "HNC Treatment Outcomes",
+    "analysis_description": "Comparison of survival rates by treatment type (surgery, radiotherapy, chemotherapy)",
+    "creation_date": "2025-07-05T09:20:00Z",
+    "update_date": "2025-07-15T12:40:00Z",
+    "expiring_date": null,
+    "user_id": "user_002",
+    "workspace_id": 201
+  },
+  {
+    "id": 3,
+    "analysis_name": "HNC QoL Monitoring",
+    "analysis_description": "Quality of life scores from HNC patients post-treatment at 3 and 6 months",
+    "creation_date": "2025-07-08T11:10:00Z",
+    "update_date": "2025-07-18T15:25:00Z",
+    "expiring_date": "2026-01-01T00:00:00Z",
+    "user_id": "user_003",
+    "workspace_id": 202
+  },
+  {
+    "id": 4,
+    "analysis_name": "HNC Symptom Tracking",
+    "analysis_description": "Longitudinal study of swallowing and speech difficulties in HNC patients",
+    "creation_date": "2025-07-12T08:40:00Z",
+    "update_date": "2025-07-25T10:55:00Z",
+    "expiring_date": null,
+    "user_id": "user_004",
+    "workspace_id": 202
+  },
+  {
+    "id": 5,
+    "analysis_name": "HNC Survivorship Care",
+    "analysis_description": "Follow-up on recurrence risk and secondary complications in HNC survivors",
+    "creation_date": "2025-07-20T14:00:00Z",
+    "update_date": "2025-07-29T09:45:00Z",
+    "expiring_date": null,
+    "user_id": "user_005",
+    "workspace_id": 203
+  }
+]
+

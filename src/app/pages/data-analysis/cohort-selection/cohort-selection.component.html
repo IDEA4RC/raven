@@ -14,7 +14,7 @@
                 <!-- Search icon -->
                 <mat-icon matPrefix class="search-icon">search</mat-icon>
                 <!-- Input field -->
-                <input matInput  type="text" class="search-input" placeholder="{{ 'pages.data-analysis.search_by_name' | translate }}"/>
+                <input matInput (keyup)="applyFilter($event)" type="text" class="search-input" placeholder="{{ 'pages.data-analysis.search_by_name' | translate }}"/>
             </mat-form-field>
             <!-- Go to cohort builder -->
             <div class="cohort-buttons-container">

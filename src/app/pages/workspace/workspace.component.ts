@@ -98,6 +98,7 @@ export class WorkspaceComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  // Search engine function to filter the table based on user input
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filterPredicate = (data: Workspace, filter: string) => {

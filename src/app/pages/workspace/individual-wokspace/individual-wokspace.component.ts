@@ -76,7 +76,7 @@ export class IndividualWokspaceComponent implements OnInit {
     this.observable_individual_wokspace$ = this.workspaceService.individualWorkspace;
     this.observable_workspace_history$ = this.workspaceService.workspaceHistory;
   
-    // Subscribe to the observable patients
+    // Subscribe to the observable individual workspace
     this.observable_individual_wokspace$.subscribe((data) => {
       
         switch (data.status) {

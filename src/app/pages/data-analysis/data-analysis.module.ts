@@ -17,9 +17,14 @@ import { DataQuaityComponent } from "./data-quaity/data-quaity.component";
 import { DataPreparationComponent } from './data-preparation/data-preparation.component';
 import { AnalyticSelectionComponent } from './analytic-selection/analytic-selection.component';
 import { AnalysisResultsComponent } from './analysis-results/analysis-results.component';
+import { IndividualDataAnalysisComponent } from './data-analysis/individual-data-analysis/individual-data-analysis.component';
+import { CreateAnalysisComponent } from './data-analysis/create-analysis/create-analysis.component';
+import { Dialog } from '@angular/cdk/dialog';
+import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-delete-analysis/dialogform-delete-analysis.component';
 
 @NgModule({
-  declarations: [DataAnalysisComponent, CohortSelectionComponent, DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent],
+  declarations: [DataAnalysisComponent, CreateAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
+    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(AnalysisRoutes),

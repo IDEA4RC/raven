@@ -121,6 +121,22 @@
 
     },
     "data-analysis": {
+      "data_analysis": "Data Analysis",
+      "new_analysis": "New Analysis",
+      "analysis_table": {
+         "id": "ID",
+          "name": "Name",
+          "creation_date": "Creation Date",
+          "update_date": "Update Date",
+          "action": "Action"
+      },
+      "create_analysis": {
+        "title": "Create New Analysis",
+        "analysis_name": "Name",
+        "analysis_description": "Brief description of the analysis",
+        "cancel": "Cancel",
+        "create": "Create"
+      },
       "data-quality": "Data Quality",
       "data-preparation": "Data Preparation",
       "analytic-selection": "Analytic Selection",

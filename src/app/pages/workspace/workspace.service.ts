@@ -22,36 +22,41 @@ export class WorkspaceService {
   
   constructor(private httpClient: HttpClient) {}
 
-  /**
+  /** //TODO replace url
    * Function to get the number of patients of each cancer type
    * @returns the list of workspaces
    */
   getWorkspace() {
-    const url = '/raven-api/v1/workspaces/';
+    // const url = '/raven-api/v1/workspaces/';
+    const url = './assets/jsons/workspace.json'
     this.getRequest(url).subscribe((data) => {
         this.workspace.next(data);
     });
   }
 
-  /**
+  /** //TODO replace url
+
    * Function to get the workspace by id
    * @param id id of the workspace
    * @returns the workspace with the given id
    */
   getWorkspaceById(id: number) {
-    const url = `/raven-api/v1/workspaces/${id}`;
-    this.getRequest(url).subscribe((data) => {      
+    // const url = `/raven-api/v1/workspaces/${id}`;
+    const url = './assets/jsons/workspace.json'
+    this.getRequest(url).subscribe((data) => {
+        data = data.filter((workspace: { id: number; }) => workspace.id == id)[0];
         this.individualWorkspace.next(data);
     });
   }
 
-  /**
+  /** //TODO replace url
    * Function to get the workspace history by workspace id
    * @param workspace_id id of the workspace
    * @returns the workspace history of the given workspace id
    */
   getWorkspaceHistory(workspace_id: number) {
-    const url = `/raven-api/v1/workspace-history/${workspace_id}`;
+    // const url = `/raven-api/v1/workspace-history/${workspace_id}`;
+    const url = './assets/jsons/workspace-history.json'
     this.getRequest(url).subscribe((data) => {
         this.workspaceHistory.next(data);
     });

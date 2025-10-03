@@ -8,7 +8,7 @@
   [ngClass]="{
     'mat-toolbar mat-accent activeMenu': item.route && router.isActive(item.route, true) && item.displayName !== 'Log In', 
     'login-button': item.displayName === 'Log In',
-    'workspace-non-active': item.displayName === 'My Workspace' ,
+    'workspace-non-active': item.displayName === 'My Workspace' || item.displayName === 'Individual Workspace',
     expanded: expanded,
     disabled: item.disabled
   }"

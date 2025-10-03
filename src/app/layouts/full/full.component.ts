@@ -103,7 +103,7 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-        console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
+    console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
     if(localStorage.getItem('access') === 'login') {
       this.navItems = [
         {
@@ -194,6 +194,9 @@ export class FullComponent implements OnInit {
       const currentUrl = window.location.pathname;
       const match = currentUrl.match(/\/workspace\/individual-workspace\/(\d+)/);
       const workspaceId = match ? match[1] : null;
+      console.log("Current URL:", currentUrl);
+      console.log("Workspace ID:", workspaceId);
+      
 
       // Pass the workspace ID if available
       if (workspaceId) {

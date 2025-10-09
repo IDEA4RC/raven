@@ -1,1 +1,86 @@
-<p>data-preparation works!</p>
+<mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+    <div class="header-title">
+        <h4>{{'pages.data-analysis.data_preparation.data_preparation' | translate}}</h4>
+    </div>
+    </div>
+
+    <mat-card-content class="data-preparation-content">
+      <div class="grid-layout">
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+          <mat-card class="inner-card">
+            <mat-card-title class="filter-title">
+              {{'pages.data-analysis.data_preparation.centers' | translate}}
+              </mat-card-title>
+            <mat-card-content>
+              <!-- <mat-selection-list>
+                <mat-list-option selected>APH P</mat-list-option>
+                <mat-list-option selected>INT</mat-list-option>
+                <mat-list-option selected>ISS-FJD</mat-list-option>
+              </mat-selection-list> -->
+              <section class="filter-checkbox-group">
+                <mat-checkbox checked>APH P</mat-checkbox>
+                <mat-checkbox checked>INT</mat-checkbox>
+                <mat-checkbox checked>ISS-FJD</mat-checkbox>
+              </section>
+            </mat-card-content>
+            <mat-card-title style="padding-top: 17px;" class="filter-title">
+              {{'pages.data-analysis.data_preparation.cohorts' | translate}}
+              </mat-card-title>
+            <mat-card-content>
+              <section class="filter-checkbox-group">
+                <mat-checkbox checked>Patients with SFT</mat-checkbox>
+                <mat-checkbox checked>Patients with SFT &gt; 45 years old</mat-checkbox>
+              </section>
+            </mat-card-content>
+          </mat-card>
+
+         
+
+          <mat-card class="inner-card">
+            <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.variables' | translate}}</mat-card-title>
+            <mat-card-content>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
+                <mat-select>
+                  <mat-option value="var1">Variable 1</mat-option>
+                  <mat-option value="var2">Variable 2</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-stroked-button color="primary" class="w-full mt-2">
+                <mat-icon>add</mat-icon>
+                {{'pages.data-analysis.data_preparation.create_variable' | translate}}
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+          <mat-card class="inner-card full-height">
+            <div class="summary-statistics-header">
+              <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.summary_statistics' | translate}}</mat-card-title>
+              <mat-card-content>
+                <div class="checkbox-group">
+                  <mat-checkbox checked>{{'pages.data-analysis.data_preparation.centers' | translate}}</mat-checkbox>
+                  <mat-checkbox checked>{{'pages.data-analysis.data_preparation.cohorts' | translate}}</mat-checkbox>
+                </div>
+              </mat-card-content>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <!-- Card Footer -->
+      <mat-card-actions class="footer">
+        <!-- Back button -->
+        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+       <!-- Continue button -->
+        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()"
+        > {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
+      </mat-card-actions>
+</mat-card>

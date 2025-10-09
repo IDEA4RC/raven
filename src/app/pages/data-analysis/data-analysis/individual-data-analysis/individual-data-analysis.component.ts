@@ -1,10 +1,11 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DataAnalysisService } from '../data-analysis.service';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-individual-data-analysis',
@@ -12,6 +13,9 @@ import { DataAnalysisService } from '../data-analysis.service';
   styleUrl: './individual-data-analysis.component.scss'
 })
 export class IndividualDataAnalysisComponent implements OnInit {
+
+  @ViewChild('stepper') stepper!: MatStepper;
+
   
   // private _activatedRoute = inject(ActivatedRoute);
   analysisId: number | null = null;
@@ -50,5 +54,14 @@ export class IndividualDataAnalysisComponent implements OnInit {
     //   }
     // });
     
+  }
+
+  // Method called from child components
+  goToNextStep(): void {
+    this.stepper.next();
+  }
+
+  goToPreviousStep(): void {
+    this.stepper.previous();
   }
 }

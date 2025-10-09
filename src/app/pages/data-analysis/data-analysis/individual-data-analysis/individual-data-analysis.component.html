@@ -2,26 +2,32 @@
   <!-- STEPPER 1: Cohort Selection -->
   <mat-step [stepControl]="cohortSelectionFormGroup" >
     <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.cohort-selection.cohort-selection' | translate}}</ng-template>
-    <app-cohort-selection></app-cohort-selection>
+    <app-cohort-selection (nextStep)="goToNextStep()"></app-cohort-selection>
   </mat-step>
   <!-- STEPPER 2: Data Quality -->
   <mat-step [stepControl]="dataQualityFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-quality' | translate}}</ng-template>
-    <app-data-quaity></app-data-quaity>
+    <app-data-quaity
+    (nextStep)="goToNextStep()" 
+      (previousStep)="goToPreviousStep()"></app-data-quaity>
   </mat-step>
   <!-- STEPPER 3: Data Preparation -->
     <mat-step [stepControl]="dataPreparationFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-preparation' | translate}}</ng-template>
-    <app-data-preparation></app-data-preparation>
+    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-preparation.data-preparation' | translate}}</ng-template>
+    <app-data-preparation
+    (nextStep)="goToNextStep()" 
+      (previousStep)="goToPreviousStep()"></app-data-preparation>
   </mat-step>
   <!-- STEPPER 4: Analytic Selection -->
   <mat-step [stepControl]="analyticSelectionFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analytic-selection' | translate}}</ng-template>
-    <app-analytic-selection></app-analytic-selection>
+    <app-analytic-selection
+    (nextStep)="goToNextStep()" 
+      (previousStep)="goToPreviousStep()"></app-analytic-selection>
   </mat-step>
   <!-- STEPPER 5: Analysis Results -->
   <mat-step [stepControl]="analysisResultsFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analysis-results' | translate}}</ng-template>
-    <app-analysis-results></app-analysis-results>
+    <app-analysis-results (previousStep)="goToPreviousStep()"></app-analysis-results>
   </mat-step>
 </mat-stepper>

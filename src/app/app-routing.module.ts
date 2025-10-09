@@ -7,16 +7,12 @@ import { DataDiscoveryModule
  } from './pages/data-discovery/data-discovery.module';
 import { WorkspaceModule } from './pages/workspace/workspace.module';
 const routes: Routes = [
+  // Layout Routes for landing and authentication pages
   {
     path: '',
     component: BlankComponent,
     children: [
-      {
-        path: '',
-        redirectTo: '/authentication/landing',
-        pathMatch: 'full',
-
-      },
+      { path: '', redirectTo: '/authentication/landing', pathMatch: 'full' },
       {
         path: 'authentication',
         loadChildren: () =>
@@ -30,11 +26,27 @@ const routes: Routes = [
     path: '',
     component: FullComponent,
     children: [
-      // {
-      //   path: 'material-table',
-      //   loadChildren: () =>
-      //     import('./pages/pages.module').then((m) => m.PagesModule),
-      // },
+      {
+        path: 'workspace',
+        loadChildren: () =>
+          import('./pages/workspace/workspace.module').then(
+            (m) => m.WorkspaceModule
+          ),
+      },
+      {
+        path: 'workspace/:id/data-discovery',
+        loadChildren: () =>
+          import('./pages/data-discovery/data-discovery.module').then(
+            (m) => m.DataDiscoveryModule
+          ),
+      },
+      {
+        path: 'workspace/:id/data-analysis',
+        loadChildren: () =>
+          import('./pages/data-analysis/data-analysis.module').then(
+            (m) => m.DataAnalysisModule
+          ),
+      },
       {
         path: 'discovery',
         loadChildren: () =>
@@ -42,33 +54,51 @@ const routes: Routes = [
             (m) => m.DataDiscoveryModule
           ),
       },
-      {
-        path: 'data-analysis',
-        loadChildren: () =>
-          import('./pages/data-analysis/data-analysis.module').then(
-            (m) => m.DataAnalysisModule
-          ),
-      },
     ],
   },
-  {
-    path: '',
-    component: FullComponent,
-    children: [
-      {
-        path: '',
-        loadChildren: () =>
-          import('./pages/workspace/workspace.module').then(
-            (m) => m.WorkspaceModule
-          ),
-      },
-    ],
-  },
+
+  // Wildcard (404)
+  { path: '**', redirectTo: 'authentication/error' },
+  // {
+  //   path: '',
+  //   component: FullComponent,
+  //   children: [
+  //     // {
+  //     //   path: 'material-table',
+  //     //   loadChildren: () =>
+  //     //     import('./pages/pages.module').then((m) => m.PagesModule),
+  //     // },
+  //     {
+  //       path: 'discovery',
+  //       loadChildren: () =>
+  //         import('./pages/data-discovery/data-discovery.module').then(
+  //           (m) => m.DataDiscoveryModule
+  //         ),
+  //     },
+  //     {
+  //       path: 'data-analysis',
+  //       loadChildren: () =>
+  //         import('./pages/data-analysis/data-analysis.module').then(
+  //           (m) => m.DataAnalysisModule
+  //         ),
+  //     },
+  //   ],
+  // },
+  // {
+  //   path: '',
+  //   component: FullComponent,
+  //   children: [
+  //     {
+  //       path: '',
+  //       loadChildren: () =>
+  //         import('./pages/workspace/workspace.module').then(
+  //           (m) => m.WorkspaceModule
+  //         ),
+  //     },
+  //   ],
+  // },
   
-  {
-    path: '**',
-    redirectTo: 'authentication/error',
-  },
+  
 ];
 
 @NgModule({

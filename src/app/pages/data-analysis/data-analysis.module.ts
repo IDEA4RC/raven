@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataAnalysisComponent } from './data-analysis/data-analysis.component';
-import { AnalysisRoutes } from './data-discovery.routing';
+import { AnalysisRoutes } from './data-analysis.routing';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,12 +18,12 @@ import { DataPreparationComponent } from './data-preparation/data-preparation.co
 import { AnalyticSelectionComponent } from './analytic-selection/analytic-selection.component';
 import { AnalysisResultsComponent } from './analysis-results/analysis-results.component';
 import { IndividualDataAnalysisComponent } from './data-analysis/individual-data-analysis/individual-data-analysis.component';
-import { CreateAnalysisComponent } from './data-analysis/create-analysis/create-analysis.component';
+import { NewAnalysisComponent } from './data-analysis/new-analysis/new-analysis.component';
 import { Dialog } from '@angular/cdk/dialog';
 import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-delete-analysis/dialogform-delete-analysis.component';
 
 @NgModule({
-  declarations: [DataAnalysisComponent, CreateAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
+  declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
     DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent],
   imports: [
     CommonModule,

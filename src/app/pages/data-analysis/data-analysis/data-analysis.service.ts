@@ -11,6 +11,11 @@ export class DataAnalysisService {
   analysis = new Subject<any>();
   analysis$ = this.analysis.asObservable();
 
+  
+  // Cohort Selection observables
+  cohort = new Subject<any>();
+  cohort$ = this.cohort.asObservable();
+
   constructor(private httpClient: HttpClient) {}
 
   /**
@@ -44,6 +49,19 @@ export class DataAnalysisService {
     // const url = `${environment.base_url}${environment.raven_url}/analysis/${analysis_id}/`;
     const url = `/raven-api/v1/analysis/${analysis_id}/`;
     return this.deleteRequest(url);
+  }
+
+
+  /**
+   * Function to get cohorts of a workspace
+   * @returns the list of cohorts
+   */
+  getCohorts() {
+    // const url = '/raven-api/v1/cohort/';
+    const url = './assets/jsons/cohort.json';
+    this.getRequest(url).subscribe((data) => {
+        this.cohort.next(data);
+    });
   }
 
 

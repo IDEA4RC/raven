@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CohortSelectionService } from './cohort-selection.service';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { DataAnalysisService } from '../data-analysis/data-analysis.service';
 import { Observable } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Cohort } from './cohort.model';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cohort-selection',
@@ -12,6 +13,10 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrl: './cohort-selection.component.scss'
 })
 export class CohortSelectionComponent implements OnInit, OnDestroy {
+
+  // Variable to store the current workspace ID from the route
+  workspaceId: string | undefined;
+  analysisId: string | undefined;
 
   // Observables cohort
   observable_cohort$ : Observable<any> | undefined;
@@ -24,17 +29,30 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @Output() nextStep = new EventEmitter<void>();
 
+  constructor(
+    private dataAnalysisService: DataAnalysisService,
+    private router: Router
+  ) { }
   
   ngOnInit(): void {
+
+    // Extract workspace ID from the current URL
+    const urlSegments = this.router.url.split('/');
+    const workspaceIndex = urlSegments.indexOf('workspace');    
+    
+    if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
+      this.workspaceId = urlSegments[workspaceIndex + 1];
+    }
+
     // Get the observable from the service
-    this.observable_cohort$ = this.cohortSelectionService.cohort
+    this.observable_cohort$ = this.dataAnalysisService.cohort
     // Subscribe to the observable patients
     this.cohortSubscription = this.observable_cohort$.subscribe((data) => {
-      console.log('Cohort data:', data);
       this.dataSource.data = data;
     });
-    this.cohortSelectionService.getCohorts();
+    this.dataAnalysisService.getCohorts();
   }
 
   ngAfterViewInit() {
@@ -50,7 +68,6 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(private cohortSelectionService: CohortSelectionService) { }
 
   // Search engine function to filter the table based on user input
   applyFilter(event: Event) {
@@ -75,6 +92,13 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   executeQuery(cohortId: number) {
     // Logic to execute the query for the selected cohort
     console.log(`Executing query for cohort ID: ${cohortId}`);
+  }
+  // Button to navigate to the previous page (Data Analysis main page)
+  backAnalysis() {
+     this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
+  }
+  goNext() {
+    this.nextStep.emit();
   }
 
 }

@@ -1,0 +1,126 @@
+.container {
+    border-radius: 10px;
+    background: #EDEDED;
+
+    /* background shadow */
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.10), 0 3px 4px 0 rgba(0, 0, 0, 0.03);
+    padding: 0px;
+    max-width: 100% !important;
+  }
+  
+.header {
+    align-items: center;
+  }
+.header-div {
+    border-radius: 10px 10px var(--Corner-Radius-zero, 0px) var(--Corner-Radius-zero, 0px);
+    border-bottom: 1px solid var(--grey-colors-border, #DBE1E6);
+    background: var(--Raven-Azul, #255E87);
+    padding: 10px var(--xxl, 30px);
+    width: 100%;
+  }
+.header-title {
+    color: #FFF;
+    font-family: Poppins;
+    font-style: normal;
+    line-height: normal;
+    display: flex;
+}
+.header-title h4 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin: 0;
+  }
+.header-title h5 {
+    color: rgba(255, 255, 255, 0.50);
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+    margin: 0;
+}
+.data-preparation-content {
+    padding-top: 24px;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* left column = 1, right = 2 */
+    gap: 16px;
+    align-items: start;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.inner-card {
+    margin: 0 !important; /* override mat-card default margins */
+    border-radius: 10px;
+    background: #FFF;
+
+    /* background shadow */
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.10), 0 3px 4px 0 rgba(0, 0, 0, 0.03);
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.filter-checkbox-group {
+    display: grid;
+}
+.filter-title {
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+
+    /* Heading/H5 */
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+.summary-statistics-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* FOOTER SECTION */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 24px !important;
+}
+
+.back-button, .continue-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-family: Poppins;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 22.5px;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    min-width: 100px;
+    
+}
+
+.back-button {
+    background: #99ABB4;
+    color: #FFFFFF !important;
+}
+
+

@@ -138,7 +138,6 @@
         "create": "Create"
       },
       "data-quality": "Data Quality",
-      "data-preparation": "Data Preparation",
       "analytic-selection": "Analytic Selection",
       "analysis-results": "Analysis Results",
       "search_by_name": "Search by name",
@@ -154,8 +153,32 @@
         "action": "Action",
         "status_created": "Created",
         "status_executed": "Executed",
-        "execute_query": "Execute Query"
-        
+        "execute_query": "Execute Query",
+        "continue": "Continue",
+        "back": "Back"
+      },
+      "data_preparation": {
+        "data_preparation": "Data Preparation",
+        "continue": "Continue",
+        "back": "Back",
+        "centers": "Centers",
+        "cohorts": "Cohorts",
+        "variables": "Variables",
+        "select": "Select",
+        "create_variable": "Create Variable",
+        "summary_statistics": "Summary Statistics",
+        "survival_time": "Survival Time",
+        "days": "Days",
+        "survival_description": "The time in days when the patient entered the cohort and died. In case the patient did not die within the cohort start and end date the value null.",
+        "statistics": "Statistics",
+        "total": "Total",
+        "mean": "Mean",
+        "min": "Min",
+        "max": "Max",
+        "q1_q3": "Q1-Q3",
+        "missing": "Missing",
+        "median_center": "Median per Center",
+        "missing_center": "Missing per Center"
       }
     }
   }

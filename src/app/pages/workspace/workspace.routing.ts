@@ -6,33 +6,56 @@ import { IndividualWokspaceComponent } from './individual-wokspace/individual-wo
 export const WorkspaceRoutes: Routes = [
   {
     path: '',
-    children: [
-      {
-        path: 'workspace',
-        component: WorkspaceComponent,
-        data: {
-          title: 'My Workspace',
-          urls: [
-            { title: 'Home', url: '/workspace' },
-            { title: 'My Workspace' },
-          ],
-        },
-      },
-      {
-        path: 'workspace/:id',
-        component: IndividualWokspaceComponent,
-        data: {
-          title: 'Individual Workspace',
-          urls: [
-            { title: 'Home', url: '/workspace' },
-            { title: 'My Workspace', url: '/workspace' },
-            { title: 'Individual Workspace' },
-          ],
-        },
-      },
-    ],
+    component: WorkspaceComponent,
+    data: {
+      title: 'My Workspace',
+      urls: [
+        { title: 'Home', url: '/workspace' },
+        { title: 'My Workspace' },
+      ],
+    },
+  },
+  {
+    path: ':id',
+    component: IndividualWokspaceComponent,
+    data: {
+      title: 'Individual Workspace',
+      urls: [
+        { title: 'Home', url: '/workspace' },
+        { title: 'My Workspace', url: '/workspace' },
+        { title: 'Individual Workspace' },
+      ],
+    },
   },
 ];
+// {
+//     path: '',
+//     children: [
+//       {
+//         path: 'workspace',
+//         component: WorkspaceComponent,
+//         data: {
+//           title: 'My Workspace',
+//           urls: [
+//             { title: 'Home', url: '/workspace' },
+//             { title: 'My Workspace' },
+//           ],
+//         },
+//       },
+//       {
+//         path: 'workspace/:id',
+//         component: IndividualWokspaceComponent,
+//         data: {
+//           title: 'Individual Workspace',
+//           urls: [
+//             { title: 'Home', url: '/workspace' },
+//             { title: 'My Workspace', url: '/workspace' },
+//             { title: 'Individual Workspace' },
+//           ],
+//         },
+//       },
+//     ],
+//   },
 
 
 // children: [

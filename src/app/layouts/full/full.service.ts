@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { forkJoin, Subject } from "rxjs";
+import { BehaviorSubject, forkJoin, Observable, Subject } from "rxjs";
 import { HttpClient} from "@angular/common/http";
 // import { environment } from "src/environments/environment";
 
@@ -9,57 +9,45 @@ import { HttpClient} from "@angular/common/http";
 export class FullService {
 
   // Workspaces observables
-  workspace = new Subject<any>();
-  workspace$ = this.workspace.asObservable();
+  private workspaceSubject = new BehaviorSubject<any>(null);
+  public workspace$: Observable<any> = this.workspaceSubject.asObservable();
+  public currentWorkspace: any = null;
 
   constructor(private httpClient: HttpClient) {}
 
-  //TODO
+  //TODO: Cambiar any por el tipo Workspace
+  
+
   /**
-   * Function to get the number of patients of each cancer type
-   * @param workspaceId ID of the workspace to fetch
-   * @returns
+   * Obtiene un workspace por ID
+   * @param workspaceId ID del workspace
    */
   getWorkspace(workspaceId: string) {
-    const url = './assets/jsons/workspace.json';
+    const url = './assets/jsons/workspace.json'; // reemplaza con tu endpoint real
     this.getRequest(url).subscribe((data) => {
-        this.workspace.next(data[0]);
+      // Para este ejemplo tomo data[0], ajusta según tu API
+      const workspace = Array.isArray(data)
+        ? data.find((w: any) => w.id === workspaceId)
+        : null;
+      this.currentWorkspace = workspace;
+      this.workspaceSubject.next(workspace);
     });
   }
 
 
 
 
-
-
-  // HTTP requests
-
-  /**
-   * Function to make a get request
-   * @param URL url to make a get request
-   * @returns 
-   */
-  getRequest(URL:any){
-    return this.httpClient.get<any>(URL)
+  // HTTP requests helper
+  getRequest(URL: string) {
+    return this.httpClient.get<any>(URL);
   }
-  /**
-   * Function to make a post request
-   * @param URL url to make a post request
-   * @param data data to send in the post request
-   * @returns
-    */
-  postRequest(URL:any,data?:any){
-    if(data) return this.httpClient.post<any>(URL,data)
-    return this.httpClient.post<any>(URL,{})  
+
+  postRequest(URL: string, data?: any) {
+    return this.httpClient.post<any>(URL, data || {});
   }
-  /**
-   * Function to make a put request
-   * @param URL url to make a put request
-   * @param data 
-   * @returns 
-   */
-  patchRequest(URL:any,data?:any){
-    if(data) return this.httpClient.patch<any>(URL,data)
-    return this.httpClient.patch<any>(URL,{})  
+
+  patchRequest(URL: string, data?: any) {
+    return this.httpClient.patch<any>(URL, data || {});
   }
+
 }

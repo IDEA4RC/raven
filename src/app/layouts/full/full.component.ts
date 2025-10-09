@@ -21,6 +21,8 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppNavItemComponent } from './vertical/sidebar/nav-item/nav-item.component';
 import { FullService } from './full.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router, NavigationEnd } from '@angular/router';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -48,18 +50,20 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
   encapsulation: ViewEncapsulation.None,
 })
 export class FullComponent implements OnInit {
-  navItems = navItems;
-  @ViewChild('leftsidenav')
-  public sidenav: MatSidenav;
+   navItems = navItems;
+  @ViewChild('leftsidenav') public sidenav: MatSidenav;
+
   resView = false;
-  //get options from service
   options = this.settings.getOptions();
-  navopt = this.navService.showClass;
   private layoutChangesSubscription = Subscription.EMPTY;
   private isMobileScreen = false;
   private isContentWidthFixed = true;
   private isCollapsedWidthFixed = false;
   private htmlElement!: HTMLHtmlElement;
+
+  // The workspace that is currently using the user
+  currentWorkspace: any = null;
+
 
   get isOver(): boolean {
     return this.isMobileScreen;
@@ -69,8 +73,11 @@ export class FullComponent implements OnInit {
     return this.resView;
   }
 
-  // Observables
-  observable_wokspace$ : Observable<any> | undefined;
+  // // Observables
+  // observable_wokspace$ : Observable<any> | undefined;
+
+
+
   // Subscriptions container
   private subscriptions: Subscription = new Subscription();
 
@@ -80,7 +87,9 @@ export class FullComponent implements OnInit {
     private mediaMatcher: MediaMatcher,
     private navService: NavService,
     private breakpointObserver: BreakpointObserver,
-    private fullService: FullService
+    private fullService: FullService,
+    private authService: AuthService,
+    private router: Router
   ) {
     
     this.htmlElement = document.querySelector('html')!;
@@ -103,118 +112,207 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
-    if(localStorage.getItem('access') === 'login') {
-      this.navItems = [
-        {
-          navCap: '',
-        },
-        {
-          displayName: 'My Workspace',
-          iconName: 'layout-grid',
-          route: '/workspace',
-        }
-      ]
-    } else {
-      this.navItems = [
-        {
-          navCap: '',
-        },
-        
-        {
-          displayName: 'Log In',
-          iconName: 'login',
-          route: '/authentication/login',
-        }
-      ]
-    }
-
-    
-  
-    // Get observables variables
-    this.observable_wokspace$ = this.fullService.workspace;
-    
-    // Subscribe to the observable workspace and add to subscription container
+    // Subscribe to authentication status
     this.subscriptions.add(
-      this.observable_wokspace$.subscribe((data) => {
+      this.authService.isAuthenticated$.subscribe(isLoggedIn => {
+        if (isLoggedIn) {
+          // If the user is logged in, load the default workspace
+          // this.fullService.getWorkspace('default');
+          this.updateNavItems(true);
 
-      
-      if (data) {
-        // Add the workspace menu to the navItems
-        this.navItems = [
-          {
-            navCap: '',
-          },
-          {
-            displayName: 'My Workspace',
-            iconName: 'layout-grid',
-            route: '/workspace',
-          },
-          {
-            navCap: '',
-          },
-          {
-            displayName: data.name,
-            iconName: 'assignment',
-            route: `/workspace/individual-workspace/${data.id}`,
-            children: [
-              {
-                displayName: 'Metadata Search',
-                iconName: 'search',
-                route: 'apps/blog/post',
-              },
-              {
-                displayName: 'Data Access',
-                iconName: 'lock_open',
-                route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
-              },
-              {
-                displayName: 'Data Analysis',
-                iconName: 'deployed_code',
-                route: 'apps/blog/post',
-              },
-              {
-                displayName: 'Result Report',
-                iconName: 'check',
-                route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
-              }
-              
-            ]
+          // }
+        } else {
+          // If not logged in, reset navItems to default
+          this.updateNavItems(false);
+        }
+      })
+    );
+    // Subscribe to route changes
+    this.subscriptions.add(
+      this.router.events.subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          // Detect if the current route is for an individual workspace
+          const match = event.urlAfterRedirects.match(/\/workspace\/(\d+)/);
+          const workspaceId = match ? match[1] : null;
+          if (workspaceId) {
+            this.fullService.getWorkspace(workspaceId);
+          } else {
+            this.fullService.currentWorkspace = null;
+            this.updateNavItems(true);
           }
-        ];
-      }
-      
+        }
+      })
+    );
+    // Subscribe to workspace changes
+    this.subscriptions.add(
+      this.fullService.workspace$.subscribe(workspace => {
+        this.fullService.currentWorkspace = workspace;
+        if (this.authService.getToken()) {
+          this.updateNavItems(true, workspace);
+        }
       })
     );
 
-    // If the user is logged in, get the workspace data from the user
-    if(localStorage.getItem('access') === 'login') {
+    // Inicialize the menu depending the status of the token
+    const isLoggedIn = !!this.authService.getToken();
+    if (isLoggedIn) {
+      // this.fullService.getWorkspace('default');
+      this.updateNavItems(true);
+    } else {
+      this.updateNavItems(false);
+    }
+  
+    
+    // console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
+    // if(localStorage.getItem('access') === 'login') {
+    //   this.navItems = [
+    //     {
+    //       navCap: '',
+    //     },
+    //     {
+    //       displayName: 'My Workspace',
+    //       iconName: 'layout-grid',
+    //       route: '/workspace',
+    //     }
+    //   ]
+    // } else {
+    //   this.navItems = [
+    //     {
+    //       navCap: '',
+    //     },
+        
+    //     {
+    //       displayName: 'Log In',
+    //       iconName: 'login',
+    //       route: '/authentication/login',
+    //     }
+    //   ]
+    // }
 
-      // Get the current route
-      const currentUrl = window.location.pathname;
-      const match = currentUrl.match(/\/workspace\/individual-workspace\/(\d+)/);
-      const workspaceId = match ? match[1] : null;
-      console.log("Current URL:", currentUrl);
-      console.log("Workspace ID:", workspaceId);
+    
+  
+    // // Get observables variables
+    // this.observable_wokspace$ = this.fullService.workspace;
+    
+    // // Subscribe to the observable workspace and add to subscription container
+    // this.subscriptions.add(
+    //   this.observable_wokspace$.subscribe((data) => {
+
+      
+    //   if (data) {
+    //     // Add the workspace menu to the navItems
+    //     this.navItems = [
+    //       {
+    //         navCap: '',
+    //       },
+    //       {
+    //         displayName: 'My Workspace',
+    //         iconName: 'layout-grid',
+    //         route: '/workspace',
+    //       },
+    //       {
+    //         navCap: '',
+    //       },
+    //       {
+    //         displayName: data.name,
+    //         iconName: 'assignment',
+    //         route: `/workspace/individual-workspace/${data.id}`,
+    //         children: [
+    //           {
+    //             displayName: 'Metadata Search',
+    //             iconName: 'search',
+    //             route: 'apps/blog/post',
+    //           },
+    //           {
+    //             displayName: 'Data Access',
+    //             iconName: 'lock_open',
+    //             route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
+    //           },
+    //           {
+    //             displayName: 'Data Analysis',
+    //             iconName: 'deployed_code',
+    //             route: 'apps/blog/post',
+    //           },
+    //           {
+    //             displayName: 'Result Report',
+    //             iconName: 'check',
+    //             route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
+    //           }
+              
+    //         ]
+    //       }
+    //     ];
+    //   }
+      
+    //   })
+    // );
+
+    // // If the user is logged in, get the workspace data from the user
+    // if(localStorage.getItem('access') === 'login') {
+
+    //   // Get the current route
+    //   const currentUrl = window.location.pathname;
+    //   const match = currentUrl.match(/\/workspace\/individual-workspace\/(\d+)/);
+    //   const workspaceId = match ? match[1] : null;
+    //   console.log("Current URL:", currentUrl);
+    //   console.log("Workspace ID:", workspaceId);
       
 
-      // Pass the workspace ID if available
-      if (workspaceId) {
-      }
-      // Get the workspace data
-      this.fullService.getWorkspace('1');
-    }
+    //   // Pass the workspace ID if available
+    //   if (workspaceId) {
+    //   }
+    //   // Get the workspace data
+    //   this.fullService.getWorkspace('1');
+    // }
 
 
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this.subscriptions.unsubscribe();
     
     // Also unsubscribe from your existing subscription
     this.layoutChangesSubscription.unsubscribe();
   }
+
+  // Método para actualizar el menú
+  private updateNavItems(isLoggedIn: boolean, workspace?: any) {
+    console.log(`Updating nav items. Logged in: ${isLoggedIn}, Workspace:`, workspace);
+    
+    if (!isLoggedIn) {
+      this.navItems = [
+        { navCap: '' },
+        { displayName: 'Log In', iconName: 'login', route: '/authentication/login' }
+      ];
+      return;
+    } 
+    // 🔹 Base menu para usuarios autenticados
+    const newNavItems: any[] = [
+      { navCap: '' },
+      { displayName: 'My Workspace', iconName: 'layout-grid', route: '/workspace' }
+    ];
+
+    // 🔹 Si hay workspace, añadimos las secciones
+    if (workspace) {
+      newNavItems.push({
+        navCap: '',
+        displayName: workspace.name || 'Workspace',
+        iconName: 'assignment',
+        route: `/workspace/${workspace.id}/data-discovery`,
+        children: [
+          { displayName: 'Data Discovery', iconName: 'search', route: `/workspace/${workspace.id}/data-discovery` },
+          { displayName: 'Data Permit', iconName: 'lock_open', route: `/workspace/${workspace.id}/data-permit` },
+          { displayName: 'Data Analysis', iconName: 'deployed_code', route: `/workspace/${workspace.id}/data-analysis` },
+          { displayName: 'Data Finalization', iconName: 'check', route: `/workspace/${workspace.id}/data-finalization` }
+        ]
+      });
+    }
+
+    console.log("New Nav Items:", newNavItems);
+    this.navItems = newNavItems;
+  }
+
 
   toggleCollapsed() {
     this.isContentWidthFixed = false;

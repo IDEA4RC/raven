@@ -6,18 +6,19 @@ import { Router } from '@angular/router';
 import { DataAnalysisService } from '../data-analysis.service';
 
 @Component({
-  selector: 'app-create-analysis',
-  templateUrl: './create-analysis.component.html',
-  styleUrl: './create-analysis.component.scss'
+  selector: 'app-new-analysis',
+  templateUrl: './new-analysis.component.html',
+  styleUrl: './new-analysis.component.scss'
 })
-export class CreateAnalysisComponent implements OnInit {
+export class NewAnalysisComponent implements OnInit {
+
+  // Variable to store the current workspace ID from the route
+  workspaceId: string | undefined;
 
   // Form groups
   private _formBuilder = inject(FormBuilder);
   readonly analysisNameCtrl = new FormControl('', Validators.required);
   readonly analysisDescriptionCtrl = new FormControl('', Validators.required);
-  
-    
   
   analysisFormGroup = this._formBuilder.group({
     analysisNameCtrl: this.analysisNameCtrl,
@@ -34,11 +35,18 @@ export class CreateAnalysisComponent implements OnInit {
   
     ) {}
   ngOnInit(): void {
+    // Extract workspace ID from the current URL
+    const urlSegments = this.router.url.split('/');
+    const workspaceIndex = urlSegments.indexOf('workspace');    
+    
+    if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
+      this.workspaceId = urlSegments[workspaceIndex + 1];
+    }
   }
 
   // Function to go back to the data analysis table page
   backAnalysis() {
-    this.router.navigate(['/data-analysis/data-analysis']);
+    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
   }
   // Function to create a new analysis and navigate to the data analysis table page
   createAnalysis() {
@@ -62,7 +70,7 @@ export class CreateAnalysisComponent implements OnInit {
       name: analysisName,
       description: analysisDescription,
       user_id: 1, // Placeholder user ID
-      workspace_id: 1, // Placeholder workspace ID
+      workspace_id: this.workspaceId, // Placeholder workspace ID
     };
      // TODO: Send the data to a service for persistence
 //     // this.dataAnalysisService.createAnalysis(analysisData).subscribe(...
@@ -73,7 +81,7 @@ export class CreateAnalysisComponent implements OnInit {
       "bottom",
       "center"
     );
-    this.router.navigate(['/data-analysis/data-analysis']);
+    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
   }
 
 

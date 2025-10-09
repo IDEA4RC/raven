@@ -101,4 +101,13 @@ export class AppNavItemComponent implements OnChanges {
       }
     }
   }
+  isWorkspaceNonActive(item: any): boolean {
+    // Workspace items are non-active if route is not active
+    const workspaceItems = ['My Workspace', 'Individual Workspace'];
+    return workspaceItems.includes(item.displayName) && !(item.route && this.router.isActive(item.route, true));
+  }
+
+  isLoginButton(item: any): boolean {
+    return item.displayName === 'Log In';
+  }
 }

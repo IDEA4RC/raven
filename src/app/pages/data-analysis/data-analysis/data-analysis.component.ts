@@ -23,17 +23,27 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<Analysis>();
   displayedColumns: string[] = ['id','analysis_name', 'creation_date', 'update_date', 'action'];
 
-
+  // Variable to store the current workspace ID from the route
+  workspaceId: string | undefined;
+  // ViewChild to access the paginator and sort components
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   
   ngOnInit(): void {
+
+    // Extract workspace ID from the current URL
+    const urlSegments = this.router.url.split('/');
+    const workspaceIndex = urlSegments.indexOf('workspace');    
+    
+    if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
+      this.workspaceId = urlSegments[workspaceIndex + 1];
+    }
+
     // Get the observable from the service
     this.observable_analysis$ = this.dataAnalysisService.analysis
     // Subscribe to the observable patients
     this.analysisSubscription = this.observable_analysis$.subscribe((data) => {
-      console.log('Analysis data:', data);
       this.dataSource.data = data;
     });
     this.dataAnalysisService.getAnalysis();
@@ -71,13 +81,12 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
 
   // Function to create a new analysis
   newAnalysis() {
-    this.router.navigate(['/data-analysis/new-analysis']);
+    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis/new`]);
   }
 
   // Function to open an indivisual analysis
   openAnalysis(analysisId: number) {
-    this.router.navigate(['/data-analysis', analysisId]);
-    // this.router.navigate(['/workspace', analysisId]);
+    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`, analysisId]);
     // Logic to open the analysis details
     console.log(`Opening analysis with ID: ${analysisId}`);
   }
@@ -85,7 +94,6 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
   // Function to delete an analysis
   deleteAnalysis(analysisId: number) {
     // Logic to delete the analysis
-    console.log(`Deleting analysis with ID: ${analysisId}`);
     const dialogRef = this.dialogModel.open(DialogformDeleteAnalysisComponent, {
       disableClose: true,
       data: {

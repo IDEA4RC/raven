@@ -20,7 +20,7 @@
   </mat-step>
   <!-- STEPPER 4: Analytic Selection -->
   <mat-step [stepControl]="analyticSelectionFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analytic-selection' | translate}}</ng-template>
+    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.analytic-selection.analytic-selection' | translate}}</ng-template>
     <app-analytic-selection
     (nextStep)="goToNextStep()" 
       (previousStep)="goToPreviousStep()"></app-analytic-selection>

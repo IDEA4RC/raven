@@ -138,7 +138,6 @@
         "create": "Create"
       },
       "data-quality": "Data Quality",
-      "analytic-selection": "Analytic Selection",
       "analysis-results": "Analysis Results",
       "search_by_name": "Search by name",
       "go_nlp_cohort": "NLP Cohort Builder",
@@ -180,6 +179,13 @@
         "missing": "Missing",
         "median_center": "Median per Center",
         "missing_center": "Missing per Center"
+      },
+      "analytic-selection": {
+        "analytic-selection": "Analytic Selection",
+        "analytic-tools-executed": "List of Analytic Tools Executed",
+        "select-algorithm": "Select Algorithm",
+        "continue": "Continue",
+        "back": "Back"
       }
     }
   }

@@ -1,0 +1,40 @@
+<mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+    <div class="header-title">
+        <h4>{{'pages.data-analysis.analytic-selection.analytic-tools-executed' | translate}}</h4>
+    </div>
+    </div>
+
+    <mat-card-content style="padding-top: 24px;">
+        <div class="filter-container">
+            <!-- Table searcher -->
+            <mat-form-field appearance="outline" class="search-field custom-search-field search-engine">
+                <!-- Search icon -->
+                <mat-icon matPrefix class="search-icon">search</mat-icon>
+                <!-- Input field -->
+                <input matInput (keyup)="applyFilter($event)" type="text" class="search-input" placeholder="{{ 'pages.data-analysis.search_by_name' | translate }}"/>
+            </mat-form-field>
+                
+            <!-- New analysis button -->
+            <button mat-button class="algorithm-button"
+            (click)="selectAlgorithm()"
+            > 
+            {{'pages.data-analysis.analytic-selection.select-algorithm' | translate}} </button>
+        </div>
+
+        <div class="analytic-table-container">
+            
+        </div>
+    
+    </mat-card-content>
+    <!-- Card Footer -->
+      <mat-card-actions class="footer">
+        <!-- Back button -->
+        <button mat-button class="back-button" (click)="backAnalysis()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
+       <!-- Continue button -->
+        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="this.selection.selected.length == 0"
+        > {{'pages.data-analysis.analytic-selection.continue' | translate}} </button>
+      </mat-card-actions>
+</mat-card>

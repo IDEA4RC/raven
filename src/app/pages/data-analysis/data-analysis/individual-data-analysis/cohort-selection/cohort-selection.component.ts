@@ -1,12 +1,12 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { DataAnalysisService } from '../data-analysis/data-analysis.service';
+import { DataAnalysisService } from '../../data-analysis.service';
 import { Observable } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Cohort } from './cohort.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { SelectionService } from '../data-analysis/selection.service';
+import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
 @Component({
   selector: 'app-cohort-selection',

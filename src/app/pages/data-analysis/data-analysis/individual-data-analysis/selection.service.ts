@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Cohort } from '../cohort-selection/cohort.model';
+import { Cohort } from './cohort-selection/cohort.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({

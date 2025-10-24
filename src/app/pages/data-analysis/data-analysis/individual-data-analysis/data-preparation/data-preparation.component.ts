@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DataAnalysisService } from '../data-analysis/data-analysis.service';
+import { DataAnalysisService } from '../../data-analysis.service';
 import { Router } from '@angular/router';
-import { SelectionService } from '../data-analysis/selection.service';
+import { SelectionService } from '../selection.service';
 import { MatTableDataSource } from '@angular/material/table';
 @Component({
   selector: 'app-data-preparation',

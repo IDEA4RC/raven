@@ -43,7 +43,7 @@ export class IndividualWokspaceComponent implements OnInit {
   steps = [
     { key: 'metadata_search', label: 'Metadata Search', icon: 'search' },
     { key: 'data_access', label: 'Data Access', icon: 'lock_open' },
-    { key: 'data_analysis', label: 'Data Analysis', icon: 'deployed_code' },
+    { key: 'data_analysis', label: 'Data Analysis', icon: 'query_stats' },
     { key: 'result_report', label: 'Result Report', icon: 'check' },
   ];
 

@@ -167,6 +167,7 @@
         "select": "Select",
         "create_variable": "Create Variable",
         "summary_statistics": "Summary Statistics",
+        "no_variable_selected": "No variable selected. Please select a variable to see its summary statistics.",
         "survival_time": "Survival Time",
         "days": "Days",
         "survival_description": "The time in days when the patient entered the cohort and died. In case the patient did not die within the cohort start and end date the value null.",

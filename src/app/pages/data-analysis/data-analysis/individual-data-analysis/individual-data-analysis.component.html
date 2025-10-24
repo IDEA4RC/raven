@@ -13,7 +13,7 @@
   </mat-step>
   <!-- STEPPER 3: Data Preparation -->
     <mat-step [stepControl]="dataPreparationFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-preparation.data-preparation' | translate}}</ng-template>
+    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data_preparation.data_preparation' | translate}}</ng-template>
     <app-data-preparation
     (nextStep)="goToNextStep()" 
       (previousStep)="goToPreviousStep()"></app-data-preparation>

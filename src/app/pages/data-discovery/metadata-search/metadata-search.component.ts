@@ -144,7 +144,7 @@ export class MetadataSearchComponent implements OnInit {
   
 
   constructor(
-    public metadataService: MetadataSearchService,
+    public metadataSearchService: MetadataSearchService,
     public selectionService: SelectionService,
     private cdrVariables: ChangeDetectorRef,
     private cdrAvailability: ChangeDetectorRef,
@@ -157,8 +157,8 @@ export class MetadataSearchComponent implements OnInit {
   ngOnInit(): void {
 
     // Get observables variables
-    this.observable_patients$ = this.metadataService.patients;
-    this.observable_metadata_variables$ = this.metadataService.variablesMetadata;
+    this.observable_patients$ = this.metadataSearchService.patients;
+    this.observable_metadata_variables$ = this.metadataSearchService.variablesMetadata;
 
     // Subscribe to the observable patients
     this.observable_patients$.subscribe((data) => {
@@ -180,7 +180,7 @@ export class MetadataSearchComponent implements OnInit {
     })
 
 
-    this.metadataService.getCancerPatients();
+    this.metadataSearchService.getCancerPatients();
 
   }
 
@@ -312,7 +312,7 @@ export class MetadataSearchComponent implements OnInit {
     this.cancerType = value.firstCtrl;
 
     // Get metadata variables
-    this.metadataService.getVariablesMetadata()
+    this.metadataSearchService.getVariablesMetadata()
     
     console.log(this.cancerType);
  }
@@ -572,9 +572,14 @@ showNotification(colorName: string, text: string, placementFrom: any, placementA
 }
 
 
-openDialogLogin(): void {  
-  
-  const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
+createWorkspace(): void {  
+
+  // Check if user is logged in by verifying access_token in localStorage
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) {
+    console.log('User not logged in. Opening login dialog.');
+    
+    const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
     // width: "740px",
     disableClose: true,
     data: {
@@ -585,44 +590,157 @@ openDialogLogin(): void {
       selectedCenters: this.selectedCenters
     }
   });
+    
+    
+  } else {
+    console.log('User is logged in. Proceeding to create workspace.');
+    this.saveWorkspace();
+  }
+  
+  
 }
-// Method to handle workspace creation from form data (by clicking continue button)
-continueWorkspace() {
+saveWorkspace() {
+
     // Get values from the form
     const workspaceName = this.workspaceNameCtrl.value;
     const workspaceDescription = this.workspaceDescriptionCtrl.value;
     
-    // Validate form data
-    if (!workspaceName || !workspaceDescription) {
-      this.showNotification(
-        "black",
-        "Please fill in all workspace fields",
-        "bottom",
-        "center"
-      );
-      return;
-    }
+
+    let wokspaceData = 
+      {
+        "name": workspaceName,
+        "description": workspaceDescription,
+        "metadata_search": 2,
+        "data_access": 1,
+        "data_analysis": 0,
+        "results_report": 0,
+        "status": "Data Permit",
+        "team_ids": []
+      }
+    //   {
+    //     "name": "HNC analysis risk factors v4",
+    //     "description": "This study focuses on identifying and analyzing risk factors associated with Head and Neck Cancer (HNC). By leveraging clinical, demographic, behavioral, and lifestyle data, the project aims to uncover patterns and variables that contribute to the development and progression of HNC. The goal is to support early detection strategies, improve patient stratification, and contribute to the development of personalized treatment and prevention approaches. Advanced statistical and machine learning methods are applied to evaluate the influence of multiple variables on cancer risk, with particular attention to modifiable factors.",
+    //     "metadata_search": 2,
+    //     "data_access": 1,
+    //     "data_analysis": 0,
+    //     "results_report": 0,
+    //     "status": "Data Permit",
+    //     "team_ids": []
+    // }
+    this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
+      next: (response: any) => {
+        console.log('Workspace created successfully:', response);
+
+        // Map selected variables to their IDs //TODO
+        let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
+        // this.data.selectedVariables.map((variable: any) => variable.id);
+        // Create the data application object
+        let dataApplication = {
+          
+            "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
+            "workspace_id": response.id,
+            "workspace_name": response.name,
+            "metadata": {
+                "type_cancer": this.cancerType,
+                "variables_id": variablesId,
+                "coes_id": this.selectedCenters
+            
+            }
+        }
+        //  "user_id": "e140f671-2247-4c53-b7bf-66d37",
+        //   "workspace_id":12,
+        //   "workspace_name": "Sarcoma Disease Trends",
+        //   "metadata": {
+        //       "type_cancer": "H&N",
+        //       "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
+        //       "coes_id": ["INT", "CLB"]
+        //   }
+        this.metadataSearchService.createDataApplication(dataApplication).subscribe({
+          next: (response: any) => {
+            console.log('Data application created successfully:', response);
+            this.showNotification(
+              "green",
+              "Workspace created successfully",
+              "bottom",
+              "center"
+            );
+            // this.showWorkspaceForm = true;
+          },
+          error: (error: any) => {
+            console.error('Error creating data application:', error);
+            this.showNotification(
+              "black",
+              "Error creating Data Application",
+              "bottom",
+              "center"
+            );
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error creating workspace:', error);
+        this.showNotification(
+          "black",
+          "Error creating workspace",
+          "bottom",
+          "center"
+        );
+      }
+    })
+
+
+  }
+// MALOOOOOO Method to handle workspace creation from form data (by clicking continue button)
+// saveWorkspace() {
+//     // Get values from the form
+//     const workspaceName = this.workspaceNameCtrl.value;
+//     const workspaceDescription = this.workspaceDescriptionCtrl.value;
     
-    // Create workspace data object
-    const workspaceData = {
-      name: workspaceName,
-      description: workspaceDescription,
-      cancerType: this.cancerType,
-      variables: this.selectedVariables,
-      centers: this.selectedCenters,
-      creationDate: new Date().toISOString()
-    };
+//     // Validate form data
+//     if (!workspaceName || !workspaceDescription) {
+//       this.showNotification(
+//         "black",
+//         "Please fill in all workspace fields",
+//         "bottom",
+//         "center"
+//       );
+//       return;
+//     }
+    
+//     // Create workspace data object
+//     const workspaceData = {
+//       name: workspaceName,
+//       description: workspaceDescription,
+//       cancerType: this.cancerType,
+//       variables: this.selectedVariables,
+//       centers: this.selectedCenters,
+//       creationDate: new Date().toISOString()
+//     };
         
-    // TODO: Send the data to a service for persistence
-    // this.metadataService.createWorkspace(workspaceData).subscribe(...
+//     // TODO: Send the data to a service for persistence
+//     this.metadataSearchService.createWorkspace(workspaceData).subscribe(
+//       (response) => {
+//         console.log('Workspace created successfully:', response);
+//         this.showNotification(
+//         "green",
+//         "Workspace created successfully",
+//         "bottom",
+//         "center"
+//       );
+//       },
+//       (error) => {
+//         console.error('Error creating workspace:', error);
+//         this.showNotification(
+//           "black",
+//           "Error creating workspace",
+//           "bottom",
+//           "center"
+//         );
+//       }
+//     );
     
-    this.showNotification(
-      "green",
-      "Workspace created successfully",
-      "bottom",
-      "center"
-    );
-}
+    
+// }
 
 backWorkspace() {
   this.metadataSearchFinished = false

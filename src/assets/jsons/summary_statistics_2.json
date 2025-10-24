@@ -1,0 +1,838 @@
+[
+  {
+    "rps_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 10.0,
+          "min": 19.0,
+          "max": 75.0,
+          "missing": 0.0,
+          "sum": 508.0,
+          "median": 53.5,
+          "q_25": 41.25,
+          "q_75": 63.25
+        },
+        "TUMOR_SIZE": {
+          "count": 9.0,
+          "min": 1.3,
+          "max": 9.4,
+          "missing": 1.0,
+          "sum": 38.7,
+          "median": 3.8,
+          "q_25": 2.8,
+          "q_75": 5.4
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 10,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 10,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 10,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 10,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 10,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 10,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 9,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 10
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 6,
+          "N/A": 4
+        },
+        "STATUS": {
+          "ALIVE": 7,
+          "DEAD": 3
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "0.0": 6,
+          "1.0": 4
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 7,
+          "1010 Leiomyosarcoma": 1,
+          "1016 MPNST": 1,
+          "1022 Other sarcomas": 1
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 7,
+          "1.0": 3
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 6,
+          "1.0": 4
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 6,
+          "1.0": 4
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically complete": 6,
+          "Macroscopically incomplete": 2,
+          "N/A2": 2
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 7,
+          "1.0": 3
+        },
+        "FNCLCC_GRADE": {
+          "Grade 1 tumor": 4,
+          "Grade 3 tumor": 3,
+          "Grade 2 tumor": 3
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "SEX": {
+          "MALE": 6,
+          "FEMALE": 4
+        }
+      },
+      "organization_id": 1
+    },
+    "pelvis_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 10.0,
+          "min": 21.0,
+          "max": 71.0,
+          "missing": 0.0,
+          "sum": 537.0,
+          "median": 60.5,
+          "q_25": 47.5,
+          "q_75": 65.75
+        },
+        "TUMOR_SIZE": {
+          "count": 6.0,
+          "min": 1.1,
+          "max": 9.3,
+          "missing": 4.0,
+          "sum": 24.200000000000003,
+          "median": 3.4,
+          "q_25": 2.275,
+          "q_75": 4.675000000000001
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 10,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 10,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 10,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 10,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 10,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 10,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 6,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 10
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 7,
+          "N/A": 3
+        },
+        "STATUS": {
+          "ALIVE": 6,
+          "DEAD": 4
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "0.0": 5,
+          "1.0": 5
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 3,
+          "1010 Leiomyosarcoma": 3,
+          "1013 Solitary fibrous tumour": 2,
+          "1022 Other sarcomas": 1,
+          "1016 MPNST": 1
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 7,
+          "1.0": 3
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 7,
+          "1.0": 3
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically incomplete": 5,
+          "Macroscopically complete": 4,
+          "N/A2": 1
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "FNCLCC_GRADE": {
+          "Grade 2 tumor": 4,
+          "Grade 3 tumor": 3,
+          "Grade 1 tumor": 3
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 9,
+          "1.0": 1
+        },
+        "SEX": {
+          "FEMALE": 5,
+          "MALE": 5
+        }
+      },
+      "organization_id": 1
+    },
+    "rps_pelvis_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 10.0,
+          "min": 42.0,
+          "max": 71.0,
+          "missing": 0.0,
+          "sum": 570.0,
+          "median": 57.5,
+          "q_25": 49.75,
+          "q_75": 64.75
+        },
+        "TUMOR_SIZE": {
+          "count": 7.0,
+          "min": 1.1,
+          "max": 4.9,
+          "missing": 3.0,
+          "sum": 21.599999999999998,
+          "median": 2.8,
+          "q_25": 2.05,
+          "q_75": 4.35
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 10,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 10,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 10,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 10,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 10,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 10.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 10,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 7,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 10
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 6,
+          "N/A": 4
+        },
+        "STATUS": {
+          "ALIVE": 7,
+          "DEAD": 3
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "1.0": 6,
+          "0.0": 4
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 5,
+          "1010 Leiomyosarcoma": 2,
+          "1013 Solitary fibrous tumour": 2,
+          "1022 Other sarcomas": 1
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically complete": 5,
+          "Macroscopically incomplete": 4,
+          "N/A2": 1
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 9,
+          "1.0": 1
+        },
+        "FNCLCC_GRADE": {
+          "Grade 2 tumor": 4,
+          "Grade 3 tumor": 3,
+          "Grade 1 tumor": 3
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 8,
+          "1.0": 2
+        },
+        "SEX": {
+          "FEMALE": 5,
+          "MALE": 5
+        }
+      },
+      "organization_id": 1
+    }
+  },
+  {
+    "rps_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 304.0,
+          "min": 18.0,
+          "max": 75.0,
+          "missing": 0.0,
+          "sum": 13768.0,
+          "median": 44.5,
+          "q_25": 31.75,
+          "q_75": 59.25
+        },
+        "TUMOR_SIZE": {
+          "count": 277.0,
+          "min": 1.1,
+          "max": 10.0,
+          "missing": 27.0,
+          "sum": 1503.4,
+          "median": 5.4,
+          "q_25": 3.1,
+          "q_75": 7.9
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 304,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 304,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 304,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 304,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 304,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 304.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 304,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 277,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 304
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 227,
+          "N/A": 77
+        },
+        "STATUS": {
+          "ALIVE": 157,
+          "DEAD": 147
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "0.0": 220,
+          "1.0": 84
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 75,
+          "1022 Other sarcomas": 52,
+          "1016 MPNST": 48,
+          "1013 Solitary fibrous tumour": 47,
+          "1019 UPS": 41,
+          "1010 Leiomyosarcoma": 41
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 222,
+          "1.0": 82
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 234,
+          "1.0": 70
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 227,
+          "1.0": 77
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically complete": 193,
+          "Macroscopically incomplete": 85,
+          "N/A2": 26
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 279,
+          "1.0": 25
+        },
+        "FNCLCC_GRADE": {
+          "Grade 1 tumor": 117,
+          "Grade 2 tumor": 95,
+          "Grade 3 tumor": 91,
+          "N/A": 1
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 286,
+          "1.0": 18
+        },
+        "SEX": {
+          "FEMALE": 154,
+          "MALE": 150
+        }
+      },
+      "organization_id": 1
+    },
+    "pelvis_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 276.0,
+          "min": 18.0,
+          "max": 75.0,
+          "missing": 0.0,
+          "sum": 13058.0,
+          "median": 46.0,
+          "q_25": 35.75,
+          "q_75": 61.25
+        },
+        "TUMOR_SIZE": {
+          "count": 245.0,
+          "min": 1.0,
+          "max": 9.9,
+          "missing": 31.0,
+          "sum": 1351.1,
+          "median": 5.6,
+          "q_25": 3.2,
+          "q_75": 7.8
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 276,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 276,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 276,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 276,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 276,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 276.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 276,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 245,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 276
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 192,
+          "N/A": 84
+        },
+        "STATUS": {
+          "ALIVE": 146,
+          "DEAD": 130
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "0.0": 207,
+          "1.0": 69
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 85,
+          "1019 UPS": 41,
+          "1022 Other sarcomas": 39,
+          "1010 Leiomyosarcoma": 39,
+          "1016 MPNST": 38,
+          "1013 Solitary fibrous tumour": 34
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 213,
+          "1.0": 63
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 205,
+          "1.0": 71
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 205,
+          "1.0": 71
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically complete": 160,
+          "Macroscopically incomplete": 87,
+          "N/A2": 29
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 255,
+          "1.0": 21
+        },
+        "FNCLCC_GRADE": {
+          "Grade 3 tumor": 103,
+          "Grade 2 tumor": 88,
+          "Grade 1 tumor": 80,
+          "N/A": 5
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 264,
+          "1.0": 12
+        },
+        "SEX": {
+          "FEMALE": 149,
+          "MALE": 127
+        }
+      },
+      "organization_id": 1
+    },
+    "rps_pelvis_cohort": {
+      "numeric": {
+        "AGE": {
+          "count": 590.0,
+          "min": 18.0,
+          "max": 75.0,
+          "missing": 0.0,
+          "sum": 27301.0,
+          "median": 45.0,
+          "q_25": 32.25,
+          "q_75": 61.0
+        },
+        "TUMOR_SIZE": {
+          "count": 530.0,
+          "min": 1.0,
+          "max": 10.0,
+          "missing": 60.0,
+          "sum": 2895.8,
+          "median": 5.5,
+          "q_25": 3.125,
+          "q_75": 7.9
+        }
+      },
+      "categorical": {
+        "LOCAL_RECURRENCE": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "MULTIFOCALITY": {
+          "count": 590,
+          "missing": 0
+        },
+        "STATUS": {
+          "count": 590,
+          "missing": 0
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "HISTOLOGY": {
+          "count": 590,
+          "missing": 0
+        },
+        "POST_OPERATIVE_RADIO": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "count": 590,
+          "missing": 0
+        },
+        "DISTANT_METASTASIS": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "FNCLCC_GRADE": {
+          "count": 590,
+          "missing": 0
+        },
+        "TUMOR_RUPTURE": {
+          "count": 590.0,
+          "missing": 0.0
+        },
+        "SEX": {
+          "count": 590,
+          "missing": 0
+        }
+      },
+      "num_complete_rows_per_node": 530,
+      "counts_unique_values": {
+        "LOCAL_RECURRENCE": {
+          "0.0": 590
+        },
+        "MULTIFOCALITY": {
+          "MULTIFOCAL TUMOR": 426,
+          "N/A": 164
+        },
+        "STATUS": {
+          "ALIVE": 309,
+          "DEAD": 281
+        },
+        "PRE_OPERATIVE_RADIO": {
+          "0.0": 434,
+          "1.0": 156
+        },
+        "HISTOLOGY": {
+          "1004/1007 Liposarcoma": 165,
+          "1022 Other sarcomas": 92,
+          "1016 MPNST": 88,
+          "1010 Leiomyosarcoma": 82,
+          "1019 UPS": 82,
+          "1013 Solitary fibrous tumour": 81
+        },
+        "POST_OPERATIVE_RADIO": {
+          "0.0": 441,
+          "1.0": 149
+        },
+        "PRE_OPERATIVE_CHEMO": {
+          "0.0": 445,
+          "1.0": 145
+        },
+        "POST_OPERATIVE_CHEMO": {
+          "0.0": 437,
+          "1.0": 153
+        },
+        "COMPLETENESS_OF_RESECTION": {
+          "Macroscopically complete": 358,
+          "Macroscopically incomplete": 175,
+          "N/A2": 57
+        },
+        "DISTANT_METASTASIS": {
+          "0.0": 540,
+          "1.0": 50
+        },
+        "FNCLCC_GRADE": {
+          "Grade 1 tumor": 201,
+          "Grade 3 tumor": 197,
+          "Grade 2 tumor": 186,
+          "N/A": 6
+        },
+        "TUMOR_RUPTURE": {
+          "0.0": 559,
+          "1.0": 31
+        },
+        "SEX": {
+          "FEMALE": 307,
+          "MALE": 283
+        }
+      },
+      "organization_id": 1
+    }
+  }
+]

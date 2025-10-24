@@ -291,9 +291,9 @@
     <mat-card-actions class="footer-workspace">
       <!-- Back button -->
       <button mat-button class="back-button" (click)="backWorkspace()">{{'pages.metadata_search.back' | translate}}</button>
-     <!-- Continue button -->
+      <!-- Continue button -->
       <button mat-raised-button color="primary" class="continue-button" type="submit"
-      [disabled]="workspaceNameCtrl.invalid || workspaceDescriptionCtrl.invalid" (click)="openDialogLogin()"
+      [disabled]="workspaceNameCtrl.invalid || workspaceDescriptionCtrl.invalid" (click)="createWorkspace()"
       > {{'pages.metadata_search.continue' | translate}} </button>
     </mat-card-actions>
   </mat-card>

@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { forkJoin, Subject } from "rxjs";
 import { HttpClient} from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { da } from "date-fns/locale";
 // import { environment } from "src/environments/environment";
 
 @Injectable({
@@ -62,6 +63,8 @@ export class MetadataSearchService {
      * @returns 
      */
     createWorkspace(data:any) {
+      console.log(data);
+      
       // const url = `${environment.base_url}${environment.raven_url}/workspaces/`;
       const url = '/raven-api/v1/workspaces/';
       return this.postRequest(url, data);
@@ -72,8 +75,10 @@ export class MetadataSearchService {
      * @param data the data of the data application to create
      *  */
     createDataApplication(data:any) {
+      console.log("AAAAAAAAAAAAAAAAAAAd",data);
+      
       const url = '/api/workspace-application/init';
-      return this.postRequest(url)
+      return this.postRequest(url, data);
     }
 
 

@@ -11,46 +11,51 @@
       <div class="grid-layout">
         <!-- LEFT COLUMN -->
         <div class="left-column">
+
+          <!-- Filters -->
           <mat-card class="inner-card">
-            <mat-card-title class="filter-title">
-              {{'pages.data-analysis.data_preparation.centers' | translate}}
-              </mat-card-title>
-            <mat-card-content>
-              <!-- <mat-selection-list>
-                <mat-list-option selected>APH P</mat-list-option>
-                <mat-list-option selected>INT</mat-list-option>
-                <mat-list-option selected>ISS-FJD</mat-list-option>
-              </mat-selection-list> -->
-              <section class="filter-checkbox-group">
-                <mat-checkbox checked>APH P</mat-checkbox>
-                <mat-checkbox checked>INT</mat-checkbox>
-                <mat-checkbox checked>ISS-FJD</mat-checkbox>
-              </section>
-            </mat-card-content>
-            <mat-card-title style="padding-top: 17px;" class="filter-title">
-              {{'pages.data-analysis.data_preparation.cohorts' | translate}}
-              </mat-card-title>
-            <mat-card-content>
-              <section class="filter-checkbox-group">
-                <mat-checkbox checked>Patients with SFT</mat-checkbox>
-                <mat-checkbox checked>Patients with SFT &gt; 45 years old</mat-checkbox>
-              </section>
-            </mat-card-content>
+            <div *ngIf="showCenters">
+              <mat-card-title class="filter-title">
+                {{'pages.data-analysis.data_preparation.centers' | translate}}
+                </mat-card-title>
+              <mat-card-content>
+                <section class="filter-checkbox-group" *ngFor="let center of selectedCenters">
+                  <mat-checkbox checked>{{center}}</mat-checkbox>
+                </section>
+              </mat-card-content>
+            </div>
+            <div *ngIf="showCohorts">
+              <mat-card-title class="filter-title">
+                {{'pages.data-analysis.data_preparation.cohorts' | translate}}
+                </mat-card-title>
+              <mat-card-content *ngIf="showCohorts">
+                <section class="filter-checkbox-group" *ngFor="let cohort of selectedCohorts">
+                  <mat-checkbox checked>{{cohort.cohort_name}}</mat-checkbox>
+                </section>
+              </mat-card-content>
+            </div>
           </mat-card>
-
          
-
+          <!-- Variables -->
           <mat-card class="inner-card">
             <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.variables' | translate}}</mat-card-title>
-            <mat-card-content>
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
+            <mat-card-content class="variables-content">
+              <!-- <mat-form-field appearance="outline" class="w-full">
+                <mat-label class="variables-search-label">{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
                 <mat-select>
                   <mat-option value="var1">Variable 1</mat-option>
                   <mat-option value="var2">Variable 2</mat-option>
                 </mat-select>
+              </mat-form-field> -->
+              <mat-form-field appearance="outline">
+                <mat-label class="variables-search-label">{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
+                <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)">
+                  <mat-option *ngFor="let option of optionsVariables" [value]="option">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
-              <button mat-stroked-button color="primary" class="w-full mt-2">
+              <button mat-stroked-button color="primary" class="create-variable-button" (click)="createVariable()">
                 <mat-icon>add</mat-icon>
                 {{'pages.data-analysis.data_preparation.create_variable' | translate}}
               </button>
@@ -63,12 +68,59 @@
           <mat-card class="inner-card full-height">
             <div class="summary-statistics-header">
               <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.summary_statistics' | translate}}</mat-card-title>
-              <mat-card-content>
+              <mat-card-content style="padding-bottom: 0px;">
+                <!-- Header -->
                 <div class="checkbox-group">
-                  <mat-checkbox checked>{{'pages.data-analysis.data_preparation.centers' | translate}}</mat-checkbox>
-                  <mat-checkbox checked>{{'pages.data-analysis.data_preparation.cohorts' | translate}}</mat-checkbox>
+                  <mat-checkbox checked [(ngModel)]="showCenters">
+                    {{'pages.data-analysis.data_preparation.centers' | translate}}
+                  </mat-checkbox>
+                  <mat-checkbox checked [(ngModel)]="showCohorts">
+                    {{'pages.data-analysis.data_preparation.cohorts' | translate}}
+                  </mat-checkbox>
                 </div>
               </mat-card-content>
+            </div>
+            <!-- VARIABLE NOT SELECTED -->
+            <div *ngIf="!selectedValue" class="no-variable-selected">
+              <p>{{'pages.data-analysis.data_preparation.no_variable_selected' | translate}}</p>
+            </div>
+
+            <!-- VARIABLE  SELECTED -->
+            <div *ngIf="selectedValue" style="width: 100%;">
+              <!-- Sub title -->
+              <div>
+                <div class="variable-title">
+                  {{ selectedValue.label }}
+                </div>
+                <span class="variable-description">
+                  Description: To be developed
+                </span>
+              </div>
+  
+              <!-- Cohorts table -->
+               <div class="table-container" *ngIf="showCohorts">
+                <table mat-table [dataSource]="dataSourceCohorts" class="statistics-table" >
+                  <!-- Column Column -->
+                  <ng-container *ngFor="let column of displayedColumnsCohorts" [matColumnDef]="column">
+                    <th mat-header-cell *matHeaderCellDef >{{ column }}</th>
+                    <td mat-cell *matCellDef="let element"> {{ element[column] }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsCohorts"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsCohorts;"></tr>
+                </table>
+               </div>
+              <!-- Centers table -->
+               <div class="table-container" *ngIf="showCenters">
+                <table mat-table [dataSource]="dataSourceCohorts" class="statistics-table" >
+                  <!-- Column Column -->
+                  <ng-container *ngFor="let column of displayedColumnsCohorts" [matColumnDef]="column">
+                    <th mat-header-cell *matHeaderCellDef >{{ column }}</th>
+                    <td mat-cell *matCellDef="let element"> {{ element[column] }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsCohorts"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsCohorts;"></tr>
+                </table>
+               </div>
             </div>
           </mat-card>
         </div>

@@ -76,27 +76,9 @@ export class DialogformLoginComponent implements OnInit {
       next: () => {
       this.showLoginForm = false
       this.showWorkspaceForm = true
-      let data = {
-          "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
-          "workspace_id":12312312,
-          "workspace_name": "A Title of Workspace",
-          "metadata": {
-              "type_cancer": "H&N",
-              "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
-              "coes_id": ["1"]
-          }
-      }
-      // this.metadataSearchService.createDataApplication(data).subscribe({
-      //   next: (response: any) => {
-      //     console.log('Data application created successfully:', response);
-      //   }
-      //   ,
-      //   error: (error: any) => {
-      //     console.error('Error creating data application:', error);
-          
-      //   }
-      // });
-      },
+      this.showLoginError = false
+      this.saveWorkspace();  
+    },
       // this.router.navigate(['/discovery/metadata-search']),
       error: (err: any) => {
       console.error('Login failed', err);
@@ -122,12 +104,23 @@ export class DialogformLoginComponent implements OnInit {
         "status": "Data Permit",
         "team_ids": []
       }
+    //   {
+    //     "name": "HNC analysis risk factors v4",
+    //     "description": "This study focuses on identifying and analyzing risk factors associated with Head and Neck Cancer (HNC). By leveraging clinical, demographic, behavioral, and lifestyle data, the project aims to uncover patterns and variables that contribute to the development and progression of HNC. The goal is to support early detection strategies, improve patient stratification, and contribute to the development of personalized treatment and prevention approaches. Advanced statistical and machine learning methods are applied to evaluate the influence of multiple variables on cancer risk, with particular attention to modifiable factors.",
+    //     "metadata_search": 2,
+    //     "data_access": 1,
+    //     "data_analysis": 0,
+    //     "results_report": 0,
+    //     "status": "Data Permit",
+    //     "team_ids": []
+    // }
     this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
       next: (response: any) => {
         console.log('Workspace created successfully:', response);
 
-        // Map selected variables to their IDs
-        let variablesId = this.data.selectedVariables.map((variable: any) => variable.id);
+        // Map selected variables to their IDs //TODO
+        let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
+        // this.data.selectedVariables.map((variable: any) => variable.id);
         // Create the data application object
         let dataApplication = {
           
@@ -141,6 +134,14 @@ export class DialogformLoginComponent implements OnInit {
             
             }
         }
+        //  "user_id": "e140f671-2247-4c53-b7bf-66d37",
+        //   "workspace_id":12,
+        //   "workspace_name": "Sarcoma Disease Trends",
+        //   "metadata": {
+        //       "type_cancer": "H&N",
+        //       "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
+        //       "coes_id": ["INT", "CLB"]
+        //   }
         this.metadataSearchService.createDataApplication(dataApplication).subscribe({
           next: (response: any) => {
             console.log('Data application created successfully:', response);

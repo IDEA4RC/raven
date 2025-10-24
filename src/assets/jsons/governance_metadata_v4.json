@@ -8,3 +8,13 @@
         "coes_id": ["INT", "ISS-FJD"]
     }
 }
+{
+    "creator_id": "414bf745-6345-403f-b7de-2ebfe72f622c", // If the user-id is modified as creator_id it will be modified here
+    "workspace_id": 1,
+    "type_cancer": "H&N", //(H&N or Sarc.)
+    "id_variables": ["Patient sex", "Patient race", "ClinicalStage usForMetastasis"],
+    "selectedid_coes": ["INT", "ISS-FJD"],
+    "status": 1,
+    "update_date": "2024-06-10T12:00:00Z", // New field added to track the last update date
+    "created_date": "2024-06-01T12:00:00Z" // New field added to track the creation date
+}

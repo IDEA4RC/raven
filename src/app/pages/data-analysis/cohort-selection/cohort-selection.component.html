@@ -42,62 +42,89 @@
         <div class="cohort-table-container">
             <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
-            <!-- Workspace ID Column -->
-            <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.id' | translate}}</th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-            </ng-container>
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef class="p-l-0">
+                    <mat-checkbox
+                    (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    color="primary"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()"
+                    >
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let element" class="p-l-0">
+                    <mat-checkbox
+                    (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(element) : null"
+                    color="primary"
+                    [checked]="selection.isSelected(element)"
+                    [aria-label]="checkboxLabel(element)"
+                    [disabled]="element.status === 0"
+                    >
+                    </mat-checkbox>
+                </td>
 
-            <!-- Workspace Name Column -->
-            <ng-container matColumnDef="cohort_name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.name' | translate}}</th>
-            <td mat-cell *matCellDef="let element"> {{element.cohort_name}} </td>
-            </ng-container>
+                </ng-container>
 
-            <!-- Creation Date Column -->
-            <ng-container matColumnDef="creation_date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.creation_date' | translate}}</th>
-            <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.creation_date | date:'dd/MM/yyyy'}} </td>
-            </ng-container>
 
-            <!-- Last Modification Column -->
-            <ng-container matColumnDef="update_date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.update_date' | translate}}</th>
-                <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.update_date | date:'dd/MM/yyyy'}} </td>
-            </ng-container>
+                <!-- Workspace ID Column -->
+                <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.id' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                </ng-container>
 
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef  mat-sort-header>{{'pages.data-analysis.cohort-selection.status' | translate}}</th>
-            <td mat-cell *matCellDef="let element"> 
-                <div class="status-column">
-                    <span class="status-created" *ngIf="element.status === 0">{{'pages.data-analysis.cohort-selection.status_created' | translate}}</span>
-                    <span class="status-executed" *ngIf="element.status === 1">{{'pages.data-analysis.cohort-selection.status_executed' | translate}}</span>
-                </div>
-            </td>
-            </ng-container>
+                <!-- Workspace Name Column -->
+                <ng-container matColumnDef="cohort_name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.name' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.cohort_name}} </td>
+                </ng-container>
 
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
-            <td mat-cell *matCellDef="let element"> 
-                <!-- Execute query -->
-                <button mat-button class="execute-button" *ngIf="element.status === 0" (click)="executeQuery(element.id)">
-                <span class="cohort-text">
-                    {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
-                    <mat-icon class="cohort-icon">chevron_right</mat-icon>
-                </span>
-                </button>
-            </td>
+                <!-- Creation Date Column -->
+                <ng-container matColumnDef="creation_date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.creation_date' | translate}}</th>
+                <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.creation_date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
 
-            </ng-container>
+                <!-- Last Modification Column -->
+                <ng-container matColumnDef="update_date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.update_date' | translate}}</th>
+                    <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.update_date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef  mat-sort-header>{{'pages.data-analysis.cohort-selection.status' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> 
+                    <div class="status-column">
+                        <span class="status-created" *ngIf="element.status === 0">{{'pages.data-analysis.cohort-selection.status_created' | translate}}</span>
+                        <span class="status-executed" *ngIf="element.status === 1">{{'pages.data-analysis.cohort-selection.status_executed' | translate}}</span>
+                    </div>
+                </td>
+                </ng-container>
 
-        <!-- Pagination -->
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> 
+                    <!-- Execute query -->
+                    <button mat-button class="execute-button" *ngIf="element.status === 0" (click)="executeQuery(element.id)">
+                    <span class="cohort-text">
+                        {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
+                        <mat-icon class="cohort-icon">chevron_right</mat-icon>
+                    </span>
+                    </button>
+                </td>
+
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <!-- Pagination -->
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
     
     </mat-card-content>
@@ -106,7 +133,7 @@
         <!-- Back button -->
         <button mat-button class="back-button" (click)="backAnalysis()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
        <!-- Continue button -->
-        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()"
+        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="this.selection.selected.length == 0"
         > {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
       </mat-card-actions>
 </mat-card>

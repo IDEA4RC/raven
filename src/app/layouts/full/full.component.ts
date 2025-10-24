@@ -162,110 +162,6 @@ export class FullComponent implements OnInit {
       this.updateNavItems(false);
     }
   
-    
-    // console.log("AAAAAAAAAAAAAAAAAAAAAA", this.navItems);
-    // if(localStorage.getItem('access') === 'login') {
-    //   this.navItems = [
-    //     {
-    //       navCap: '',
-    //     },
-    //     {
-    //       displayName: 'My Workspace',
-    //       iconName: 'layout-grid',
-    //       route: '/workspace',
-    //     }
-    //   ]
-    // } else {
-    //   this.navItems = [
-    //     {
-    //       navCap: '',
-    //     },
-        
-    //     {
-    //       displayName: 'Log In',
-    //       iconName: 'login',
-    //       route: '/authentication/login',
-    //     }
-    //   ]
-    // }
-
-    
-  
-    // // Get observables variables
-    // this.observable_wokspace$ = this.fullService.workspace;
-    
-    // // Subscribe to the observable workspace and add to subscription container
-    // this.subscriptions.add(
-    //   this.observable_wokspace$.subscribe((data) => {
-
-      
-    //   if (data) {
-    //     // Add the workspace menu to the navItems
-    //     this.navItems = [
-    //       {
-    //         navCap: '',
-    //       },
-    //       {
-    //         displayName: 'My Workspace',
-    //         iconName: 'layout-grid',
-    //         route: '/workspace',
-    //       },
-    //       {
-    //         navCap: '',
-    //       },
-    //       {
-    //         displayName: data.name,
-    //         iconName: 'assignment',
-    //         route: `/workspace/individual-workspace/${data.id}`,
-    //         children: [
-    //           {
-    //             displayName: 'Metadata Search',
-    //             iconName: 'search',
-    //             route: 'apps/blog/post',
-    //           },
-    //           {
-    //             displayName: 'Data Access',
-    //             iconName: 'lock_open',
-    //             route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
-    //           },
-    //           {
-    //             displayName: 'Data Analysis',
-    //             iconName: 'deployed_code',
-    //             route: 'apps/blog/post',
-    //           },
-    //           {
-    //             displayName: 'Result Report',
-    //             iconName: 'check',
-    //             route: 'apps/blog/detail/Early Black Friday Amazon deals: cheap TVs, headphones',
-    //           }
-              
-    //         ]
-    //       }
-    //     ];
-    //   }
-      
-    //   })
-    // );
-
-    // // If the user is logged in, get the workspace data from the user
-    // if(localStorage.getItem('access') === 'login') {
-
-    //   // Get the current route
-    //   const currentUrl = window.location.pathname;
-    //   const match = currentUrl.match(/\/workspace\/individual-workspace\/(\d+)/);
-    //   const workspaceId = match ? match[1] : null;
-    //   console.log("Current URL:", currentUrl);
-    //   console.log("Workspace ID:", workspaceId);
-      
-
-    //   // Pass the workspace ID if available
-    //   if (workspaceId) {
-    //   }
-    //   // Get the workspace data
-    //   this.fullService.getWorkspace('1');
-    // }
-
-
   }
 
   ngOnDestroy(): void {
@@ -302,12 +198,13 @@ export class FullComponent implements OnInit {
         route: `/workspace/${workspace.id}/data-discovery`,
         children: [
           { displayName: 'Data Discovery', iconName: 'search', route: `/workspace/${workspace.id}/data-discovery` },
-          { displayName: 'Data Permit', iconName: 'lock_open', route: `/workspace/${workspace.id}/data-permit` },
-          { displayName: 'Data Analysis', iconName: 'deployed_code', route: `/workspace/${workspace.id}/data-analysis` },
+          { displayName: 'Data Permit', iconName: 'lock-open', route: `/workspace/${workspace.id}/data-permit` },
+          { displayName: 'Data Analysis', iconName: 'chart-line', route: `/workspace/${workspace.id}/data-analysis` },
           { displayName: 'Data Finalization', iconName: 'check', route: `/workspace/${workspace.id}/data-finalization` }
         ]
       });
     }
+    
 
     console.log("New Nav Items:", newNavItems);
     this.navItems = newNavItems;

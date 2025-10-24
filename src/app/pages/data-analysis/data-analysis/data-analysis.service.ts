@@ -16,6 +16,10 @@ export class DataAnalysisService {
   cohort = new Subject<any>();
   cohort$ = this.cohort.asObservable();
 
+  //Data preparation observables (summary statistics, variables, etc)
+  data_preparation = new Subject<any>();
+  data_preparation$ = this.data_preparation.asObservable();
+
   constructor(private httpClient: HttpClient) {}
 
   /**
@@ -62,6 +66,27 @@ export class DataAnalysisService {
     this.getRequest(url).subscribe((data) => {
         this.cohort.next(data);
     });
+  }
+
+  /**
+   * Function to get summary statistics for data preparation
+   * @returns the summary statistics
+   */
+  getSummaryStatistics() {
+    const url = './assets/jsons/summary_statistics_2.json';
+    this.getRequest(url).subscribe((data) => {
+        this.data_preparation.next(data);
+    });
+  }
+
+  /**
+   * Function to get metadata search for data preparation (get variables and centers selected in metadata search)
+   * @param workspace_id id of the workspace
+   * @returns the metadata search of the given workspace id
+   */
+  getMetadataSearch(workspace_id: number) {
+    const url = './assets/jsons/metadata_search.json';
+    return this.getRequest(url);
   }
 
 

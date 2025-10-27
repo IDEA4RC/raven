@@ -183,7 +183,13 @@
       "analytic-selection": {
         "analytic-selection": "Analytic Selection",
         "analytic-tools-executed": "List of Analytic Tools Executed",
+        "analytic-tool-selection": "Analytic Tool Selection",
         "select-algorithm": "Select Algorithm",
+        "select-analysis-method": "Select the analysis method you want to run:",
+        "click-more-info": "Click to see more information about each algorithm",
+        "select-analysis-method-label": "Select Analysis Methods",
+        "select-variable": "Select the variable:",
+        "save-execute": "Save & Execute",
         "continue": "Continue",
         "back": "Back"
       }

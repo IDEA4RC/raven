@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-analytic-selection',
@@ -21,20 +22,60 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   workspaceId: string | undefined;
   analysisId: string | undefined;
 
-  // Observables cohort
-  observable_cohort$ : Observable<any> | undefined;
-  private cohortSubscription: any;
+  // Observables algorithm
+  observable_algorithm$ : Observable<any> | undefined;
+  private algorithmSubscription: any;
 
   // Table components
   dataSource = new MatTableDataSource<Algorithm>();
-  displayedColumns: string[] = ['select', 'id','cohort_name', 'creation_date', 'update_date', 'status', 'action'];
+  displayedColumns: string[] = ['id','algorithm_name', 'creation_date', 'update_date', 'action'];
 
+  //Selection forms
+  selectedMethod: string | null = null;
+  selectedMethodInfo: string | null = null;
+  methods = [
+  {
+    value: "crosstabulation",
+    label: "Crosstabulation",
+    info: "This algorithm computes a cross-table (contingency table) for two or more categorical variables. It returns a table of counts showing the frequency of each combination of categories."
+  },
+  {
+    value: "kaplan-meier",
+    label: "Kaplan-Meier",
+    info: "The Kaplan-Meier estimator computes survival probabilities over time for one or more groups, typically used in time-to-event analysis."
+  },
+  {
+    value: "chi-squared",
+    label: "Chi-squared",
+    info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
+  },
+  {
+    value: "glm",
+    label: "GLM",
+    info: "The Generalized Linear Model (GLM) fits a linear model to data using a specified link function, allowing analysis of outcomes that are not normally distributed."
+  },
+  {
+    value: "coxph",
+    label: "CoxPH",
+    info: "The Cox Proportional Hazards model estimates the relationship between survival time and explanatory variables, accounting for censored data."
+  },
+  {
+    value: "log-rank-test",
+    label: "Log-rank test",
+    info: "The Log-rank test compares the survival distributions of two or more groups to determine if there are statistically significant differences."
+  }
+];
+
+  variables: string[] = ['Metastasis', 'Site of SFT', 'Variable 3', 'Variable 4'];
+  selectedVariables: string[] = [];
+  
   selection = new SelectionModel<any>(true, []);
+  selectAlhorithm = false;
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() nextStep = new EventEmitter<void>();
-
+  @Output() previousStep = new EventEmitter<void>();
   constructor(
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
@@ -52,12 +93,12 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     }
 
     // Get the observable from the service
-    this.observable_cohort$ = this.dataAnalysisService.cohort
+    this.observable_algorithm$ = this.dataAnalysisService.algorithm
     // Subscribe to the observable patients
-    this.cohortSubscription = this.observable_cohort$.subscribe((data) => {
+    this.algorithmSubscription = this.observable_algorithm$.subscribe((data) => {
       this.dataSource.data = data;
     });
-    // this.dataAnalysisService.getAlgorithms();
+    this.dataAnalysisService.getAlgorithms(1); // TODO Pass the analysis ID here
   }
 
   ngAfterViewInit() {
@@ -68,8 +109,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Unsubscribe from the observable to prevent memory leaks
-    if (this.cohortSubscription) {
-      this.cohortSubscription.unsubscribe();
+    if (this.algorithmSubscription) {
+      this.algorithmSubscription.unsubscribe();
     }
   }
 
@@ -87,46 +128,43 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   // Functions for buttons
   selectAlgorithm() {
-    // Logic to navigate to the cohort manager
-    console.log('Navigating to Algorithm Manager');
+    // Show the container to select an algorithm
+    this.selectAlhorithm = true;
+  }
+  goBackAlgorithms() {
+    this.selectAlhorithm = false;
+  }
+  openAlgorithm(algorithm_id: number) {
+  }
+  deleteAlgorithm(algorithm_id: number) {
+  }
+
+  // Functions of algorithm selection section
+  onMethodChange(value: string) {
+    const method = this.methods.find(m => m.value === value);
+    this.selectedMethodInfo = method ? method.info : null;
+  }
+  onVariablesSelected(value: any) {
+  }
+  removeVariable(variable: string) {
+    const index = this.selectedVariables.indexOf(variable);
+    if (index >= 0) {
+      this.selectedVariables.splice(index, 1);
+      // Trigger Angular change detection to update the <mat-select>
+      this.selectedVariables = [...this.selectedVariables];
+    }
+  }
+
+  saveAlgorithm() {
+    // Logic to save the selected algorithm and variables
+    console.log('Saving algorithm:', this.selectedMethod);
+    console.log('Selected variables to include:', this.selectedVariables);
   }
   
-  // Button to navigate to the previous page (Data Analysis main page)
-  backAnalysis() {
-     this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
+  goBack() {
+    this.previousStep.emit();
   }
-  goNext() {
-    // Update the selection in the service
-    this.selectionService.setSelected(this.selection.selected);
-    this.nextStep.emit();
-  }
-
-
-  // ################## SELECTION MODEL FUNCTIONS ##################
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected(): any {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.filter(row => row.status !== 0).length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle(): void {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.filter(row => row.status !== 0).forEach((row) => this.selection.select(row));
-  }
-
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: Algorithm): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
-      row.id + 1
-    }`;
-  }
+  
 
 
 }

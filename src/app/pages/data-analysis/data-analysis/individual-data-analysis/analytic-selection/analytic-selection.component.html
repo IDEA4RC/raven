@@ -1,4 +1,4 @@
-<mat-card class="container">
+<mat-card class="container" *ngIf="!selectAlhorithm">
 
     <!-- Card Header -->
     <div class="header-div">
@@ -25,16 +25,143 @@
         </div>
 
         <div class="analytic-table-container">
-            
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+                <!-- Workspace ID Column -->
+                <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.id' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                </ng-container>
+
+                <!-- Workspace Name Column -->
+                <ng-container matColumnDef="algorithm_name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.name' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.algorithm_name}} </td>
+                </ng-container>
+
+                <!-- Creation Date Column -->
+                <ng-container matColumnDef="creation_date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.creation_date' | translate}}</th>
+                <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.creation_date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <!-- Last Modification Column -->
+                <ng-container matColumnDef="update_date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.update_date' | translate}}</th>
+                    <td mat-cell *matCellDef="let element" style="color: #596F79;"> {{element.update_date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
+                <td mat-cell *matCellDef="let element"> 
+                    <!-- Open Analysis button -->
+                    <button mat-button class="open-button" (click)="openAlgorithm(element.id)">
+                        <mat-icon>open_in_new</mat-icon>
+                        {{'pages.workspace.open' | translate}}
+                        </button>
+                        <!-- Delete button -->
+                        <button class="delete-button" (click)="deleteAlgorithm(element.id)">
+                        <img
+                            src="./assets/images/icons/workspace/delete-icon.svg"
+                            alt="delete-icon"
+                            
+                        />
+                    
+                    </button>
+                </td>
+
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <!-- Pagination -->
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
     
     </mat-card-content>
     <!-- Card Footer -->
-      <mat-card-actions class="footer">
-        <!-- Back button -->
-        <button mat-button class="back-button" (click)="backAnalysis()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
-       <!-- Continue button -->
-        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="this.selection.selected.length == 0"
-        > {{'pages.data-analysis.analytic-selection.continue' | translate}} </button>
-      </mat-card-actions>
+    <mat-card-actions class="footer">
+    <!-- Back button -->
+    <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
+    </mat-card-actions>
+</mat-card>
+
+<mat-card class="container" *ngIf="selectAlhorithm">
+
+    <!-- Card Header -->
+    <div class="header-div">
+    <div class="header-title">
+        <h4>{{'pages.data-analysis.analytic-selection.analytic-tool-selection' | translate}}</h4>
+    </div>
+    </div>
+
+    <mat-card-content style="padding-top: 24px;">
+        
+        <div class="grid-layout">
+            <div class="left-column">
+                <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.select-analysis-method' | translate}}</p>
+                <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.click-more-info' | translate}}</p>
+                <mat-form-field appearance="outline" class="algorithm-select">
+                    <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.select-analysis-method-label' | translate}}</mat-label>
+                    <mat-select [(value)]="selectedMethod" (selectionChange)="onMethodChange($event.value)">
+                    <mat-option *ngFor="let method of methods" [value]="method.value">
+                        {{ method.label }}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                 <!-- Info box (visible when a method is selected) -->
+                <div class="info-card" *ngIf="selectedMethodInfo">
+                    <mat-icon color="primary" class="info-icon">info</mat-icon>
+                    <p class="info-content">{{ selectedMethodInfo }}</p>
+                    <button mat-icon-button class="close-btn" (click)="selectedMethodInfo = null">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                
+            </div>
+            <div class="right-column">
+                <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.select-variable' | translate}}</p>
+                <div class="variable-selector">
+                    <mat-form-field appearance="outline" class="algorithm-select">
+                        <mat-label class="algorithm-search-label">Select the variable</mat-label>
+                        <mat-select [(value)]="selectedVariables" multiple>
+                        <mat-option *ngFor="let variable of variables" [value]="variable">
+                            {{ variable }}
+                        </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Selected variables shown as chips outside -->
+                    <div class="selected-chips">
+                        <mat-chip-set>
+                        <mat-chip class="variables-chips" *ngFor="let variable of selectedVariables" (removed)="removeVariable(variable)">
+                            {{ variable }}
+                            <button matChipRemove aria-label="Remove">
+                            <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-chip>
+                        </mat-chip-set>
+                    </div>
+                    </div>
+
+
+
+            </div>
+
+        </div>
+    
+    </mat-card-content>
+    <!-- Card Footer -->
+    <mat-card-actions class="footer">
+    <!-- Back button -->
+    <button mat-button class="back-button" (click)="goBackAlgorithms()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
+    <!-- Save and Execute button -->
+    <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="saveAlgorithm()"
+    > {{'pages.data-analysis.analytic-selection.save-execute' | translate}} </button>
+      
+</mat-card-actions>
 </mat-card>

@@ -12,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
 import { CohortSelectionComponent } from './data-analysis/individual-data-analysis/cohort-selection/cohort-selection.component';
 import { DataQuaityComponent } from "./data-analysis/individual-data-analysis/data-quaity/data-quaity.component";
 import { DataPreparationComponent } from './data-analysis/individual-data-analysis/data-preparation/data-preparation.component';
@@ -38,6 +39,7 @@ import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-de
     MatNativeDateModule,
     NgApexchartsModule,
     MatDialogModule,
+    MatChipsModule
 ]
 })
 export class DataAnalysisModule { }

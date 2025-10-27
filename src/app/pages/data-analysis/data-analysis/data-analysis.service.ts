@@ -20,6 +20,10 @@ export class DataAnalysisService {
   data_preparation = new Subject<any>();
   data_preparation$ = this.data_preparation.asObservable();
 
+  // Algorithm Selection observables
+  algorithm = new Subject<any>();
+  algorithm$ = this.algorithm.asObservable();
+
   constructor(private httpClient: HttpClient) {}
 
   /**
@@ -87,6 +91,20 @@ export class DataAnalysisService {
   getMetadataSearch(workspace_id: number) {
     const url = './assets/jsons/metadata_search.json';
     return this.getRequest(url);
+  }
+
+  /**
+   * Function to get algorithms for algorithm selection
+   * @param analysis_id id of the analysis
+   * @returns the list of algorithms of an analysis
+   */
+  getAlgorithms(analysis_id: number) {
+    //TODO: replace with API endpoint
+    const url = './assets/jsons/algorithms.json';
+    this.getRequest(url).subscribe((data) => {
+        // Emit the data through the algorithm subject
+        this.algorithm.next(data);
+    });
   }
 
 

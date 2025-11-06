@@ -4,6 +4,7 @@ import { DataAnalysisService } from '../../data-analysis.service';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { MatTableDataSource } from '@angular/material/table';
+
 @Component({
   selector: 'app-data-preparation',
   templateUrl: './data-preparation.component.html',
@@ -18,27 +19,38 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   workspaceId: string | undefined;
   analysisId: string | undefined;
 
-  selectedCenters: any[] = ["APH P", "INT", "ISS-FJD"];
+
+  
+  allCohorts: any[] = []; // Loaded from cohort selection
+  allCenters: any[] = [
+    {center_name: "APH P"},
+    {center_name: "INT"},
+    {center_name: "ISS-FJD"}
+  ] // Loaded from cohort selection
+
+  // Variables for the filters
+  selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
+
   showCenters = true;
   showCohorts = true;
   variableList: any[] = [];
   summaryStatisticsCohorts: any[] = [];
   summaryStatisticsCenters: any[] = [];
-  summryTableCat : any[] = [
+  summaryTableCat : any[] = [
     { Statistics: 'N', field: "count", Total: 0},
     { Statistics: 'Missing', field: "missing", Total: 0 }
-  ]
-  summryTableNum: any[] = [
-    { Statistics: 'N', field: "count", Total: 0},
-    { Statistics: 'Median', field: "median", Total: 0 },
-    { Statistics: 'Min', field: "min", Total: 0 },
-    { Statistics: 'Max', field: "max", Total: 0 },
-    { Statistics: 'Missing', field: "missing", Total: 0 },
-    { Statistics: 'Q1 (25%)', field: "q_25", Total: 0 },
-    { Statistics: 'Q3 (75%)', field: "q_75", Total: 0 },
-    { Statistics: 'Sum', field: "sum", Total: 0 }
-  ]
+  ];
+  summaryTableNum: any[] = [
+    { Statistics: 'N', field: "count" },
+    { Statistics: 'Mean', field: "mean" },
+    { Statistics: 'Min', field: "min" },
+    { Statistics: 'Max', field: "max" },
+    { Statistics: 'Missing', field: "missing" },
+  ];
+
+  // Object to show the summary statistics by center
+  centersTables: any = {};
    
 
   // Variable bound to the selected value
@@ -49,14 +61,16 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   // Table components
   dataSourceCohorts = new MatTableDataSource<any>();
-  displayedColumnsCohorts: string[] = ['Statistics', 'Total', 'Cohort 1', 'Cohort 2'];
+  displayedColumnsCohorts: string[] = [];
 
   dataSourceCenters = new MatTableDataSource<any>();
-  displayedColumnsCenters: string[] = ['Statistics', 'Total', 'Cohort 1', 'Cohort 2'];
+  displayedColumnsCenters: string[] = [];
 
   // Observables cohort
-  observable_data_preparation$ : Observable<any> | undefined;
-  private dataPreparationSubscription: any;
+  observable_data_preparation_cohort$ : Observable<any> | undefined;
+  observable_data_preparation_center$ : Observable<any> | undefined;
+  private dataPreparationSubscriptionCohort: any;
+  private dataPreparationSubscriptionCenter: any;
 
   constructor(
       private dataAnalysisService: DataAnalysisService,
@@ -107,23 +121,37 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     // Subscribe to the observable from the service
     this.selectionService.selectedItems$.subscribe(items => {
-      this.selectedCohorts = items;
-      // Aquí puedes hacer cualquier cosa con los datos
-      console.log(this.selectedCohorts);
+      this.allCohorts = items;
+      // TODO: Aquí puedes hacer cualquier cosa con los datos
+      console.log(this.allCohorts);
     });
 
-    this.observable_data_preparation$ = this.dataAnalysisService.data_preparation
-    // Subscribe to the observable data preparation
-    this.dataPreparationSubscription = this.observable_data_preparation$.subscribe((data) => {
+    this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort
+        this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center
+
+    // Subscribe to the observable data preparation by cohort
+    this.dataPreparationSubscriptionCohort = this.observable_data_preparation_cohort$.subscribe((data:any) => {
       this.summaryStatisticsCohorts = data;
+      this.updateCohortsTable();
     });
-    this.dataAnalysisService.getSummaryStatistics();
+    // Subscribe to the observable data preparation by center
+    this.dataPreparationSubscriptionCenter = this.observable_data_preparation_center$.subscribe((data:any) => {
+      this.summaryStatisticsCenters = data;
+      this.updateCentersTable();
+    });
+
+    // Initial data fetch
+    this.dataAnalysisService.getSummaryStatisticsCohort(this.allCohorts);
+    this.dataAnalysisService.getSummaryStatisticsCenter(this.allCenters);
   }
 
   ngOnDestroy(): void {
     // Unsubscribe from the observable to prevent memory leaks
-    if (this.dataPreparationSubscription) {
-      this.dataPreparationSubscription.unsubscribe();
+    if (this.dataPreparationSubscriptionCohort) {
+      this.dataPreparationSubscriptionCohort.unsubscribe();
+    }
+    if (this.dataPreparationSubscriptionCenter) {
+      this.dataPreparationSubscriptionCenter.unsubscribe();
     }
   }
   
@@ -135,41 +163,215 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
   onVariableSelected(value: any) {
     this.selectedValue = value;
+
+    this.updateCohortsTable();
+    this.updateCentersTable();
     
-    // console.log('Selected variable:', this.selectedValue);
-    let variableCohorts: any[] = [];
-    if(this.selectedValue.type === 'categorical'){
-      variableCohorts = this.summryTableCat
-    } else if(this.selectedValue.type === 'numeric'){
-      variableCohorts = this.summryTableNum
+  }
+
+  updateCohortsTable() {
+
+    // Update the cohorts table based on the selected variable
+    if(this.selectedValue) {
+      let variableCohorts: any[] = [];
+      if(this.selectedValue.type === 'categorical'){
+        variableCohorts = [];
+
+        // Reset displayed columns
+        this.displayedColumnsCohorts = [];
+        this.dataSourceCohorts.data = [];
+        this.displayedColumnsCohorts.push(this.selectedValue.label);
+        
+        this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
+          const variableData = statistic.rps_cohort["counts_unique_values"][this.selectedValue.value];
+
+          this.displayedColumnsCohorts.push( `Cohort ${index + 1}` );
+          
+          
+          let variableValue = Object.keys(variableData);
+          
+          variableValue.forEach((val: any) => {
+            if(variableCohorts.length < variableValue.length ) {
+              let row = { 
+                [this.selectedValue.label]: val, 
+                [`Cohort ${index + 1}`]: variableData[val]
+              };
+              variableCohorts.push(row);
+            } else {
+              variableCohorts = variableCohorts.map((row: any) => {
+                if(row[this.selectedValue.label] === val){
+                  row = {...row, [`Cohort ${index + 1}`]: variableData[val]};
+                };
+                return row;
+              });
+            }
+            
+          });
+        });
+      } else if(this.selectedValue.type === 'numeric'){
+        variableCohorts = this.summaryTableNum
+        // Reset displayed columns
+        this.displayedColumnsCohorts = [];
+        this.dataSourceCohorts.data = [];
+        this.displayedColumnsCohorts.push( 'Statistics' );
+        this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
+          const variableData = statistic.rps_cohort[this.selectedValue.type][this.selectedValue.value];
+          this.displayedColumnsCohorts.push( `Cohort ${index + 1}` );
+
+          variableCohorts = variableCohorts.map((row: any) => {
+            const cohortValue = variableData[row.field] || 0;
+    
+            // Keep existing cohorts and add the new one dynamically
+            return {
+              ...row,
+              [`Cohort ${index + 1}`]: cohortValue
+            };
+          });
+        
+        });
+      }
+      
+      // Update the data source for the cohorts table
+      this.dataSourceCohorts.data = variableCohorts;
+      this.dataSourceCohorts._updateChangeSubscription();
     }
-    this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
-      const variableData = statistic.rps_cohort[this.selectedValue.type][this.selectedValue.value];
-      console.log(variableData);
+    
+  }
+
+  updateCentersTable() {
+    // Update the centers table based on the selected variable
+    if(this.selectedValue) {
+      let variableCenters: any[] = [];
+      if(this.selectedValue.type === 'categorical') {
+        // Reset displayed columns
+          this.displayedColumnsCenters = [];
+          this.dataSourceCenters.data = [];
+          // Add Statistics as first column
+          this.displayedColumnsCenters.push(this.selectedValue.label);
+
+          let centersTable: any = {};
+
+          let cohorts = Object.keys(this.summaryStatisticsCenters[0]);
+
+          cohorts.forEach((cohort: any, index: number) => {
+            // let variableCenters = [...this.summaryTableCat];
+            variableCenters = [];
+
+            let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
+             if (index === 0) {
+               this.displayedColumnsCenters.push(...centers);
+             }
+
+            centers.forEach((center: any) => {
+              
+              const variableData = this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
+
+              let variableValue = Object.keys(variableData);
+          
+              variableValue.forEach((val: any) => {
+                if(variableCenters.length < variableValue.length ) {
+                  let row = { 
+                    [this.selectedValue.label]: val, 
+                    [center]: variableData[val]
+                  };
+                  variableCenters.push(row);
+                } else {
+                  variableCenters = variableCenters.map((row: any) => {
+                    if(row[this.selectedValue.label] === val){
+                      row = {...row, [center]: variableData[val]};
+                    };
+                    return row;
+                  });
+                }
+            
+          });
+
+              // variableCenters = variableCenters.map((row: any) => {
+              //   const centerValue = variableData[row.field] || 0;
+              //   return {
+              //     ...row,
+              //     [center]: centerValue,
+              //   };
+              // });
+            });
+
+            // Save this centers' table
+            centersTable[cohort] = variableCenters;
+          });
+
+          console.log(centersTable);
+          this.centersTables = centersTable;
+      } else
+        if(this.selectedValue.type === 'numeric'){
+          
+          // Reset displayed columns
+          this.displayedColumnsCenters = [];
+          this.dataSourceCenters.data = [];
+          // Add Statistics as first column
+          this.displayedColumnsCenters.push( 'Statistics' );
+
+          let centersTable: any = {};
+
+          let cohorts = Object.keys(this.summaryStatisticsCenters[0]);
+
+          cohorts.forEach((cohort: any, index: number) => {
+            let variableCenters = [...this.summaryTableNum];
+            let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
+             if (index === 0) {
+               this.displayedColumnsCenters.push(...centers);
+             }
+
+            centers.forEach((center: any) => {
+              const variableData =
+                this.summaryStatisticsCenters[0][cohort][center][this.selectedValue.type][this.selectedValue.value];
+
+              variableCenters = variableCenters.map((row: any) => {
+                const centerValue = variableData[row.field] || 0;
+                return {
+                  ...row,
+                  [center]: centerValue,
+                };
+              });
+            });
+
+            // Save this centers' table
+            centersTable[cohort] = variableCenters;
+          });
+
+          console.log(centersTable);
+          this.centersTables = centersTable;
+
+      }
+      
+    }
+  }
+  onCentersChange(): void {
+  //   // Get only selected centers
+  //   this.selectedCenters = this.allCenters
+  //     .filter(center => center.selected)
+  //     .map(center => center.name);
+
+  //   // this.updateVariableCenters();
+  }
+
+  onCohortsChange(): void {
+  //   // Get only selected cohorts
+  //   this.selectedCohorts = this.allCohorts
+  //     .filter(cohort => cohort.selected)
+  //     .map(cohort => cohort.cohort_name);
+  //     console.log(this.selectedCohorts);
       
 
-      variableCohorts = variableCohorts.map((row: any) => {
-        const cohortValue = variableData[row.field] || 0;
-        const total = Number(((row["Total"] || 0) + cohortValue).toFixed(2));
-
-        // Keep existing cohorts and add the new one dynamically
-        return {
-          ...row,
-          Total: total,
-          [`Cohort ${index + 1}`]: cohortValue
-        };
-      });
-    
-    });
-
-   
-    // Update the data source for the cohorts table
-    this.dataSourceCohorts.data = variableCohorts;
-
+  //   // this.updateVariableCenters();
   }
+
   createVariable() {
     // Logic to create a new variable
     console.log('Create Variable button clicked');
+  }
+  // Function to get the keys of an object
+  objectKeys(data: any){
+    return Object.keys(data);
   }
 
 }

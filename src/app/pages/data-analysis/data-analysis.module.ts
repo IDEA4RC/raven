@@ -22,10 +22,11 @@ import { IndividualDataAnalysisComponent } from './data-analysis/individual-data
 import { NewAnalysisComponent } from './data-analysis/new-analysis/new-analysis.component';
 import { Dialog } from '@angular/cdk/dialog';
 import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-delete-analysis/dialogform-delete-analysis.component';
+import { StatisticsTableComponent } from './data-analysis/individual-data-analysis/data-preparation/statistics-table/statistics-table.component';
 
 @NgModule({
   declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
-    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent],
+    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(AnalysisRoutes),

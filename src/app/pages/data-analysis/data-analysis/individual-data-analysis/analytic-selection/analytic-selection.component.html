@@ -128,10 +128,15 @@
                 <div class="variable-selector">
                     <mat-form-field appearance="outline" class="algorithm-select">
                         <mat-label class="algorithm-search-label">Select the variable</mat-label>
-                        <mat-select [(value)]="selectedVariables" multiple>
-                        <mat-option *ngFor="let variable of variables" [value]="variable">
-                            {{ variable }}
-                        </mat-option>
+                        <mat-select 
+                            [(value)]="selectedVariables" 
+                            multiple 
+                            (selectionChange)="onSelectionChange($event)">
+                            
+                            <mat-option *ngFor="let variable of variables" [value]="variable" 
+                                        [disabled]="selectedVariables.length >= 2 && !selectedVariables.includes(variable)">
+                            {{ variable.label }}
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
 
@@ -139,7 +144,7 @@
                     <div class="selected-chips">
                         <mat-chip-set>
                         <mat-chip class="variables-chips" *ngFor="let variable of selectedVariables" (removed)="removeVariable(variable)">
-                            {{ variable }}
+                            {{ variable.label }}
                             <button matChipRemove aria-label="Remove">
                             <mat-icon>close</mat-icon>
                             </button>

@@ -1,1 +1,24 @@
-<p>data-quaity works!</p>
+<mat-card class="container">
+
+    <!-- Card Header -->
+    <div class="header-div">
+    <div class="header-title">
+        <h4>{{'pages.data-analysis.data-quality' | translate}}</h4>
+    </div>
+    </div>
+
+    <mat-card-content style="padding-top: 24px;">
+        Under development
+
+       
+    
+    </mat-card-content>
+    <!-- Card Footer -->
+      <mat-card-actions class="footer">
+        <!-- Back button -->
+        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+       <!-- Continue button -->
+        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()"
+        > {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
+      </mat-card-actions>
+</mat-card>

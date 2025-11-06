@@ -17,8 +17,10 @@ export class DataAnalysisService {
   cohort$ = this.cohort.asObservable();
 
   //Data preparation observables (summary statistics, variables, etc)
-  data_preparation = new Subject<any>();
-  data_preparation$ = this.data_preparation.asObservable();
+  data_preparation_center = new Subject<any>();
+  data_preparation_center$ = this.data_preparation_center.asObservable();
+  data_preparation_cohort = new Subject<any>();
+  data_preparation_cohort$ = this.data_preparation_cohort.asObservable();
 
   // Algorithm Selection observables
   algorithm = new Subject<any>();
@@ -73,13 +75,26 @@ export class DataAnalysisService {
   }
 
   /**
-   * Function to get summary statistics for data preparation
-   * @returns the summary statistics
+   * Function to get summary statistics for data preparation by center
+   * @param data list of centers
+   * @returns the summary statistics by center
    */
-  getSummaryStatistics() {
-    const url = './assets/jsons/summary_statistics_2.json';
+  getSummaryStatisticsCenter(data: string[]) {
+    const url = './assets/jsons/summary_statistics_center.json';
     this.getRequest(url).subscribe((data) => {
-        this.data_preparation.next(data);
+        this.data_preparation_center.next(data);
+    });
+  }
+
+  /**
+   * Function to get summary statistics for data preparation by cohort
+   * @param data list of cohorts
+   * @returns the summary statistics by cohort
+   */
+  getSummaryStatisticsCohort(data: string[]) {
+    const url = './assets/jsons/summary_statistics_cohort.json';
+    this.getRequest(url).subscribe((data) => {
+        this.data_preparation_cohort.next(data);
     });
   }
 

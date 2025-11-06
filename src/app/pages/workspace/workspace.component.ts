@@ -84,6 +84,9 @@ export class WorkspaceComponent implements OnInit {
     // Get the workspace data
     this.workspaceService.getWorkspace()
     
+
+
+    
   }
 
   ngAfterViewInit(): void {

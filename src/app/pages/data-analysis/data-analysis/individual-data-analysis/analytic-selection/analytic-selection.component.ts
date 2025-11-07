@@ -153,6 +153,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     this.selectAlhorithm = false;
   }
   openAlgorithm(algorithm_id: number) {
+    this.nextStep.emit();
   }
   deleteAlgorithm(algorithm_id: number) {
   }
@@ -181,8 +182,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   saveAlgorithm() {
     // Logic to save the selected algorithm and variables
-    console.log('Saving algorithm:', this.selectedMethod);
-    console.log('Selected variables to include:', this.selectedVariables);
+    this.nextStep.emit();
   }
   
   goBack() {

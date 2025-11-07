@@ -191,6 +191,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           let variableValue = Object.keys(variableData);
           
           variableValue.forEach((val: any) => {
+            // Skip N/A category (we'll handle it later)
+            if (val === 'N/A') return;
+
             if(variableCohorts.length < variableValue.length ) {
               let row = { 
                 [this.selectedValue.label]: val, 
@@ -208,6 +211,35 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             
           });
         });
+
+        // === Add Total and Missing rows ===
+        const totalRow: any = { [this.selectedValue.label]: 'Total' };
+        const missingRow: any = { [this.selectedValue.label]: 'Missing' };
+
+        // Compute totals and missings per cohort
+        this.displayedColumnsCohorts.slice(1).forEach((cohortLabel: string, index: number) => {
+          const variableData = this.summaryStatisticsCohorts[index].rps_cohort["counts_unique_values"][this.selectedValue.value];
+
+          let total = 0;
+          let missing = 0;
+
+          Object.entries(variableData).forEach(([key, value]: [string, any]) => {
+            if (key === 'N/A') missing += value;
+            else total += value;
+          });
+
+          const totalPlusMissing = total + missing;
+          const missingPerc = totalPlusMissing > 0 ? (missing / totalPlusMissing) * 100 : 0;
+
+          totalRow[cohortLabel] = total;
+          missingRow[cohortLabel] = `${missing} (${missingPerc.toFixed(1)}%)`;
+        });
+
+        // Add summary rows at the end
+        variableCohorts.push(totalRow);
+        variableCohorts.push(missingRow);
+
+        
       } else if(this.selectedValue.type === 'numeric'){
         variableCohorts = this.summaryTableNum
         // Reset displayed columns
@@ -254,52 +286,72 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           let cohorts = Object.keys(this.summaryStatisticsCenters[0]);
 
           cohorts.forEach((cohort: any, index: number) => {
-            // let variableCenters = [...this.summaryTableCat];
             variableCenters = [];
 
             let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
+             // Add center names to displayed columns (only once)
              if (index === 0) {
                this.displayedColumnsCenters.push(...centers);
              }
 
+            // === Build variable rows per cohort ===
             centers.forEach((center: any) => {
-              
-              const variableData = this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
+              const variableData =
+                this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
 
-              let variableValue = Object.keys(variableData);
-          
-              variableValue.forEach((val: any) => {
-                if(variableCenters.length < variableValue.length ) {
-                  let row = { 
-                    [this.selectedValue.label]: val, 
-                    [center]: variableData[val]
+              const variableValues = Object.keys(variableData);
+
+              variableValues.forEach((val: any) => {
+                // Skip 'N/A' entries — will handle later in Missing
+                if (val === "N/A") return;
+
+                if (variableCenters.length < variableValues.length - (variableValues.includes("N/A") ? 1 : 0)) {
+                  let row = {
+                    [this.selectedValue.label]: val,
+                    [center]: variableData[val],
                   };
                   variableCenters.push(row);
                 } else {
                   variableCenters = variableCenters.map((row: any) => {
-                    if(row[this.selectedValue.label] === val){
-                      row = {...row, [center]: variableData[val]};
-                    };
+                    if (row[this.selectedValue.label] === val) {
+                      row = { ...row, [center]: variableData[val] };
+                    }
                     return row;
                   });
                 }
-            
-          });
-
-              // variableCenters = variableCenters.map((row: any) => {
-              //   const centerValue = variableData[row.field] || 0;
-              //   return {
-              //     ...row,
-              //     [center]: centerValue,
-              //   };
-              // });
+              });
             });
 
-            // Save this centers' table
+            // === Add Total and Missing rows ===
+            const totalRow: any = { [this.selectedValue.label]: "Total" };
+            const missingRow: any = { [this.selectedValue.label]: "Missing" };
+
+            centers.forEach((center: any) => {
+              const variableData =
+                this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
+
+              let total = 0;
+              let missing = 0;
+
+              Object.entries(variableData).forEach(([key, value]: [string, any]) => {
+                if (key === "N/A") missing += value;
+                else total += value;
+              });
+
+              const totalPlusMissing = total + missing;
+              const missingPerc = totalPlusMissing > 0 ? (missing / totalPlusMissing) * 100 : 0;
+
+              totalRow[center] = total;
+              missingRow[center] = `${missing} (${missingPerc.toFixed(1)}%)`;
+            });
+
+            // Append summary rows at the end
+            variableCenters.push(totalRow);
+            variableCenters.push(missingRow);
+
+            // Save this cohort's centers table
             centersTable[cohort] = variableCenters;
           });
-
-          console.log(centersTable);
           this.centersTables = centersTable;
       } else
         if(this.selectedValue.type === 'numeric'){

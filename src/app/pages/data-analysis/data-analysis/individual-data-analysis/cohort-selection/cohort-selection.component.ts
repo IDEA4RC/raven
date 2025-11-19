@@ -18,10 +18,13 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   // Variable to store the current workspace ID from the route
   workspaceId: string | undefined;
   analysisId: string | undefined;
+  permitId: string | undefined;
 
   // Observables cohort
   observable_cohort$ : Observable<any> | undefined;
+  observable_permit$ : Observable<any> | undefined;
   private cohortSubscription: any;
+  private permitSubscription: any;
 
   // Table components
   dataSource = new MatTableDataSource<Cohort>();
@@ -41,12 +44,20 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
 
-    // Extract workspace ID from the current URL
+    // Extract segments
     const urlSegments = this.router.url.split('/');
-    const workspaceIndex = urlSegments.indexOf('workspace');    
-    
+
+    // Workspace ID
+    const workspaceIndex = urlSegments.indexOf('workspace');
     if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
       this.workspaceId = urlSegments[workspaceIndex + 1];
+      this.dataAnalysisService.getPermitByWorkspaceId(this.workspaceId);
+    }
+
+    // Analysis ID
+    const analysisIndex = urlSegments.indexOf('data-analysis');
+    if (analysisIndex !== -1 && urlSegments.length > analysisIndex + 1) {
+      this.analysisId = urlSegments[analysisIndex + 1];
     }
 
     // Get the observable from the service
@@ -55,6 +66,17 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     this.cohortSubscription = this.observable_cohort$.subscribe((data) => {
       this.dataSource.data = data;
     });
+
+    // Get the observable permit from the service
+    this.observable_permit$ = this.dataAnalysisService.permit
+    // Subscribe to the observable permit
+    this.permitSubscription = this.observable_permit$.subscribe((data) => {
+      console.log(data);
+      
+      this.permitId = data.length > 0 ? data[0].id : undefined;
+    });
+
+
     this.dataAnalysisService.getCohorts();
   }
 
@@ -87,10 +109,17 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   goToCohortManager() {
     // Logic to navigate to the cohort manager
     console.log('Navigating to Cohort Manager');
+    let token = localStorage.getItem('access_token');
+    let userId = localStorage.getItem('user_id');
+    window.location.href = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/advanced-query/:${userId}/:${this.analysisId}/:${this.permitId}/:${token}`;
+
   }
   goToNLPCohort() {
     // Logic to navigate to the cohort selection
     console.log('Navigating to Cohort Selection');
+    let token = localStorage.getItem('access_token');
+    let userId = localStorage.getItem('user_id');
+    window.location.href = `https://valhalla.deusto.es/nlp-cohort-builder/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
   }
   executeQuery(cohortId: number) {
     // Logic to execute the query for the selected cohort

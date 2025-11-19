@@ -23,14 +23,10 @@ export class FullService {
    * @param workspaceId ID del workspace
    */
   getWorkspace(workspaceId: string) {
-    const url = './assets/jsons/workspace.json'; // reemplaza con tu endpoint real
+    const url = `/raven-api/v1/workspaces/${workspaceId}`;
     this.getRequest(url).subscribe((data) => {
-      // Para este ejemplo tomo data[0], ajusta según tu API
-      const workspace = Array.isArray(data)
-        ? data.find((w: any) => w.id === workspaceId)
-        : null;
-      this.currentWorkspace = workspace;
-      this.workspaceSubject.next(workspace);
+      this.currentWorkspace = data;
+      this.workspaceSubject.next(data);
     });
   }
 

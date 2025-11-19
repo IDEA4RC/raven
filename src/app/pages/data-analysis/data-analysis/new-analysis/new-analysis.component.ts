@@ -67,21 +67,23 @@ export class NewAnalysisComponent implements OnInit {
     }
     // Create workspace data object
     const analysisData = {
-      name: analysisName,
-      description: analysisDescription,
-      user_id: 1, // Placeholder user ID
+      analysis_name: analysisName,
+      analysis_description: analysisDescription,
+      user_id: 1, // Placeholder user ID //TODO: Cambiar por user id real
       workspace_id: this.workspaceId, // Placeholder workspace ID
     };
-     // TODO: Send the data to a service for persistence
-//     // this.dataAnalysisService.createAnalysis(analysisData).subscribe(...
-    
-    this.showNotification(
-      "green",
-      "Analysis created successfully",
-      "bottom",
-      "center"
-    );
-    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
+    this.dataAnalysisService.createAnalysis(analysisData).subscribe({
+      next: () => {
+        this.showNotification('green', 'Analysis created successfully', 'bottom', 'center');
+        this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
+      },
+      error: (err) => {
+        console.error('Error creating analysis:', err);
+        this.showNotification('red', 'Error creating analysis', 'bottom', 'center');
+      }
+    });
+
+     
   }
 
 

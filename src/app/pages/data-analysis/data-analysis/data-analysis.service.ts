@@ -16,6 +16,10 @@ export class DataAnalysisService {
   cohort = new Subject<any>();
   cohort$ = this.cohort.asObservable();
 
+  // Permit Selection observables
+  permit = new Subject<any>();
+  permit$ = this.permit.asObservable();
+
   //Data preparation observables (summary statistics, variables, etc)
   data_preparation_center = new Subject<any>();
   data_preparation_center$ = this.data_preparation_center.asObservable();
@@ -33,8 +37,8 @@ export class DataAnalysisService {
    * @returns the list of analysis
    */
   getAnalysis() {
-    // const url = '/raven-api/v1/analysis/';
-    const url = './assets/jsons/analysis.json';
+    const url = '/raven-api/v1/analyses/';
+    // const url = './assets/jsons/analysis.json';
     this.getRequest(url).subscribe((data) => {
         this.analysis.next(data);
     });
@@ -46,7 +50,7 @@ export class DataAnalysisService {
    */
   createAnalysis(data:any) {
     // const url = `${environment.base_url}${environment.raven_url}/analysis/`;
-    const url = '/raven-api/v1/analysis/';
+    const url = '/raven-api/v1/analyses/';
     return this.postRequest(url, data);
   }
 
@@ -57,7 +61,7 @@ export class DataAnalysisService {
    */
   deleteAnalysis(analysis_id:any) {
     // const url = `${environment.base_url}${environment.raven_url}/analysis/${analysis_id}/`;
-    const url = `/raven-api/v1/analysis/${analysis_id}/`;
+    const url = `/raven-api/v1/analyses/${analysis_id}`;
     return this.deleteRequest(url);
   }
 
@@ -71,6 +75,20 @@ export class DataAnalysisService {
     const url = './assets/jsons/cohort.json';
     this.getRequest(url).subscribe((data) => {
         this.cohort.next(data);
+    });
+  }
+
+  /**
+   * Function to get permit by workspace id
+   * @param workspace_id the workspace id
+   * @returns the permit of the workspace
+   */
+  getPermitByWorkspaceId(workspace_id: string) {
+    const url = `/raven-api/v1/permits/workspace/${workspace_id}`;
+    console.log(url);
+    
+    this.getRequest(url).subscribe((data) => {
+        this.permit.next(data);
     });
   }
 

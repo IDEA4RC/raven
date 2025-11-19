@@ -30,7 +30,6 @@ export class DialogformDeleteAnalysisComponent implements OnInit {
   delete() {
     this.dataAnalysisService.deleteAnalysis(this.data.analysis_id).subscribe({
       next: () => {
-        console.log('Analysis deleted successfully');
         // Close the dialog after successful deletion
         this.dialogRef.close(true);
       }, error: (err: any) => {

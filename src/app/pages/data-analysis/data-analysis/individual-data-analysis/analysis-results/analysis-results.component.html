@@ -1,4 +1,4 @@
-<mat-tab-group class="custom-tabs" backgroundColor="primary">
+<mat-tab-group class="custom-tabs">
   <mat-tab label="Execution Status">
     <div class="execution-container">
       <!-- Status message -->
@@ -69,6 +69,82 @@
     </div>
   </mat-tab>
 
-  <mat-tab label="Analysis Results"></mat-tab>
+  <mat-tab label="Analysis Results">
+
+    <mat-card class="container">
+
+      <mat-card-content class="data-preparation-content">
+          <!-- FIRST ROW -->
+
+          <mat-card class="inner-card">
+            <h3 class="section-title">Algorithm Overview</h3>
+            <div class="section-content">
+              <p><strong>Name:</strong> Crosstabulation</p>
+              <p><strong>Cohorts:</strong> Cohort 1: Patients with SFT; Cohort 2: Patients with SFT >45 years</p>
+              <p><strong>Variables:</strong> Metastasis, Site of SFT</p>
+            </div>        
+          </mat-card>
+        
+          <!-- SECOND ROW -->
+          
+          <mat-card class="inner-card" style="margin-top: 20px;">
+            <h3 class="section-title">Analysis Results</h3>
+
+            <div class="table-container">
+              <table mat-table [dataSource]="dataSource" class="custom-table">
+
+                <!-- Site of SFT Column -->
+                <ng-container matColumnDef="site">
+                  <th mat-header-cell *matHeaderCellDef> Site of SFT </th>
+                  <td mat-cell *matCellDef="let element"> {{element.site}} </td>
+                </ng-container>
+
+                <!-- Total Column -->
+                <ng-container matColumnDef="total">
+                  <th mat-header-cell *matHeaderCellDef> Total </th>
+                  <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+                </ng-container>
+
+                <!-- Long bones Column -->
+                <ng-container matColumnDef="longBones">
+                  <th mat-header-cell *matHeaderCellDef> Long bones </th>
+                  <td mat-cell *matCellDef="let element"> {{element.longBones}} </td>
+                </ng-container>
+
+                <!-- Pelvis Column -->
+                <ng-container matColumnDef="pelvis">
+                  <th mat-header-cell *matHeaderCellDef> Pelvis </th>
+                  <td mat-cell *matCellDef="let element"> {{element.pelvis}} </td>
+                </ng-container>
+
+                <!-- Ribs Column -->
+                <ng-container matColumnDef="ribs">
+                  <th mat-header-cell *matHeaderCellDef> Ribs </th>
+                  <td mat-cell *matCellDef="let element"> {{element.ribs}} </td>
+                </ng-container>
+
+                <!-- Spine Column -->
+                <ng-container matColumnDef="spine">
+                  <th mat-header-cell *matHeaderCellDef> Spine </th>
+                  <td mat-cell *matCellDef="let element"> {{element.spine}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns2;" [class.alt-row]="row.alt"></tr>
+              </table>
+            </div>
+              
+          </mat-card>
+      </mat-card-content>
+
+      <!-- Card Footer -->
+        <mat-card-actions class="footer">
+          <!-- Back button -->
+          <button mat-button class="back-button">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+          
+        </mat-card-actions>
+  </mat-card>
+
+  </mat-tab>
   <mat-tab label="Data Overview"></mat-tab>
 </mat-tab-group>

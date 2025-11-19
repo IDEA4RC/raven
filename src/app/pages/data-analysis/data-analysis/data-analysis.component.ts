@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { DialogformDeleteAnalysisComponent } from './dialogform-delete-analysis/dialogform-delete-analysis.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-data-analysis',
   templateUrl: './data-analysis.component.html',
@@ -65,7 +66,9 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
   constructor(
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
-    private dialogModel: MatDialog
+    private dialogModel: MatDialog,
+    private snackBar: MatSnackBar,
+    
   ) { }
 
   // Search engine function to filter the table based on user input
@@ -100,41 +103,44 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
         analysis_id: analysisId,
       }
     });
+    dialogRef.afterClosed().subscribe((success: boolean) => {
+
+      if(success) {
+        this.dataAnalysisService.getAnalysis(); // Refresh the analysis list
+        // Show success notification
+        this.showNotification(
+            "black",
+            "Analysis deleted successfully",
+            "bottom",
+            "center")
+      } else {
+        // Show error notification
+         this.showNotification(
+            "black",
+            "Error deleting analysis",
+            "bottom",
+            "center")
+      }
+    });
   }
 
-  // Remove the workspace from the database
-    // deleteWorkspace(workspace: Workspace) {
-    
-    //   const dialogRef = this.dialogModel.open(DialogformDeleteAnalysisComponent, {
-    //     disableClose: true,
-    //     data: {
-    //       workspace_id: workspace.id,
-    //     }
-    //   });
-    //   dialogRef.afterClosed().subscribe((success: boolean) => {
+  /**
+   * Function to show a notification in the frontend
+   * @param colorName the color of the notification
+   * @param text the text message
+   * @param placementFrom the position from where the notification will appear
+   * @param placementAlign the position where the notification will align
+   */
+  showNotification(colorName: string, text: string, placementFrom: any, placementAlign: any) {
+    this.snackBar.open(text, "", {
+      duration: 2000,
+      verticalPosition: placementFrom,
+      horizontalPosition: placementAlign,
+      panelClass: colorName
+    });
+  }
+
   
-    //     if(success) {
-    //       // Show success notification
-    //       this.showNotification(
-    //         "black",
-    //         "Workspace deleted successfully",
-    //         "bottom",
-    //         "center")
-    //     } else {
-    //       // Show error notification
-    //       this.showNotification(
-    //         "black",
-    //         "Cancelled workspace delition",
-    //         "bottom",
-    //         "center")
-    //     }
-  
-        
-    //     // Refresh the workspace data after deletion
-    //     this.workspaceService.getWorkspace();
-    //   });
-       
-    // }
 
 }
 

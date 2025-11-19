@@ -8,9 +8,12 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   // private apiUrl = 'https://your-api.com/auth'; // Replace with your API
-  private apiUrl = '/realms/idea4rc/protocol/openid-connect/token'; // Replace with your API endpoint
+  private apiUrl = '/raven-api/v1/auth/login'
+  // private apiUrl = '/realms/idea4rc/protocol/openid-connect/token'; // Replace with your API endpoint
   private tokenKey = 'access_token';
-  private userIdKey = 'userId';
+  private userKeyIdKey = 'keycloak_id';
+  private userIdKey = 'user_id';
+
 
   // Observable to track authentication status (true/false)
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
@@ -41,10 +44,11 @@ export class AuthService {
       tap(response => {
         // Keycloak returns access_token rather than token
         const token = response.access_token;
+        const keycloak_id = response.keycloak_id;
         if (token) {
           localStorage.setItem(this.tokenKey, token);
-          localStorage.setItem(this.userIdKey, '1');
-          // localStorage.setItem('userId', '1'); // Example userId, replace with actual user ID if available
+          localStorage.setItem(this.userKeyIdKey, keycloak_id);
+          localStorage.setItem(this.userIdKey, "1"); // Temporary user ID until backend provides it //TODO
           this.isAuthenticatedSubject.next(true);
         }
       })
@@ -57,6 +61,7 @@ export class AuthService {
   logout(): void {
     console.log('Logging out...');
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKeyIdKey);
     localStorage.removeItem(this.userIdKey);
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/authentication/login']); // redirect to login page after logout

@@ -193,7 +193,10 @@ export class FullComponent implements OnInit {
     if (workspace) {
       newNavItems.push({
         navCap: '',
-        displayName: workspace.name || 'Workspace',
+        displayName: (() => {
+          const name = workspace.name ?? 'Workspace';
+          return name.length > 20 ? name.slice(0, 20) + '...' : name;
+        })(),
         iconName: 'assignment',
         route: `/workspace/${workspace.id}/data-discovery`,
         children: [

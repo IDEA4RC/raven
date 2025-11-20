@@ -76,58 +76,18 @@ ngOnInit() {
   console.log("this.variableData", this.variableData);
   
   this.variableData = this.variableData.filter((item: any) => {
-    // Check if the item has a centers array and it's an array
-    return item.centers == this.center});
-    // .filter((item: any) => item.variables && Array.isArray(item.variables))
-    // .map((item: any) => {
-    //   // Process each variable within the item
-    //   const processedVariables = item.variables.map((variable: any) => {
-    //     if (variable.centers && Array.isArray(variable.centers)) {
-    //       // Find the center object that matches this.center
-    //       const matchingCenterObj = variable.centers.find((centerObj: any) => {
-    //         const centerName = Object.keys(centerObj)[0];
-    //         return centerName === this.center;
-    //       });
+      return item.center == this.center;
+  })[0].variables;
 
-    //       // If found, replace centers array with just the matching center's data
-    //       if (matchingCenterObj) {
-    //         return {
-    //           ...variable,
-    //           centers: matchingCenterObj[this.center] // This will be {availability_d:...} structure
-    //         };
-    //       }
-    //     }
-        
-    //     return variable;
-    //   });
-
-    //   return {
-    //      processedVariables
-    //   };
-    // })
-
-    console.log('Filtered variableData:', this.center, this.variableData);
-    
-    
-  // .map((item: any) => {
-  //   // Filter the centers based on availability_d
-  //   const filteredCenters = item.centers.filter((centerObj: any) => {
-  //     const centerName = Object.keys(centerObj)[0];
-  //     return centerName == this.center;
-  //   });
-
-  //   // Only include the item if it has at least one matching center
-  //   if (filteredCenters.length > 0) {
-  //     return {
-  //       ...item,
-  //       centers: filteredCenters[0][this.center],
-  //     };
-  //   }
-  //   return null;
-  // })
-  // .filter((item: null) => item !== null);
-
-  // console.log('AAAAAAAAA Filtered variableData:', this.variableData);
+  this.variableData = this.variableData.map((variable: any) => {
+    return {
+      ...variable,
+      centers: variable.centers.filter((centerObj: any) => {
+        const centerKey = Object.keys(centerObj)[0]; // e.g. "INT"
+        return centerKey === this.center;
+      })[0][this.center]
+    };
+  });
   
 
   
@@ -138,7 +98,6 @@ ngOnInit() {
   })
   
   this.dataSourceAll.data = this.variableData;
-  
 
 }
 

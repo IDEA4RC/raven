@@ -635,26 +635,21 @@ saveWorkspace() {
         let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
         // this.data.selectedVariables.map((variable: any) => variable.id);
         // Create the data application object
+        // Normalize cancer type (remove trailing dot if present, e.g. "Sarc." -> "Sarc")
+        const typeCancer = (this.cancerType || '').replace(/\.$/, '');
+
         let dataApplication = {
-          
             "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
             "workspace_id": response.id,
             "workspace_name": response.name,
             "metadata": {
-                "type_cancer": this.cancerType,
-                "variables_id": variablesId,
-                "coes_id": this.selectedCenters
-            
+            "type_cancer": typeCancer,
+            "variables_id": variablesId,
+            "coes_id": ["INT", "CLB"]
             }
         }
-        //  "user_id": "e140f671-2247-4c53-b7bf-66d37",
-        //   "workspace_id":12,
-        //   "workspace_name": "Sarcoma Disease Trends",
-        //   "metadata": {
-        //       "type_cancer": "H&N",
-        //       "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
-        //       "coes_id": ["INT", "CLB"]
-        //   }
+        console.log(dataApplication);
+   
         this.metadataSearchService.createDataApplication(dataApplication).subscribe({
           next: (response: any) => {
             console.log('Data application created successfully:', response);
@@ -664,7 +659,18 @@ saveWorkspace() {
               "bottom",
               "center"
             );
-            // this.showWorkspaceForm = true;
+            
+            const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
+              // width: "740px",
+              disableClose: true,
+              data: {
+                workspaceName: this.workspaceFormGroup.value.workspaceNameCtrl,
+                workspaceDescription: this.workspaceFormGroup.value.workspaceDescriptionCtrl,
+                cancerType: this.cancerType,
+                selectedVariables: this.selectedVariables,
+                selectedCenters: this.selectedCenters
+              }
+            });
           },
           error: (error: any) => {
             console.error('Error creating data application:', error);

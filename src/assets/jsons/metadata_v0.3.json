@@ -29,7 +29,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -57,7 +57,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -203,7 +203,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                    "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -231,7 +231,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -371,7 +371,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -399,7 +399,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -526,9 +526,9 @@
         "centers": [
             {
                 "INT": {
-                    "availability_d": "Not available",
-                    "availability_p": "True",
-                    "availability_r": "False",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -539,10 +539,10 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
-                    "availability_p": "True",
-                    "availability_r": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -555,7 +555,7 @@
             {
                 "FPNS": {
                     "availability_d": "True",
-                    "availability_p": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -567,9 +567,9 @@
                 }
             },
             {
-                "MSCI": {
-                    "availability_d": "False",
-                    "availability_p": "True",
+                "MMCI": {
+                    "availability_d": "True",
+                    "availability_p": "Not available",
                     "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -583,8 +583,8 @@
             {
                 "VGR": {
                     "availability_d": "True",
-                    "availability_p": "True",
-                    "availability_r": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -596,9 +596,9 @@
             },
             {
                 "MCCI": {
-                    "availability_d": "Not available",
-                    "availability_p": "False",
-                    "availability_r": "True",
+                    "availability_d": "True",
+                    "availability_p": "Not available",
+                    "availability_r": "Not available",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -711,9 +711,9 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
-                    "availability_p": "Not available",
+                    "availability_p": "True",
                     "availability_r": "False",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
@@ -739,10 +739,10 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
-                    "availability_r": "Not available",
+                    "availability_r": "False",
                     "years": "2019-2021",
                     "datasource_name": "National Registry",
                     "datasource_information": "lorem ipsum",
@@ -754,7 +754,7 @@
             },
             {
                 "VGR": {
-                    "availability_d": "Not available",
+                    "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
                     "years": "2019-2021",
@@ -879,7 +879,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -907,7 +907,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -1049,7 +1049,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -1077,7 +1077,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -1216,7 +1216,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -1244,7 +1244,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -1384,7 +1384,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -1412,7 +1412,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -1551,7 +1551,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -1579,7 +1579,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -1718,7 +1718,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -1746,7 +1746,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -1885,7 +1885,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -1913,7 +1913,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -2052,7 +2052,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -2080,7 +2080,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -2219,7 +2219,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -2247,7 +2247,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -2386,7 +2386,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -2414,7 +2414,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -2553,7 +2553,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -2581,7 +2581,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -2720,7 +2720,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -2748,7 +2748,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -2887,7 +2887,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -2915,7 +2915,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -3054,7 +3054,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -3082,7 +3082,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -3221,7 +3221,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -3249,7 +3249,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -3388,7 +3388,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -3416,7 +3416,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -3555,7 +3555,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -3583,7 +3583,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -3722,7 +3722,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -3750,7 +3750,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -3889,7 +3889,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -3917,7 +3917,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -4056,7 +4056,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -4084,7 +4084,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -4223,7 +4223,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -4251,7 +4251,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -4390,7 +4390,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -4418,7 +4418,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -4557,7 +4557,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -4585,7 +4585,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -4724,7 +4724,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -4752,7 +4752,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -4891,7 +4891,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -4919,7 +4919,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -5058,7 +5058,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -5086,7 +5086,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -5227,7 +5227,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -5255,7 +5255,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -5394,7 +5394,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -5422,7 +5422,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -5563,7 +5563,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -5591,7 +5591,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -5732,7 +5732,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -5760,7 +5760,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -5901,7 +5901,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -5929,7 +5929,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -6070,7 +6070,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -6098,7 +6098,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -6237,7 +6237,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -6265,7 +6265,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -6406,7 +6406,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -6434,7 +6434,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -6575,7 +6575,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -6603,7 +6603,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -6744,7 +6744,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -6772,7 +6772,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -6911,7 +6911,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -6939,7 +6939,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -7080,7 +7080,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -7108,7 +7108,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -7249,7 +7249,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -7277,7 +7277,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -7418,7 +7418,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -7446,7 +7446,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -7587,7 +7587,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -7615,7 +7615,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -7755,7 +7755,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -7783,7 +7783,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -7926,7 +7926,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -7954,7 +7954,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -8094,7 +8094,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -8122,7 +8122,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -8268,7 +8268,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -8296,7 +8296,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -8442,7 +8442,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -8470,7 +8470,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -8610,7 +8610,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -8638,7 +8638,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -8779,7 +8779,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -8807,7 +8807,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -8946,7 +8946,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -8974,7 +8974,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -9113,7 +9113,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -9141,7 +9141,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -9280,7 +9280,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -9308,7 +9308,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -9447,7 +9447,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -9475,7 +9475,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -9614,7 +9614,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -9642,7 +9642,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -9781,7 +9781,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -9809,7 +9809,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -9948,7 +9948,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -9976,7 +9976,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -10116,7 +10116,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -10144,7 +10144,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -10284,7 +10284,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -10312,7 +10312,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -10452,7 +10452,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -10480,7 +10480,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -10620,7 +10620,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -10648,7 +10648,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -10793,7 +10793,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -10821,7 +10821,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -10961,7 +10961,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -10989,7 +10989,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -11129,7 +11129,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -11157,7 +11157,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -11296,7 +11296,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -11324,7 +11324,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -11464,7 +11464,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -11492,7 +11492,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -11654,7 +11654,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -11682,7 +11682,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -11850,7 +11850,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -11878,7 +11878,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -12159,7 +12159,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -12187,7 +12187,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -12455,7 +12455,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -12483,7 +12483,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -12623,7 +12623,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -12651,7 +12651,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -12790,7 +12790,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -12818,7 +12818,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -12957,7 +12957,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -12985,7 +12985,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -13124,7 +13124,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -13152,7 +13152,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -13291,7 +13291,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -13319,7 +13319,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -13461,7 +13461,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -13489,7 +13489,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -13632,7 +13632,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -13660,7 +13660,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -13803,7 +13803,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -13831,7 +13831,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -13974,7 +13974,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -14002,7 +14002,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -14141,7 +14141,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -14169,7 +14169,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -14308,7 +14308,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -14336,7 +14336,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -14475,7 +14475,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -14503,7 +14503,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -14644,7 +14644,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -14672,7 +14672,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -14813,7 +14813,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -14841,7 +14841,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -14982,7 +14982,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -15010,7 +15010,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -15152,7 +15152,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -15180,7 +15180,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -15319,7 +15319,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -15347,7 +15347,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -15488,7 +15488,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -15516,7 +15516,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -15657,7 +15657,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -15685,7 +15685,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -15826,7 +15826,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -15854,7 +15854,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -15995,7 +15995,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -16023,7 +16023,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -16162,7 +16162,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -16190,7 +16190,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -16334,7 +16334,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -16362,7 +16362,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -16505,7 +16505,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -16533,7 +16533,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -16674,7 +16674,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -16702,7 +16702,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -16846,7 +16846,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -16874,7 +16874,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -17041,7 +17041,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -17069,7 +17069,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -17239,7 +17239,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -17267,7 +17267,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -17413,7 +17413,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -17441,7 +17441,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -17582,7 +17582,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -17610,7 +17610,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -17774,7 +17774,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -17802,7 +17802,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -17943,7 +17943,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -17971,7 +17971,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -18112,7 +18112,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -18140,7 +18140,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -18281,7 +18281,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -18309,7 +18309,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -18450,7 +18450,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -18478,7 +18478,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -18619,7 +18619,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -18647,7 +18647,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -18788,7 +18788,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -18816,7 +18816,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -18957,7 +18957,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -18985,7 +18985,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -19126,7 +19126,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19154,7 +19154,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19295,7 +19295,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -19323,7 +19323,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -19464,7 +19464,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -19492,7 +19492,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19633,7 +19633,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -19661,7 +19661,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -19802,7 +19802,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19830,7 +19830,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19971,7 +19971,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -19999,7 +19999,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -20140,7 +20140,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20168,7 +20168,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -20309,7 +20309,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20337,7 +20337,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20478,7 +20478,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20506,7 +20506,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -20645,7 +20645,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -20673,7 +20673,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -20812,7 +20812,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20840,7 +20840,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -20979,7 +20979,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -21007,7 +21007,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -21148,7 +21148,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -21176,7 +21176,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -21317,7 +21317,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -21345,7 +21345,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -21486,7 +21486,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -21514,7 +21514,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -21656,7 +21656,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -21684,7 +21684,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -21823,7 +21823,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -21851,7 +21851,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -21992,7 +21992,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -22020,7 +22020,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -22161,7 +22161,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -22189,7 +22189,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -22330,7 +22330,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -22358,7 +22358,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -22500,7 +22500,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -22528,7 +22528,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -22667,7 +22667,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -22695,7 +22695,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -22839,7 +22839,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -22867,7 +22867,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -23010,7 +23010,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -23038,7 +23038,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -23179,7 +23179,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -23207,7 +23207,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -23351,7 +23351,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -23379,7 +23379,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -23546,7 +23546,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -23574,7 +23574,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -23744,7 +23744,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -23772,7 +23772,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -23918,7 +23918,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -23946,7 +23946,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -24087,7 +24087,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -24115,7 +24115,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -24256,7 +24256,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -24284,7 +24284,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -24448,7 +24448,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -24476,7 +24476,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -24617,7 +24617,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -24645,7 +24645,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -24786,7 +24786,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -24814,7 +24814,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -24955,7 +24955,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -24983,7 +24983,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -25124,7 +25124,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -25152,7 +25152,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -25293,7 +25293,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -25321,7 +25321,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -25462,7 +25462,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -25490,7 +25490,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -25631,7 +25631,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -25659,7 +25659,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -25800,7 +25800,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -25828,7 +25828,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -25969,7 +25969,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -25997,7 +25997,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -26138,7 +26138,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -26166,7 +26166,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -26307,7 +26307,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -26335,7 +26335,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -26476,7 +26476,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -26504,7 +26504,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -26645,7 +26645,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -26673,7 +26673,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -26814,7 +26814,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -26842,7 +26842,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -26983,7 +26983,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -27011,7 +27011,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -27152,7 +27152,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -27180,7 +27180,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -27320,7 +27320,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -27348,7 +27348,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -27493,7 +27493,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -27521,7 +27521,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -27661,7 +27661,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -27689,7 +27689,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -27829,7 +27829,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -27857,7 +27857,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -27996,7 +27996,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -28024,7 +28024,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28165,7 +28165,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -28193,7 +28193,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -28334,7 +28334,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -28362,7 +28362,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -28503,7 +28503,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -28531,7 +28531,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28672,7 +28672,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28700,7 +28700,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -28841,7 +28841,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28869,7 +28869,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -29010,7 +29010,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -29038,7 +29038,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -29179,7 +29179,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -29207,7 +29207,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -29348,7 +29348,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -29376,7 +29376,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -29517,7 +29517,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -29545,7 +29545,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -29686,7 +29686,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -29714,7 +29714,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -29855,7 +29855,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -29883,7 +29883,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -30024,7 +30024,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -30052,7 +30052,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -30193,7 +30193,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -30221,7 +30221,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -30362,7 +30362,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -30390,7 +30390,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -30531,7 +30531,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -30559,7 +30559,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -30698,7 +30698,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -30726,7 +30726,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -30865,7 +30865,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -30893,7 +30893,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -31032,7 +31032,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -31060,7 +31060,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -31199,7 +31199,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -31227,7 +31227,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -31368,7 +31368,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -31396,7 +31396,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -31535,7 +31535,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -31563,7 +31563,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -31704,7 +31704,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -31732,7 +31732,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -31871,7 +31871,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -31899,7 +31899,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -32040,7 +32040,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -32068,7 +32068,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -32207,7 +32207,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -32235,7 +32235,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -32376,7 +32376,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -32404,7 +32404,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -32543,7 +32543,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -32571,7 +32571,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -32712,7 +32712,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -32740,7 +32740,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -32879,7 +32879,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -32907,7 +32907,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -33048,7 +33048,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -33076,7 +33076,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -33215,7 +33215,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -33243,7 +33243,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -33383,7 +33383,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -33411,7 +33411,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -33551,7 +33551,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -33579,7 +33579,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -33724,7 +33724,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -33752,7 +33752,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -33891,7 +33891,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -33919,7 +33919,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -34059,7 +34059,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -34087,7 +34087,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -34230,7 +34230,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -34258,7 +34258,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -34404,7 +34404,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -34432,7 +34432,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -34576,7 +34576,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -34604,7 +34604,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -34745,7 +34745,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -34773,7 +34773,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -34914,7 +34914,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -34942,7 +34942,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -35083,7 +35083,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -35111,7 +35111,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -35250,7 +35250,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -35278,7 +35278,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -35419,7 +35419,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -35447,7 +35447,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -35588,7 +35588,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -35616,7 +35616,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -35755,7 +35755,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -35783,7 +35783,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -35926,7 +35926,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -35954,7 +35954,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -36095,7 +36095,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36123,7 +36123,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -36262,7 +36262,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -36290,7 +36290,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -36431,7 +36431,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36459,7 +36459,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -36600,7 +36600,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -36628,7 +36628,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36769,7 +36769,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -36797,7 +36797,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -36938,7 +36938,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36966,7 +36966,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -37107,7 +37107,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -37135,7 +37135,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -37276,7 +37276,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -37304,7 +37304,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -37445,7 +37445,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -37473,7 +37473,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -37614,7 +37614,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -37642,7 +37642,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -37783,7 +37783,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -37811,7 +37811,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -37952,7 +37952,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -37980,7 +37980,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -38121,7 +38121,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -38149,7 +38149,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -38289,7 +38289,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -38317,7 +38317,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -38457,7 +38457,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -38485,7 +38485,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -38625,7 +38625,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -38653,7 +38653,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -38796,7 +38796,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -38824,7 +38824,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -38966,7 +38966,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -38994,7 +38994,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -39137,7 +39137,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -39165,7 +39165,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -39309,7 +39309,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -39337,7 +39337,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -39477,7 +39477,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -39505,7 +39505,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -39645,7 +39645,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -39673,7 +39673,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -39813,7 +39813,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -39841,7 +39841,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -40036,7 +40036,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -40064,7 +40064,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -40203,7 +40203,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -40231,7 +40231,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -40370,7 +40370,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -40398,7 +40398,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -40544,7 +40544,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -40572,7 +40572,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -40717,7 +40717,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -40745,7 +40745,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -40885,7 +40885,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -40913,7 +40913,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -41053,7 +41053,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -41081,7 +41081,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -41221,7 +41221,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -41249,7 +41249,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -41392,7 +41392,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -41420,7 +41420,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -41566,7 +41566,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -41594,7 +41594,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -41741,7 +41741,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -41769,7 +41769,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -41908,7 +41908,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -41936,7 +41936,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -42086,7 +42086,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -42114,7 +42114,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -42254,7 +42254,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -42282,7 +42282,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -42423,7 +42423,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -42451,7 +42451,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -42591,7 +42591,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -42619,7 +42619,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -42760,7 +42760,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -42788,7 +42788,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -42929,7 +42929,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -42957,7 +42957,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -43096,7 +43096,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -43124,7 +43124,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -43263,7 +43263,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -43291,7 +43291,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -43431,7 +43431,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -43459,7 +43459,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -43599,7 +43599,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -43627,7 +43627,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -43766,7 +43766,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -43794,7 +43794,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -43933,7 +43933,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -43961,7 +43961,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -44100,7 +44100,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -44128,7 +44128,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -44267,7 +44267,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -44295,7 +44295,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -44436,7 +44436,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -44464,7 +44464,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -44606,7 +44606,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -44634,7 +44634,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -44776,7 +44776,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -44804,7 +44804,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -44946,7 +44946,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -44974,7 +44974,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -45116,7 +45116,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -45144,7 +45144,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -45286,7 +45286,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -45314,7 +45314,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -45460,7 +45460,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -45488,7 +45488,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -45627,7 +45627,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -45655,7 +45655,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -45799,7 +45799,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -45827,7 +45827,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -45966,7 +45966,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -45994,7 +45994,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -46133,7 +46133,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -46161,7 +46161,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -46300,7 +46300,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -46328,7 +46328,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -46467,7 +46467,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -46495,7 +46495,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -46634,7 +46634,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -46662,7 +46662,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -46806,7 +46806,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -46834,7 +46834,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -46973,7 +46973,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -47001,7 +47001,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -47140,7 +47140,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -47168,7 +47168,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -47307,7 +47307,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -47335,7 +47335,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -47474,7 +47474,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -47502,7 +47502,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -47641,7 +47641,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -47669,7 +47669,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -47813,7 +47813,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -47841,7 +47841,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -47981,7 +47981,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -48009,7 +48009,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -48149,7 +48149,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -48177,7 +48177,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -48317,7 +48317,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -48345,7 +48345,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -48485,7 +48485,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -48513,7 +48513,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -48653,7 +48653,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -48681,7 +48681,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -48821,7 +48821,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -48849,7 +48849,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -48994,7 +48994,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -49022,7 +49022,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -49162,7 +49162,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -49190,7 +49190,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -49329,7 +49329,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -49357,7 +49357,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -49496,7 +49496,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -49524,7 +49524,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -49663,7 +49663,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -49691,7 +49691,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -49835,7 +49835,7 @@
                 }
             },
             {
-                "ISS-FJD": {
+                "IIS-FJD": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -49863,7 +49863,7 @@
                 }
             },
             {
-                "MSCI": {
+                "MMCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",

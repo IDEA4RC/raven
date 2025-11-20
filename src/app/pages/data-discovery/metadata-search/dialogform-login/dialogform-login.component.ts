@@ -48,10 +48,11 @@ export class DialogformLoginComponent implements OnInit {
 
   ngOnInit(): void {
     
-    let userLoogedIn = localStorage.getItem('access') == "login" ? true : false;
+    let userLoogedIn = localStorage.getItem('access_token') ? true : false;
     // If the user is logged in, save the workspace in the database
     if(userLoogedIn) {
-      this.saveWorkspace();
+      this.showWorkspaceForm = true;
+
       // this.showLoginError = false;
       // this.showWorkspaceForm = true;
     } else {

@@ -161,7 +161,7 @@
       <mat-card-actions class="footer">
         <!-- Back button -->
         <button mat-button matStepperPrevious class="back-button">{{'pages.metadata_search.back' | translate}}</button>
-       <!-- Continue button -->
+        <!-- Continue button -->
         <button mat-raised-button color="primary" matStepperNext class="continue-button" type="submit"
         [disabled]="selectionService.getDataSelected().length == 0 || selectionService.getSelectedCenters().length == 0" (click)="continueAvailability()"> {{'pages.metadata_search.continue' | translate}} </button>
       </mat-card-actions>

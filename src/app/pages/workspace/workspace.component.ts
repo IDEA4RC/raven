@@ -120,12 +120,16 @@ export class WorkspaceComponent implements OnInit {
   }
 
   // Navigate to the user journey phase of the workspace
-  goToStatus(status: string) {
+  goToStatus(workspace: Workspace) {
 
-    switch(status) {
+    switch(workspace.status) {
       case "Data Permit": {
         // Redirect to the data permit platform
         window.location.href = `//idea4rc-data-permit-platform.iti.gr//auth/callback?access_token=${localStorage.getItem('access_token')}`;
+        break;
+      }
+      case "Data Analysis": {
+        this.router.navigate([`/workspace/${workspace.id}/data-analysis`])
         break;
       }
     }

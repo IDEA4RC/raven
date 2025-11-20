@@ -58,6 +58,8 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     const analysisIndex = urlSegments.indexOf('data-analysis');
     if (analysisIndex !== -1 && urlSegments.length > analysisIndex + 1) {
       this.analysisId = urlSegments[analysisIndex + 1];
+      this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+
     }
 
     // Get the observable from the service
@@ -77,7 +79,6 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     });
 
 
-    this.dataAnalysisService.getCohorts();
   }
 
   ngAfterViewInit() {

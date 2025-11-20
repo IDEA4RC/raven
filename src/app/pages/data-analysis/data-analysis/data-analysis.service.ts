@@ -70,9 +70,9 @@ export class DataAnalysisService {
    * Function to get cohorts of a workspace
    * @returns the list of cohorts
    */
-  getCohorts() {
-    // const url = '/raven-api/v1/cohort/';
-    const url = './assets/jsons/cohort.json';
+  getCohorts(analysis_id: number) {
+    const url = `/raven-api/v1/cohorts/analysis/${analysis_id}`;
+    // const url = './assets/jsons/cohort.json';
     this.getRequest(url).subscribe((data) => {
         this.cohort.next(data);
     });

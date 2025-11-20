@@ -73,37 +73,40 @@ export class DetailAnalysisTableComponent implements OnInit, OnChanges{
   
 ngOnInit() {    
   
+  console.log("this.variableData", this.variableData);
   
-  this.variableData = this.variableData
-    .filter((item: any) => item.variables && Array.isArray(item.variables))
-    .map((item: any) => {
-      // Process each variable within the item
-      const processedVariables = item.variables.map((variable: any) => {
-        if (variable.centers && Array.isArray(variable.centers)) {
-          // Find the center object that matches this.center
-          const matchingCenterObj = variable.centers.find((centerObj: any) => {
-            const centerName = Object.keys(centerObj)[0];
-            return centerName === this.center;
-          });
+  this.variableData = this.variableData.filter((item: any) => {
+    // Check if the item has a centers array and it's an array
+    return item.centers == this.center});
+    // .filter((item: any) => item.variables && Array.isArray(item.variables))
+    // .map((item: any) => {
+    //   // Process each variable within the item
+    //   const processedVariables = item.variables.map((variable: any) => {
+    //     if (variable.centers && Array.isArray(variable.centers)) {
+    //       // Find the center object that matches this.center
+    //       const matchingCenterObj = variable.centers.find((centerObj: any) => {
+    //         const centerName = Object.keys(centerObj)[0];
+    //         return centerName === this.center;
+    //       });
 
-          // If found, replace centers array with just the matching center's data
-          if (matchingCenterObj) {
-            return {
-              ...variable,
-              centers: matchingCenterObj[this.center] // This will be {availability_d:...} structure
-            };
-          }
-        }
+    //       // If found, replace centers array with just the matching center's data
+    //       if (matchingCenterObj) {
+    //         return {
+    //           ...variable,
+    //           centers: matchingCenterObj[this.center] // This will be {availability_d:...} structure
+    //         };
+    //       }
+    //     }
         
-        return variable;
-      });
+    //     return variable;
+    //   });
 
-      return {
-         processedVariables
-      };
-    })
+    //   return {
+    //      processedVariables
+    //   };
+    // })
 
-    console.log('Filtered variableData:', this.variableData);
+    console.log('Filtered variableData:', this.center, this.variableData);
     
     
   // .map((item: any) => {

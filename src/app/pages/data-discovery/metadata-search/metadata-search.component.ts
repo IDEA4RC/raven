@@ -361,10 +361,10 @@ checkboxLabelCenters(row?: MetadataVariables): string {
   }`;
 }
 
-/** Toggle selection center and update the service */
-actionCenter(row: any) {
-  this.selectionService.toggleSelectionCenters(row);
-}
+  /** Toggle selection center and update the service */
+  actionCenter(row: any) {
+    this.selectionService.toggleSelectionCenters(row);
+  }
 
 
 

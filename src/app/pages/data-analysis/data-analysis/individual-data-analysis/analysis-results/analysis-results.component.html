@@ -80,59 +80,45 @@
             <h3 class="section-title">Algorithm Overview</h3>
             <div class="section-content">
               <p><strong>Name:</strong> Crosstabulation</p>
-              <p><strong>Cohorts:</strong> Cohort 1: Patients with SFT; Cohort 2: Patients with SFT >45 years</p>
+              <p><strong>Cohorts:</strong> Cohort 1: Cohort rps; Cohort 2: Cohort pelvis; Cohort 3: Cohort pelvis and rps</p>
               <p><strong>Variables:</strong> Metastasis, Site of SFT</p>
             </div>        
           </mat-card>
         
           <!-- SECOND ROW -->
           
-          <mat-card class="inner-card" style="margin-top: 20px;">
+          <mat-card class="inner-card" style="margin-top: 20px !important;">
             <h3 class="section-title">Analysis Results</h3>
 
-            <div class="table-container">
-              <table mat-table [dataSource]="dataSource" class="custom-table">
+            <div *ngFor="let tableKey of getTableKeys()" class="table-container">
+            <h2>{{ tableKey }}</h2>
 
-                <!-- Site of SFT Column -->
-                <ng-container matColumnDef="site">
-                  <th mat-header-cell *matHeaderCellDef> Site of SFT </th>
-                  <td mat-cell *matCellDef="let element"> {{element.site}} </td>
-                </ng-container>
+            <table class="statistics-table">
+              <thead>
+                <tr>
+                  <th>FNCLCC Grade</th>
+                  <th>Male</th>
+                  <th>Female</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
 
-                <!-- Total Column -->
-                <ng-container matColumnDef="total">
-                  <th mat-header-cell *matHeaderCellDef> Total </th>
-                  <td mat-cell *matCellDef="let element"> {{element.total}} </td>
-                </ng-container>
+              <tbody>
+                <tr *ngFor="let row of dataTables[0][tableKey].contingency_table">
+                  <td>{{ row.fnclcc_grade }}</td>
+                  <td>{{ row.MALE }}</td>
+                  <td>{{ row.FEMALE }}</td>
+                  <td>{{ row.Total }}</td>
+                </tr>
+              </tbody>
+            </table>
 
-                <!-- Long bones Column -->
-                <ng-container matColumnDef="longBones">
-                  <th mat-header-cell *matHeaderCellDef> Long bones </th>
-                  <td mat-cell *matCellDef="let element"> {{element.longBones}} </td>
-                </ng-container>
-
-                <!-- Pelvis Column -->
-                <ng-container matColumnDef="pelvis">
-                  <th mat-header-cell *matHeaderCellDef> Pelvis </th>
-                  <td mat-cell *matCellDef="let element"> {{element.pelvis}} </td>
-                </ng-container>
-
-                <!-- Ribs Column -->
-                <ng-container matColumnDef="ribs">
-                  <th mat-header-cell *matHeaderCellDef> Ribs </th>
-                  <td mat-cell *matCellDef="let element"> {{element.ribs}} </td>
-                </ng-container>
-
-                <!-- Spine Column -->
-                <ng-container matColumnDef="spine">
-                  <th mat-header-cell *matHeaderCellDef> Spine </th>
-                  <td mat-cell *matCellDef="let element"> {{element.spine}} </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns2;" [class.alt-row]="row.alt"></tr>
-              </table>
+            <div class="chi2">
+              <p><strong>Chi²:</strong> {{ dataTables[0][tableKey].chi2.chi2 }}</p>
+              <p><strong>P-value:</strong> {{ dataTables[0][tableKey].chi2['P-value'] }}</p>
             </div>
+          </div>
+
               
           </mat-card>
       </mat-card-content>

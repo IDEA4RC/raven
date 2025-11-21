@@ -69,8 +69,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   //TODO get variables
     // Example: load data dynamically (could be from a service)
   variables = [
-      { "value": "AGE", "label": "Age", "type": "numeric" },
-      { "value": "TUMOR_SIZE", "label": "Tumor Size", "type": "numeric" },
       { "value": "LOCAL_RECURRENCE", "label": "Local Recurrence", "type": "categorical" },
       { "value": "MULTIFOCALITY", "label": "Multifocality", "type": "categorical" },
       { "value": "STATUS", "label": "Status", "type": "categorical" },
@@ -85,6 +83,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       { "value": "TUMOR_RUPTURE", "label": "Tumor Rupture", "type": "categorical" },
       { "value": "SEX", "label": "Sex", "type": "categorical" }
   ];
+  loading = false;
+
   selectedVariables: any[] = [];
   
   selection = new SelectionModel<any>(true, []);
@@ -182,7 +182,13 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   saveAlgorithm() {
     // Logic to save the selected algorithm and variables
-    this.nextStep.emit();
+    this.loading = true;            // show spinner
+
+    setTimeout(() => {
+      this.loading = false;         // hide spinner
+      this.nextStep.emit();
+
+    }, 5000);  
   }
   
   goBack() {

@@ -5,15 +5,15 @@
     <app-cohort-selection (nextStep)="goToNextStep()"></app-cohort-selection>
   </mat-step>
   <!-- STEPPER 2: Data Quality -->
-  <mat-step [stepControl]="dataQualityFormGroup">
+  <!-- <mat-step [stepControl]="dataQualityFormGroup">
     <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data-quality' | translate}}</ng-template>
     <app-data-quaity
     (nextStep)="goToNextStep()" 
       (previousStep)="goToPreviousStep()"></app-data-quaity>
-  </mat-step>
+  </mat-step> -->
   <!-- STEPPER 3: Data Preparation -->
     <mat-step [stepControl]="dataPreparationFormGroup">
-    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data_preparation.data_preparation' | translate}}</ng-template>
+    <ng-template matStepLabel class="stepper-label">{{'pages.data-analysis.data_preparation.data_quality_preparation' | translate}}</ng-template>
     <app-data-preparation
     (nextStep)="goToNextStep()" 
       (previousStep)="goToPreviousStep()"></app-data-preparation>

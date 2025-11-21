@@ -185,33 +185,58 @@
 }
 
 .table-container {
-  overflow-x: auto;
-  border-radius: 8px;
-}
-
-.custom-table {
   width: 100%;
-  border-collapse: collapse;
 }
 
-.custom-table th {
-  background-color: #555e6f;
-  color: white;
-  font-weight: 600;
-  text-align: left;
-  padding: 0.75rem 1rem;
+h2 {
+  margin-bottom: 10px;
 }
 
-.custom-table td {
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  color: #333;
+/*    TABLE STYLES   */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: none;
 }
 
-.custom-table tr.alt-row {
-  background-color: #f6f6f6;
+table th, table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #DBE1E6;
 }
 
-.custom-table tr:hover {
-  background-color: rgba(153, 171, 180, 0.2);
+/* Table Header */
+table th {
+    background: #6C757D;
+    font-weight: 500;
+    color: var(--grey-colors-Text-Heading-Color, #FFF);
+
+}
+/* Table Body */
+table td {
+    font-family: Poppins;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 22.5px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: var(--grey-colors-Text-Heading-Color, #3A4752);
+
+}
+/* Table Row, mause hover */
+table tr:hover {
+background-color: #f1f1f1;
+}
+.statistics-table .mat-mdc-header-cell,
+.statistics-table .mat-mdc-cell {
+  padding: 0.4rem 0.6rem;
+}
+
+.statistics-table .mat-mdc-row:nth-child(odd) {
+  background-color: #fff;
+}
+
+.statistics-table .mat-mdc-row:nth-child(even) {
+  background-color: #efefef;
 }

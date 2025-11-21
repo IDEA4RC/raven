@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-cohort-selection',
   templateUrl: './cohort-selection.component.html',
@@ -32,11 +33,15 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   selection = new SelectionModel<any>(true, []);
 
+  loading = false;
+
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() nextStep = new EventEmitter<void>();
 
   constructor(
+    private snackBar: MatSnackBar,
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
     public selectionService: SelectionService
@@ -122,9 +127,18 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     let userId = localStorage.getItem('user_id');
     window.location.href = `https://valhalla.deusto.es/nlp-cohort-builder/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
   }
+
   executeQuery(cohortId: number) {
-    // Logic to execute the query for the selected cohort
     console.log(`Executing query for cohort ID: ${cohortId}`);
+
+    this.loading = true;            // show spinner
+
+    setTimeout(() => {
+      this.loading = false;         // hide spinner
+      this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+      this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
+
+    }, 3000);                       // wait 5 seconds
   }
   // Button to navigate to the previous page (Data Analysis main page)
   backAnalysis() {
@@ -161,6 +175,22 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
       row.id + 1
     }`;
+  }
+
+  /**
+   * Function to show a notification in the frontend
+   * @param colorName the color of the notification
+   * @param text the text message
+   * @param placementFrom the position from where the notification will appear
+   * @param placementAlign the position where the notification will align
+   */
+  showNotification(colorName: string, text: string, placementFrom: any, placementAlign: any) {
+    this.snackBar.open(text, "", {
+      duration: 2000,
+      verticalPosition: placementFrom,
+      horizontalPosition: placementAlign,
+      panelClass: colorName
+    });
   }
 
 

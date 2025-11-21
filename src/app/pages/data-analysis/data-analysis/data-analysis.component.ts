@@ -39,6 +39,8 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
     
     if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
       this.workspaceId = urlSegments[workspaceIndex + 1];
+      this.dataAnalysisService.getAnalysis(this.workspaceId as unknown as number);
+
     }
 
     // Get the observable from the service
@@ -47,7 +49,6 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
     this.analysisSubscription = this.observable_analysis$.subscribe((data) => {
       this.dataSource.data = data;
     });
-    this.dataAnalysisService.getAnalysis();
   }
 
   ngAfterViewInit() {
@@ -106,7 +107,7 @@ export class DataAnalysisComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((success: boolean) => {
 
       if(success) {
-        this.dataAnalysisService.getAnalysis(); // Refresh the analysis list
+        this.dataAnalysisService.getAnalysis(this.workspaceId as unknown as number); // Refresh the analysis list
         // Show success notification
         this.showNotification(
             "black",

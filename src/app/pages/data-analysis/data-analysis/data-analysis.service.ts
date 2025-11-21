@@ -36,8 +36,8 @@ export class DataAnalysisService {
    * Function to get analysis of a workspace
    * @returns the list of analysis
    */
-  getAnalysis() {
-    const url = '/raven-api/v1/analyses/';
+  getAnalysis(workspace_id: number) {
+    const url = `/raven-api/v1/analyses//workspace/${workspace_id}`;
     // const url = './assets/jsons/analysis.json';
     this.getRequest(url).subscribe((data) => {
         this.analysis.next(data);
@@ -59,7 +59,7 @@ export class DataAnalysisService {
    * @param analysis_id the id of the analysis to delete
    * @returns 
    */
-  deleteAnalysis(analysis_id:any) {
+  deleteAnalysis(analysis_id: any) {
     // const url = `${environment.base_url}${environment.raven_url}/analysis/${analysis_id}/`;
     const url = `/raven-api/v1/analyses/${analysis_id}`;
     return this.deleteRequest(url);

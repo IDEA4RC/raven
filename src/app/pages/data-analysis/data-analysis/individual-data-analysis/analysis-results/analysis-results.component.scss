@@ -240,3 +240,16 @@ background-color: #f1f1f1;
 .statistics-table .mat-mdc-row:nth-child(even) {
   background-color: #efefef;
 }
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* left column = 1, right = 2 */
+    gap: 16px;
+    align-items: start;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

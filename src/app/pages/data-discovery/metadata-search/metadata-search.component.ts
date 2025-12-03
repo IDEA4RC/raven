@@ -15,6 +15,7 @@ import { ngxCsv } from 'ngx-csv/ngx-csv';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogformLoginComponent } from './dialogform-login/dialogform-login.component';
+import { DialogformWorkspaceCreatedComponent } from './dialogform-workspace-created/dialogform-workspace-created.component';
 
 @Component({
   selector: 'app-metadata-search',
@@ -576,20 +577,20 @@ createWorkspace(): void {
 
   // Check if user is logged in by verifying access_token in localStorage
   const accessToken = localStorage.getItem('access_token');
+  // If the user is not logged in, open the login dialog
   if (!accessToken) {
     console.log('User not logged in. Opening login dialog.');
     
     const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
-    // width: "740px",
-    disableClose: true,
-    data: {
-      workspaceName: this.workspaceFormGroup.value.workspaceNameCtrl,
-      workspaceDescription: this.workspaceFormGroup.value.workspaceDescriptionCtrl,
-      cancerType: this.cancerType,
-      selectedVariables: this.selectedVariables,
-      selectedCenters: this.selectedCenters
-    }
-  });
+      // width: "740px",
+      disableClose: true
+    });
+    // Handle dialog close event
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        this.saveWorkspace();
+      }
+    });
     
     
   } else {
@@ -604,6 +605,9 @@ saveWorkspace() {
     // Get values from the form
     const workspaceName = this.workspaceNameCtrl.value;
     const workspaceDescription = this.workspaceDescriptionCtrl.value;
+
+    const variablesSelected = this.selectionService.getDataSelected().map((variable: any) => variable.variable_id);
+    const centersSelected = this.selectionService.getSelectedCenters();
     
 
     let wokspaceData = 
@@ -617,36 +621,35 @@ saveWorkspace() {
         "status": "Data Permit",
         "team_ids": []
       }
-    //   {
-    //     "name": "HNC analysis risk factors v4",
-    //     "description": "This study focuses on identifying and analyzing risk factors associated with Head and Neck Cancer (HNC). By leveraging clinical, demographic, behavioral, and lifestyle data, the project aims to uncover patterns and variables that contribute to the development and progression of HNC. The goal is to support early detection strategies, improve patient stratification, and contribute to the development of personalized treatment and prevention approaches. Advanced statistical and machine learning methods are applied to evaluate the influence of multiple variables on cancer risk, with particular attention to modifiable factors.",
-    //     "metadata_search": 2,
-    //     "data_access": 1,
-    //     "data_analysis": 0,
-    //     "results_report": 0,
-    //     "status": "Data Permit",
-    //     "team_ids": []
-    // }
+      
+    
     this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
       next: (response: any) => {
         console.log('Workspace created successfully:', response);
 
-        // Map selected variables to their IDs //TODO
-        let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
-        // this.data.selectedVariables.map((variable: any) => variable.id);
-        // Create the data application object
         // Normalize cancer type (remove trailing dot if present, e.g. "Sarc." -> "Sarc")
         const typeCancer = (this.cancerType || '').replace(/\.$/, '');
-
+        const keyUserId = localStorage.getItem('keycloak_id') || '';
+        
+        // Create the data application object
         let dataApplication = {
-            "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
+            "user_id": keyUserId,
             "workspace_id": response.id,
             "workspace_name": response.name,
             "metadata": {
-            "type_cancer": typeCancer,
-            "variables_id": variablesId,
-            "coes_id": ["INT", "CLB"]
+              "type_cancer": typeCancer,
+              "variables_id": variablesSelected,
+              "coes_id": centersSelected
             }
+        }
+        // Create the metadata search object
+        let metadataSearch = {
+            "workspace_id": response.id,
+            "type_cancer": typeCancer,
+            "id_variables": variablesSelected,
+            "selectedid_coes": centersSelected,
+            "status": 2
+            
         }
         console.log(dataApplication);
    
@@ -660,16 +663,9 @@ saveWorkspace() {
               "center"
             );
             
-            const dialogRef = this.dialogModel.open(DialogformLoginComponent, {
+            const dialogRef = this.dialogModel.open(DialogformWorkspaceCreatedComponent, {
               // width: "740px",
-              disableClose: true,
-              data: {
-                workspaceName: this.workspaceFormGroup.value.workspaceNameCtrl,
-                workspaceDescription: this.workspaceFormGroup.value.workspaceDescriptionCtrl,
-                cancerType: this.cancerType,
-                selectedVariables: this.selectedVariables,
-                selectedCenters: this.selectedCenters
-              }
+              disableClose: true, 
             });
           },
           error: (error: any) => {
@@ -696,64 +692,13 @@ saveWorkspace() {
 
 
   }
-// MALOOOOOO Method to handle workspace creation from form data (by clicking continue button)
-// saveWorkspace() {
-//     // Get values from the form
-//     const workspaceName = this.workspaceNameCtrl.value;
-//     const workspaceDescription = this.workspaceDescriptionCtrl.value;
-    
-//     // Validate form data
-//     if (!workspaceName || !workspaceDescription) {
-//       this.showNotification(
-//         "black",
-//         "Please fill in all workspace fields",
-//         "bottom",
-//         "center"
-//       );
-//       return;
-//     }
-    
-//     // Create workspace data object
-//     const workspaceData = {
-//       name: workspaceName,
-//       description: workspaceDescription,
-//       cancerType: this.cancerType,
-//       variables: this.selectedVariables,
-//       centers: this.selectedCenters,
-//       creationDate: new Date().toISOString()
-//     };
-        
-//     // TODO: Send the data to a service for persistence
-//     this.metadataSearchService.createWorkspace(workspaceData).subscribe(
-//       (response) => {
-//         console.log('Workspace created successfully:', response);
-//         this.showNotification(
-//         "green",
-//         "Workspace created successfully",
-//         "bottom",
-//         "center"
-//       );
-//       },
-//       (error) => {
-//         console.error('Error creating workspace:', error);
-//         this.showNotification(
-//           "black",
-//           "Error creating workspace",
-//           "bottom",
-//           "center"
-//         );
-//       }
-//     );
-    
-    
-// }
 
 backWorkspace() {
   this.metadataSearchFinished = false
 }
 
 
- mapDetailedInformation(data: any) {
+mapDetailedInformation(data: any) {
   let detailedDataMapped:any = [];
   // First, get all unique center names
   const centerNames = new Set<string>();

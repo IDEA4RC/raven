@@ -24,7 +24,6 @@ export class DialogformLoginComponent implements OnInit {
     public router: Router,
     private authService: AuthService,
     private metadataSearchService: MetadataSearchService,
-    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   form = new FormGroup({
@@ -38,7 +37,6 @@ export class DialogformLoginComponent implements OnInit {
 
   showLoginError:boolean = false;
   showLoginForm:boolean = false;
-  showWorkspaceForm:boolean = false;
   loginError:boolean = false;
 
 
@@ -50,23 +48,12 @@ export class DialogformLoginComponent implements OnInit {
     
     let userLoogedIn = localStorage.getItem('access_token') ? true : false;
     // If the user is logged in, save the workspace in the database
-    if(userLoogedIn) {
-      this.showWorkspaceForm = true;
-
-      // this.showLoginError = false;
-      // this.showWorkspaceForm = true;
-    } else {
+    if(!userLoogedIn) {
       this.showLoginError = true;
     }
   }
 
   onSubmit() {
-    // Handle form submission
-    console.log('Form submitted');
-  }
-  submit() {
-    // console.log(this.form.value);
-    // this.router.navigate(['/dashboards/dashboard1']);
     const { username, password } = this.form.value;
     console.log('Login action triggered with:', username, password);
     
@@ -76,11 +63,10 @@ export class DialogformLoginComponent implements OnInit {
     }).subscribe({
       next: () => {
       this.showLoginForm = false
-      this.showWorkspaceForm = true
+      
       this.showLoginError = false
-      this.saveWorkspace();  
+      this.dialogRef.close('success');
     },
-      // this.router.navigate(['/discovery/metadata-search']),
       error: (err: any) => {
       console.error('Login failed', err);
       if (err.status === 401) {
@@ -92,82 +78,73 @@ export class DialogformLoginComponent implements OnInit {
     });
   }
 
-  saveWorkspace() {
+  // saveWorkspace() {
 
-    let wokspaceData = 
-      {
-        "name": this.data.workspaceName,
-        "description": this.data.workspaceDescription,
-        "metadata_search": 2,
-        "data_access": 1,
-        "data_analysis": 0,
-        "results_report": 0,
-        "status": "Data Permit",
-        "team_ids": []
-      }
-    //   {
-    //     "name": "HNC analysis risk factors v4",
-    //     "description": "This study focuses on identifying and analyzing risk factors associated with Head and Neck Cancer (HNC). By leveraging clinical, demographic, behavioral, and lifestyle data, the project aims to uncover patterns and variables that contribute to the development and progression of HNC. The goal is to support early detection strategies, improve patient stratification, and contribute to the development of personalized treatment and prevention approaches. Advanced statistical and machine learning methods are applied to evaluate the influence of multiple variables on cancer risk, with particular attention to modifiable factors.",
-    //     "metadata_search": 2,
-    //     "data_access": 1,
-    //     "data_analysis": 0,
-    //     "results_report": 0,
-    //     "status": "Data Permit",
-    //     "team_ids": []
-    // }
-    this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
-      next: (response: any) => {
-        console.log('Workspace created successfully:', response);
+  //   let wokspaceData = 
+  //     {
+  //       "name": this.data.workspaceName,
+  //       "description": this.data.workspaceDescription,
+  //       "metadata_search": 2,
+  //       "data_access": 1,
+  //       "data_analysis": 0,
+  //       "results_report": 0,
+  //       "status": "Data Permit",
+  //       "team_ids": []
+  //     }
+    
+  //   this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
+  //     next: (response: any) => {
+  //       console.log('Workspace created successfully:', response);
 
-        // Map selected variables to their IDs //TODO
-        let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
-        // this.data.selectedVariables.map((variable: any) => variable.id);
-        // Create the data application object
-        let dataApplication = {
+  //       // Map selected variables to their IDs //TODO
+  //       let variablesId = ["SOMETHING", "SOMETHING", "SOMETHING"]
+  //       // this.data.selectedVariables.map((variable: any) => variable.id);
+  //       // Create the data application object
+  //       let dataApplication = {
           
-            "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
-            "workspace_id": response.id,
-            "workspace_name": response.name,
-            "metadata": {
-                "type_cancer": this.data.cancerType,
-                "variables_id": variablesId,
-                "coes_id": this.data.selectedCenters
+  //           "user_id": "e140f671-2247-4c53-b7bf-6cefa6ac6d37",
+  //           "workspace_id": response.id,
+  //           "workspace_name": response.name,
+  //           "metadata": {
+  //               "type_cancer": this.data.cancerType,
+  //               "variables_id": variablesId,
+  //               "coes_id": this.data.selectedCenters
             
-            }
-        }
-        //  "user_id": "e140f671-2247-4c53-b7bf-66d37",
-        //   "workspace_id":12,
-        //   "workspace_name": "Sarcoma Disease Trends",
-        //   "metadata": {
-        //       "type_cancer": "H&N",
-        //       "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
-        //       "coes_id": ["INT", "CLB"]
-        //   }
-        this.metadataSearchService.createDataApplication(dataApplication).subscribe({
-          next: (response: any) => {
-            console.log('Data application created successfully:', response);
-            this.showWorkspaceForm = true;
-          },
-          error: (error: any) => {
-            console.error('Error creating data application:', error);
-            this.snackBar.open('Error creating data application', 'Close', {
-              duration: 3000,
-              panelClass: ['error-snackbar']
-            });
-          }
-        });
-      },
-      error: (error: any) => {
-        console.error('Error creating workspace:', error);
-        this.snackBar.open('Error creating workspace', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-      }
-    })
+  //           }
+  //       }
+  //       //  "user_id": "e140f671-2247-4c53-b7bf-66d37",
+  //       //   "workspace_id":12,
+  //       //   "workspace_name": "Sarcoma Disease Trends",
+  //       //   "metadata": {
+  //       //       "type_cancer": "H&N",
+  //       //       "variables_id": ["SOMETHING", "SOMETHING", "SOMETHING"],
+  //       //       "coes_id": ["INT", "CLB"]
+  //       //   }
+  //       this.metadataSearchService.createDataApplication(dataApplication).subscribe({
+  //         next: (response: any) => {
+  //           console.log('Data application created successfully:', response);
+  //           this.showWorkspaceForm = true;
+  //         },
+  //         error: (error: any) => {
+  //           console.error('Error creating data application:', error);
+  //           this.snackBar.open('Error creating data application', 'Close', {
+  //             duration: 3000,
+  //             panelClass: ['error-snackbar']
+  //           });
+  //         }
+  //       });
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Error creating workspace:', error);
+  //       this.snackBar.open('Error creating workspace', 'Close', {
+  //         duration: 3000,
+  //         panelClass: ['error-snackbar']
+  //       });
+  //     }
+  //   })
 
 
-  }
+  // }
 
   // Function to show the login form
   loginForm() {
@@ -181,19 +158,6 @@ export class DialogformLoginComponent implements OnInit {
     // Handle cancel action
     console.log('Form cancelled');
     this.dialogRef.close();
-  }
-
-  continueLater() {
-    // Handle continue later action
-    console.log('Continue later action triggered');
-    this.goToPage('workspace');
-    this.dialogRef.close();
-
-  }
-  
-  dataAccess() {
-    // Redirect to the data permit platform
-    window.location.href = `//idea4rc-data-permit-platform.iti.gr//auth/callback?access_token=${localStorage.getItem('access_token')}`;
   }
   
   // Function to toggle password visibility

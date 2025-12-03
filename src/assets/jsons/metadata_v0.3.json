@@ -85,7 +85,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -259,7 +259,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -427,7 +427,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -595,7 +595,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -767,7 +767,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -935,7 +935,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -1105,7 +1105,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -1272,7 +1272,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -1440,7 +1440,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -1607,7 +1607,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -1774,7 +1774,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -1941,7 +1941,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -2108,7 +2108,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -2275,7 +2275,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -2442,7 +2442,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -2609,7 +2609,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -2776,7 +2776,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -2943,7 +2943,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -3110,7 +3110,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -3277,7 +3277,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -3444,7 +3444,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -3611,7 +3611,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -3778,7 +3778,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -3945,7 +3945,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -4112,7 +4112,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -4279,7 +4279,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -4446,7 +4446,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -4613,7 +4613,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -4780,7 +4780,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -4947,7 +4947,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -5114,7 +5114,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -5283,7 +5283,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -5450,7 +5450,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -5619,7 +5619,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -5788,7 +5788,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -5957,7 +5957,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -6126,7 +6126,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -6293,7 +6293,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -6462,7 +6462,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -6631,7 +6631,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -6800,7 +6800,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -6967,7 +6967,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -7136,7 +7136,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -7305,7 +7305,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -7474,7 +7474,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -7643,7 +7643,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -7811,7 +7811,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -7982,7 +7982,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -8150,7 +8150,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -8324,7 +8324,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -8498,7 +8498,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -8666,7 +8666,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -8835,7 +8835,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -9002,7 +9002,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -9169,7 +9169,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -9336,7 +9336,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -9503,7 +9503,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -9670,7 +9670,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -9837,7 +9837,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -10004,7 +10004,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -10172,7 +10172,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -10340,7 +10340,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -10508,7 +10508,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -10676,7 +10676,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -10849,7 +10849,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -11017,7 +11017,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -11185,7 +11185,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -11352,7 +11352,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -11520,7 +11520,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -11710,7 +11710,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -11906,7 +11906,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -12215,7 +12215,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -12511,7 +12511,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -12679,7 +12679,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -12846,7 +12846,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -13013,7 +13013,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -13180,7 +13180,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -13347,7 +13347,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -13517,7 +13517,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -13688,7 +13688,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -13859,7 +13859,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -14030,7 +14030,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -14197,7 +14197,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -14364,7 +14364,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -14531,7 +14531,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -14700,7 +14700,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -14869,7 +14869,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -15038,7 +15038,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -15208,7 +15208,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -15375,7 +15375,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -15544,7 +15544,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -15713,7 +15713,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -15882,7 +15882,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -16051,7 +16051,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -16218,7 +16218,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -16390,7 +16390,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -16561,7 +16561,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -16730,7 +16730,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -16902,7 +16902,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -17097,7 +17097,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -17295,7 +17295,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -17469,7 +17469,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -17638,7 +17638,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -17830,7 +17830,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -17999,7 +17999,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -18168,7 +18168,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -18337,7 +18337,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -18506,7 +18506,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -18675,7 +18675,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -18844,7 +18844,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -19013,7 +19013,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -19182,7 +19182,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -19351,7 +19351,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -19520,7 +19520,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -19689,7 +19689,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -19858,7 +19858,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -20027,7 +20027,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -20196,7 +20196,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -20365,7 +20365,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -20534,7 +20534,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -20701,7 +20701,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -20868,7 +20868,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -21035,7 +21035,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -21204,7 +21204,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -21373,7 +21373,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -21542,7 +21542,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -21712,7 +21712,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -21879,7 +21879,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -22048,7 +22048,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -22217,7 +22217,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -22386,7 +22386,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -22556,7 +22556,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -22723,7 +22723,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -22895,7 +22895,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -23066,7 +23066,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -23235,7 +23235,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -23407,7 +23407,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -23602,7 +23602,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -23800,7 +23800,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -23974,7 +23974,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -24143,7 +24143,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -24312,7 +24312,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -24504,7 +24504,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -24673,7 +24673,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -24842,7 +24842,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -25011,7 +25011,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -25180,7 +25180,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -25349,7 +25349,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -25518,7 +25518,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -25687,7 +25687,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -25856,7 +25856,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -26025,7 +26025,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -26194,7 +26194,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -26363,7 +26363,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -26532,7 +26532,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -26701,7 +26701,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -26870,7 +26870,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -27039,7 +27039,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -27208,7 +27208,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -27376,7 +27376,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -27549,7 +27549,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -27717,7 +27717,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -27885,7 +27885,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28052,7 +28052,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -28221,7 +28221,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28390,7 +28390,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -28559,7 +28559,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -28728,7 +28728,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -28897,7 +28897,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -29066,7 +29066,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -29235,7 +29235,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -29404,7 +29404,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -29573,7 +29573,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -29742,7 +29742,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -29911,7 +29911,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -30080,7 +30080,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -30249,7 +30249,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -30418,7 +30418,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -30587,7 +30587,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -30754,7 +30754,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -30921,7 +30921,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -31088,7 +31088,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -31255,7 +31255,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -31424,7 +31424,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -31591,7 +31591,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -31760,7 +31760,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -31927,7 +31927,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -32096,7 +32096,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -32263,7 +32263,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -32432,7 +32432,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -32599,7 +32599,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -32768,7 +32768,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -32935,7 +32935,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -33104,7 +33104,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -33271,7 +33271,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -33439,7 +33439,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -33607,7 +33607,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -33780,7 +33780,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -33947,7 +33947,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -34115,7 +34115,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -34286,7 +34286,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -34460,7 +34460,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -34632,7 +34632,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -34801,7 +34801,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -34970,7 +34970,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -35139,7 +35139,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -35306,7 +35306,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -35475,7 +35475,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -35644,7 +35644,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -35811,7 +35811,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -35982,7 +35982,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36151,7 +36151,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -36318,7 +36318,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -36487,7 +36487,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -36656,7 +36656,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -36825,7 +36825,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -36994,7 +36994,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -37163,7 +37163,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -37332,7 +37332,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -37501,7 +37501,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -37670,7 +37670,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -37839,7 +37839,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -38008,7 +38008,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -38177,7 +38177,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -38345,7 +38345,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -38513,7 +38513,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -38681,7 +38681,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -38852,7 +38852,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -39022,7 +39022,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -39193,7 +39193,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -39365,7 +39365,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -39533,7 +39533,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -39701,7 +39701,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -39869,7 +39869,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -40092,7 +40092,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -40259,7 +40259,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -40426,7 +40426,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -40600,7 +40600,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -40773,7 +40773,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -40941,7 +40941,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -41109,7 +41109,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -41277,7 +41277,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -41448,7 +41448,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "True",
@@ -41622,7 +41622,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -41797,7 +41797,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -41964,7 +41964,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -42142,7 +42142,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -42310,7 +42310,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -42479,7 +42479,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -42647,7 +42647,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -42816,7 +42816,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -42985,7 +42985,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -43152,7 +43152,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -43319,7 +43319,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -43487,7 +43487,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -43655,7 +43655,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -43822,7 +43822,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -43989,7 +43989,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -44156,7 +44156,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -44323,7 +44323,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -44492,7 +44492,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -44662,7 +44662,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -44832,7 +44832,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -45002,7 +45002,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -45172,7 +45172,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -45342,7 +45342,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -45516,7 +45516,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "Not available",
@@ -45683,7 +45683,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -45855,7 +45855,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -46022,7 +46022,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -46189,7 +46189,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -46356,7 +46356,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -46523,7 +46523,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -46690,7 +46690,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -46862,7 +46862,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -47029,7 +47029,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -47196,7 +47196,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "Not available",
                     "availability_r": "False",
@@ -47363,7 +47363,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -47530,7 +47530,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -47697,7 +47697,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -47869,7 +47869,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -48037,7 +48037,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -48205,7 +48205,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "Not available",
                     "availability_r": "True",
@@ -48373,7 +48373,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -48541,7 +48541,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -48709,7 +48709,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "True",
                     "availability_r": "Not available",
@@ -48877,7 +48877,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -49050,7 +49050,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "Not available",
@@ -49218,7 +49218,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -49385,7 +49385,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "False",
                     "availability_r": "False",
@@ -49552,7 +49552,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "False",
                     "availability_p": "False",
                     "availability_r": "True",
@@ -49719,7 +49719,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "True",
                     "availability_p": "True",
                     "availability_r": "False",
@@ -49891,7 +49891,7 @@
                 }
             },
             {
-                "MCCI": {
+                "MSCI": {
                     "availability_d": "Not available",
                     "availability_p": "False",
                     "availability_r": "False",

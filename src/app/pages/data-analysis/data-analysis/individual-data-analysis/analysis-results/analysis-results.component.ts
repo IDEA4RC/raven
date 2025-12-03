@@ -1,15 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { DataAnalysisService } from '../../data-analysis.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-analysis-results',
   templateUrl: './analysis-results.component.html',
   styleUrl: './analysis-results.component.scss'
 })
-export class AnalysisResultsComponent {
+export class AnalysisResultsComponent implements OnInit {
 
 
-
+  allCohorts: any[] = []; // Loaded from cohort selection
+  allCenters: any[] = [
+    {center_name: "APH P"},
+    {center_name: "INT"},
+    {center_name: "ISS-FJD"}
+  ] // Loaded from cohort selection
+  
   displayedColumns = ['id', 'name', 'status', 'org', 'user', 'created'];
   data = [
     { id: 450, name: 'Crosstabulation', status: 'Completed', org: 'INT', user: 'J. Perez', created: '21/11/2025' }
@@ -59,6 +67,36 @@ export class AnalysisResultsComponent {
   }
 ];
 
+// Observables cohort
+observable_data_preparation_cohort$ : Observable<any> | undefined;
+observable_data_preparation_center$ : Observable<any> | undefined;
+private dataPreparationSubscriptionCohort: any;
+private dataPreparationSubscriptionCenter: any;
+
+constructor(
+  private dataAnalysisService: DataAnalysisService,
+) { }
+ngOnInit(): void {
+
+  this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort
+  this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center
+
+  // Subscribe to the observable data preparation by cohort
+  this.dataPreparationSubscriptionCohort = this.observable_data_preparation_cohort$.subscribe((data:any) => {
+    // this.summaryStatisticsCohorts = data;
+    // this.updateCohortsTable();
+  });
+  // Subscribe to the observable data preparation by center
+  this.dataPreparationSubscriptionCenter = this.observable_data_preparation_center$.subscribe((data:any) => {
+    // this.summaryStatisticsCenters = data;
+    // this.updateCentersTable();
+  });
+
+  // Initial data fetch
+  this.dataAnalysisService.getSummaryStatisticsCohort(this.allCohorts);
+  this.dataAnalysisService.getSummaryStatisticsCenter(this.allCenters);
+  
+}
 
 getTableKeys(): any[] {
   return Object.keys(this.dataTables[0]) as any[];

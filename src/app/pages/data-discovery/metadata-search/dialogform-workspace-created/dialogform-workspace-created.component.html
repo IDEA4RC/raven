@@ -1,0 +1,21 @@
+<!-- Workspace saved -->
+<div class="modal-content-workspace-saved">
+
+    
+    <div class="workspace-saved-container">
+        <p><strong>{{'pages.metadata_search.workspace_saved' | translate }}</strong></p>
+    </div>
+    <div class="workspace-saved-container">
+        <p>{{'pages.metadata_search.workspace_saved_description' | translate }}</p>
+    </div>
+   
+    <div class="buttons-container-login">
+        <!-- Cancel button -->
+        <button mat-button class="continue-later-button" (click)="continueLater()">{{'pages.metadata_search.continue_later' | translate}}</button>
+        <!-- Continue button -->
+        <button mat-button color="primary" class="login-button"
+        (click)="dataAccess()"
+        > {{'pages.metadata_search.proceed' | translate}} </button>
+    </div>
+    
+</div>

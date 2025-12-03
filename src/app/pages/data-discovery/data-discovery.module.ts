@@ -28,9 +28,11 @@ import {
   MatDialogModule,
   } from '@angular/material/dialog';
 import { DialogformLoginComponent } from './metadata-search/dialogform-login/dialogform-login.component';
+import { DialogformWorkspaceCreatedComponent } from './metadata-search/dialogform-workspace-created/dialogform-workspace-created.component';
 
 @NgModule({
-  declarations: [MetadataSearchComponent, VariablesTableComponent, AvailabilityTableComponent, DetailAnalysisTableComponent, VariablesSearcherComponent, DialogformLoginComponent],
+  declarations: [MetadataSearchComponent, VariablesTableComponent, AvailabilityTableComponent, DetailAnalysisTableComponent, 
+    VariablesSearcherComponent, DialogformLoginComponent, DialogformWorkspaceCreatedComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(DiscoveryRoutes),

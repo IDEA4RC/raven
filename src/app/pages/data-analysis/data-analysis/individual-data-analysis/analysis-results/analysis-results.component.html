@@ -129,8 +129,99 @@
           <button mat-button class="back-button">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
           
         </mat-card-actions>
-  </mat-card>
+    </mat-card>
 
   </mat-tab>
-  <mat-tab label="Data Overview"></mat-tab>
+  <mat-tab label="Data Overview">
+    <mat-card class="container">
+
+      <mat-card-content class="data-preparation-content">
+
+           <div class="section-content">
+              <p><strong>Cohorts:</strong> Cohort 1: Cohort rps; Cohort 2: Cohort pelvis; Cohort 3: Cohort pelvis and rps</p>
+            </div>
+        
+          <!-- LEFT CARD -->
+           <div class="grid-layout">
+          
+              <mat-card class="left-column" style="margin-top: 20px !important;">
+                <h3 class="section-title">Analysis Results</h3>
+
+                <div *ngFor="let tableKey of getTableKeys()" class="table-container">
+                <h2>{{ tableKey }}</h2>
+
+                <table class="statistics-table">
+                  <thead>
+                    <tr>
+                      <th>FNCLCC Grade</th>
+                      <th>Male</th>
+                      <th>Female</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let row of dataTables[0][tableKey].contingency_table">
+                      <td>{{ row.fnclcc_grade }}</td>
+                      <td>{{ row.MALE }}</td>
+                      <td>{{ row.FEMALE }}</td>
+                      <td>{{ row.Total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="chi2">
+                  <p><strong>Chi²:</strong> {{ dataTables[0][tableKey].chi2.chi2 }}</p>
+                  <p><strong>P-value:</strong> {{ dataTables[0][tableKey].chi2['P-value'] }}</p>
+                </div>
+              </div>
+
+                  
+              </mat-card>
+              <!-- RIGHT CARD -->
+              <mat-card class="right-column" style="margin-top: 20px !important;">
+                <h3 class="section-title">Analysis Results</h3>
+
+                <div *ngFor="let tableKey of getTableKeys()" class="table-container">
+                <h2>{{ tableKey }}</h2>
+
+                <table class="statistics-table">
+                  <thead>
+                    <tr>
+                      <th>FNCLCC Grade</th>
+                      <th>Male</th>
+                      <th>Female</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let row of dataTables[0][tableKey].contingency_table">
+                      <td>{{ row.fnclcc_grade }}</td>
+                      <td>{{ row.MALE }}</td>
+                      <td>{{ row.FEMALE }}</td>
+                      <td>{{ row.Total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="chi2">
+                  <p><strong>Chi²:</strong> {{ dataTables[0][tableKey].chi2.chi2 }}</p>
+                  <p><strong>P-value:</strong> {{ dataTables[0][tableKey].chi2['P-value'] }}</p>
+                </div>
+              </div>
+
+                  
+              </mat-card>
+            </div>
+      </mat-card-content>
+
+      <!-- Card Footer -->
+        <mat-card-actions class="footer">
+          <!-- Back button -->
+          <button mat-button class="back-button">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+          
+        </mat-card-actions>
+    </mat-card>
+  </mat-tab>
 </mat-tab-group>

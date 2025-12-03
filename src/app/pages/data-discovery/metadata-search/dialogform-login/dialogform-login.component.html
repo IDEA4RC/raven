@@ -37,7 +37,7 @@
 
     <!-- Login form -->
 
-    <form class="login-form-container" [formGroup]="form" (ngSubmit)="submit()">
+    <form class="login-form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
       <!-- Username Input form -->
       <mat-form-field appearance="outline" class="w-100 mat-field" color="primary">
         <mat-label class="text-grey">Username</mat-label>
@@ -55,7 +55,6 @@
       <!-- Password Input form -->
       <mat-form-field appearance="outline" class="w-100 mat-field" color="primary">
         <mat-label class="text-grey">Password</mat-label>
-        <!-- <input matInput type="password" formControlName="password" /> -->
         <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
         <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
           <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
@@ -75,7 +74,6 @@
     }
 
       <div class="d-flex align-items-center ">
-        <!-- <mat-checkbox color="primary">Remember this Device</mat-checkbox> -->
         <!-- Forgot password link -->
         <a
           [routerLink]="['/authentication/boxed-forgot-pwd']"
@@ -98,24 +96,4 @@
     
 </div>
 
-<!-- Workspace saved -->
-<div class="modal-content-workspace-saved" *ngIf="showWorkspaceForm">
 
-    
-    <div class="workspace-saved-container">
-        <p><strong>{{'pages.metadata_search.workspace_saved' | translate }}</strong></p>
-    </div>
-    <div class="workspace-saved-container">
-        <p>{{'pages.metadata_search.workspace_saved_description' | translate }}</p>
-    </div>
-   
-    <div class="buttons-container-login">
-        <!-- Cancel button -->
-        <button mat-button class="continue-later-button" (click)="continueLater()">{{'pages.metadata_search.continue_later' | translate}}</button>
-        <!-- Continue button -->
-        <button mat-button color="primary" class="login-button"
-        (click)="dataAccess()"
-        > {{'pages.metadata_search.proceed' | translate}} </button>
-    </div>
-    
-</div>

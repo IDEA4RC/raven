@@ -117,7 +117,7 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     console.log('Navigating to Cohort Manager');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
-    window.location.href = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/advanced-query/:${userId}/:${this.analysisId}/:${this.permitId}/:${token}`;
+    window.location.href = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/web/advanced-query/${userId}/${this.analysisId}/${this.permitId}/${token}`;
 
   }
   goToNLPCohort() {

@@ -253,3 +253,6 @@ background-color: #f1f1f1;
     flex-direction: column;
     gap: 16px;
 }
+.card-content, .footer {
+  padding: 0 !important;
+}

@@ -66,7 +66,7 @@
                     color="primary"
                     [checked]="selection.isSelected(element)"
                     [aria-label]="checkboxLabel(element)"
-                    [disabled]="element.status === 0"
+                    [disabled]="element.status != 1"
                     >
                     </mat-checkbox>
                 </td>
@@ -105,6 +105,7 @@
                     <div class="status-column">
                         <span class="status-created" *ngIf="element.status === 0">{{'pages.data-analysis.cohort-selection.status_created' | translate}}</span>
                         <span class="status-executed" *ngIf="element.status === 1">{{'pages.data-analysis.cohort-selection.status_executed' | translate}}</span>
+                        <span class="status-v6-error" *ngIf="element.status === 2">{{'pages.data-analysis.cohort-selection.status-v6-error' | translate}}</span>
                     </div>
                 </td>
                 </ng-container>
@@ -112,13 +113,21 @@
                 <!-- Action Column -->
                 <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
-                <td mat-cell *matCellDef="let element"> 
-                    <!-- Execute query -->
+                <td mat-cell *matCellDef="let element">
+                    <!-- Execute query in Cohort builder-->
                     <button mat-button class="execute-button" *ngIf="element.status === 0" (click)="executeQuery(element.id)" [disabled]="loading">
-                    <span class="cohort-text">
-                        {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
-                        <mat-icon class="cohort-icon">chevron_right</mat-icon>
-                    </span>
+                        <span class="cohort-text">
+                            {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
+                            <mat-icon class="cohort-icon">chevron_right</mat-icon>
+                        </span>
+                    </button>
+
+                    <!-- Execute query in V6-->
+                    <button mat-button class="execute-button" *ngIf="element.status === 2" (click)="executeQueryV6(element.id)" [disabled]="loading">
+                        <span class="cohort-text">
+                            {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
+                            <mat-icon class="cohort-icon">chevron_right</mat-icon>
+                        </span>
                     </button>
                     
 
@@ -142,7 +151,7 @@
         <!-- Back button -->
         <button mat-button class="back-button" (click)="backAnalysis()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
        <!-- Continue button -->
-        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="this.selection.selected.length == 0"
+        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="this.selection.selected.length < 2"
         > {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
       </mat-card-actions>
 </mat-card>

@@ -73,7 +73,7 @@
 
     <mat-card class="container">
 
-      <mat-card-content class="data-preparation-content">
+      <mat-card-content class="card-content">
           <!-- FIRST ROW -->
 
           <mat-card class="inner-card">
@@ -135,7 +135,7 @@
   <mat-tab label="Data Overview">
     <mat-card class="container">
 
-      <mat-card-content class="data-preparation-content">
+      <mat-card-content class="card-content">
 
            <div class="section-content">
               <p><strong>Cohorts:</strong> Cohort 1: Cohort rps; Cohort 2: Cohort pelvis; Cohort 3: Cohort pelvis and rps</p>
@@ -144,8 +144,8 @@
           <!-- LEFT CARD -->
            <div class="grid-layout">
           
-              <mat-card class="left-column" style="margin-top: 20px !important;">
-                <h3 class="section-title">Analysis Results</h3>
+              <mat-card class="inner-card left-column" style="margin-top: 20px !important;">
+                <h3 class="section-title">{{'pages.data-analysis.analysis-results.summary-statistics' | translate}}</h3>
 
                 <div *ngFor="let tableKey of getTableKeys()" class="table-container">
                 <h2>{{ tableKey }}</h2>
@@ -179,7 +179,7 @@
                   
               </mat-card>
               <!-- RIGHT CARD -->
-              <mat-card class="right-column" style="margin-top: 20px !important;">
+              <mat-card class="inner-card right-column" style="margin-top: 20px !important;">
                 <h3 class="section-title">Analysis Results</h3>
 
                 <div *ngFor="let tableKey of getTableKeys()" class="table-container">

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { forkJoin, Subject } from "rxjs";
+import { forkJoin, Observable, of, Subject } from "rxjs";
 import { HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -25,6 +25,9 @@ export class DataAnalysisService {
   data_preparation_center$ = this.data_preparation_center.asObservable();
   data_preparation_cohort = new Subject<any>();
   data_preparation_cohort$ = this.data_preparation_cohort.asObservable();
+
+  data_summary_statistics = new Subject<any>();
+  data_summary_statistics$ = this.data_summary_statistics.asObservable();
 
   // Algorithm Selection observables
   algorithm = new Subject<any>();
@@ -78,6 +81,16 @@ export class DataAnalysisService {
     });
   }
 
+  /** // TODO change url
+   * Function to execute a query for a cohort (V6), it creates the dataframe in v6
+   * @param cohortId id of the cohort
+   * @returns 
+   */
+  executeQueryV6(cohortId: number) {
+    const url = `/raven-api/v1/cohorts/analysis/${cohortId}`;
+    return this.postRequest(url);
+  }
+
   /**
    * Function to get permit by workspace id
    * @param workspace_id the workspace id
@@ -85,14 +98,58 @@ export class DataAnalysisService {
    */
   getPermitByWorkspaceId(workspace_id: string) {
     const url = `/raven-api/v1/permits/workspace/${workspace_id}`;
-    console.log(url);
     
     this.getRequest(url).subscribe((data) => {
         this.permit.next(data);
     });
   }
+  // TODO: create a dictionary on the API
+  getVariables(): Observable<any[]> {
+    const data = [
+      { value: "AGE", label: "Age", type: "numeric" },
+      { value: "TUMOR_SIZE", label: "Tumor Size", type: "numeric" },
+      { value: "LOCAL_RECURRENCE", label: "Local Recurrence", type: "categorical" },
+      { value: "MULTIFOCALITY", label: "Multifocality", type: "categorical" },
+      { value: "STATUS", label: "Status", type: "categorical" },
+      { value: "PRE_OPERATIVE_RADIO", label: "Pre Operative Radio", type: "categorical" },
+      { value: "HISTOLOGY", label: "Histology", type: "categorical" },
+      { value: "POST_OPERATIVE_RADIO", label: "Post Operative Radio", type: "categorical" },
+      { value: "PRE_OPERATIVE_CHEMO", label: "Pre Operative Chemo", type: "categorical" },
+      { value: "POST_OPERATIVE_CHEMO", label: "Post Operative Chemo", type: "categorical" },
+      { value: "COMPLETENESS_OF_RESECTION", label: "Completeness Of Resection", type: "categorical" },
+      { value: "DISTANT_METASTASIS", label: "Distant Metastasis", type: "categorical" },
+      { value: "FNCLCC_GRADE", label: "Fnclcc Grade", type: "categorical" },
+      { value: "TUMOR_RUPTURE", label: "Tumor Rupture", type: "categorical" },
+      { value: "SEX", label: "Sex", type: "categorical" }
+    ];
+
+    return of(data); // simula una API
+  }
+
+
+
+  /** //TODO: change get request
+   * Function to get metadata search
+   * @param workspace_id the workspace id
+   * @returns the metadata search of the given workspace id
+   */
+  getMetadataSearch(workspace_id: number) {
+    const url = `/raven-api/v1/metadata/workspace/${workspace_id}`;
+    // return this.getRequest(url);
+    return this.getVariables();
+  }
 
   /**
+   * Function to get coEs granted for a workspace from the permit
+   * @param workspace_id the workspace id
+   * @returns the coEs granted
+   */
+  getCoEsGranted(workspace_id: number) {
+    const url = `/raven-api/v1/permits/workspace/${workspace_id}`;
+    return this.getRequest(url)
+  }
+
+  /** // TODO this function will be replaced by getSummaryStatistics
    * Function to get summary statistics for data preparation by center
    * @param data list of centers
    * @returns the summary statistics by center
@@ -104,7 +161,7 @@ export class DataAnalysisService {
     });
   }
 
-  /**
+  /** // TODO this function will be replaced by getSummaryStatistics
    * Function to get summary statistics for data preparation by cohort
    * @param data list of cohorts
    * @returns the summary statistics by cohort
@@ -116,15 +173,18 @@ export class DataAnalysisService {
     });
   }
 
-  /**
-   * Function to get metadata search for data preparation (get variables and centers selected in metadata search)
-   * @param workspace_id id of the workspace
-   * @returns the metadata search of the given workspace id
+  /** New function to get summary statistics for data preparation
+   * Function to get summary statistics
+   * @param taskId id of the data preparation task
+   * @returns the summary statistics by cohort and center
    */
-  getMetadataSearch(workspace_id: number) {
-    const url = './assets/jsons/metadata_search.json';
-    return this.getRequest(url);
+  getSummaryStatistics(taskId: number) {
+    const url = './assets/jsons/summary_statistics.json';
+    this.getRequest(url).subscribe((data) => {
+        this.data_summary_statistics.next(data);
+    });
   }
+
 
   /**
    * Function to get algorithms for algorithm selection

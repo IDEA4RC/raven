@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
@@ -22,11 +22,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   
   allCohorts: any[] = []; // Loaded from cohort selection
-  allCenters: any[] = [
-    {center_name: "APH P"},
-    {center_name: "INT"},
-    {center_name: "ISS-FJD"}
-  ] // Loaded from cohort selection
+  allCenters: any[] = [] // Loaded from cohort selection
+  optionsVariables: { value: string; label: string, type: string }[] = []; // Loaded from metadata search
 
   // Variables for the filters
   selectedCenters: any[] = [];
@@ -56,8 +53,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   // Variable bound to the selected value
   selectedValue: any = null;
 
-  // Options loaded dynamically on the variables selection
-  optionsVariables: { value: string; label: string, type: string }[] = [];
+  
 
   // Table components
   dataSourceCohorts = new MatTableDataSource<any>();
@@ -67,8 +63,10 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   displayedColumnsCenters: string[] = [];
 
   // Observables cohort
+  observable_coes_granted$ : Observable<any> | undefined;
   observable_data_preparation_cohort$ : Observable<any> | undefined;
   observable_data_preparation_center$ : Observable<any> | undefined;
+  private coesGrantedSubscription: any;
   private dataPreparationSubscriptionCohort: any;
   private dataPreparationSubscriptionCenter: any;
 
@@ -80,25 +78,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    //TODO get variables
-    // Example: load data dynamically (could be from a service)
-    this.optionsVariables = [
-      { "value": "AGE", "label": "Age", "type": "numeric" },
-      { "value": "TUMOR_SIZE", "label": "Tumor Size", "type": "numeric" },
-      { "value": "LOCAL_RECURRENCE", "label": "Local Recurrence", "type": "categorical" },
-      { "value": "MULTIFOCALITY", "label": "Multifocality", "type": "categorical" },
-      { "value": "STATUS", "label": "Status", "type": "categorical" },
-      { "value": "PRE_OPERATIVE_RADIO", "label": "Pre Operative Radio", "type": "categorical" },
-      { "value": "HISTOLOGY", "label": "Histology", "type": "categorical" },
-      { "value": "POST_OPERATIVE_RADIO", "label": "Post Operative Radio", "type": "categorical" },
-      { "value": "PRE_OPERATIVE_CHEMO", "label": "Pre Operative Chemo", "type": "categorical" },
-      { "value": "POST_OPERATIVE_CHEMO", "label": "Post Operative Chemo", "type": "categorical" },
-      { "value": "COMPLETENESS_OF_RESECTION", "label": "Completeness Of Resection", "type": "categorical" },
-      { "value": "DISTANT_METASTASIS", "label": "Distant Metastasis", "type": "categorical" },
-      { "value": "FNCLCC_GRADE", "label": "Fnclcc Grade", "type": "categorical" },
-      { "value": "TUMOR_RUPTURE", "label": "Tumor Rupture", "type": "categorical" },
-      { "value": "SEX", "label": "Sex", "type": "categorical" }
-    ];
 
 
     this.dataSourceCohorts.data = [
@@ -117,6 +96,21 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     
     if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
       this.workspaceId = urlSegments[workspaceIndex + 1];
+
+      forkJoin([
+        this.dataAnalysisService.getCoEsGranted(this.workspaceId as unknown as number),
+        this.dataAnalysisService.getMetadataSearch(this.workspaceId as unknown as number)
+      ]).subscribe({
+        next: ([data1, data2]) => {
+          console.log('both finished', data1, data2);
+          // continue your flow
+          this.allCenters = data2[0].coes_granted.map((center: string) => ({
+            center_name: center
+          }));
+          this.optionsVariables = data1;
+        },
+        error: err => console.error(err)
+      });
     }
 
     // Subscribe to the observable from the service
@@ -127,7 +121,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     });
 
     this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort
-        this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center
+    this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center
+
 
     // Subscribe to the observable data preparation by cohort
     this.dataPreparationSubscriptionCohort = this.observable_data_preparation_cohort$.subscribe((data:any) => {
@@ -140,9 +135,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       this.updateCentersTable();
     });
 
-    // Initial data fetch
-    this.dataAnalysisService.getSummaryStatisticsCohort(this.allCohorts);
-    this.dataAnalysisService.getSummaryStatisticsCenter(this.allCenters);
+    
+    // this.dataAnalysisService.getSummaryStatisticsCohort(this.allCohorts);
+    // this.dataAnalysisService.getSummaryStatisticsCenter(this.allCenters);
   }
 
   ngOnDestroy(): void {

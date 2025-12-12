@@ -78,7 +78,6 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     this.observable_permit$ = this.dataAnalysisService.permit
     // Subscribe to the observable permit
     this.permitSubscription = this.observable_permit$.subscribe((data) => {
-      console.log(data);
       
       this.permitId = data.length > 0 ? data[0].id : undefined;
     });
@@ -139,6 +138,21 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
       this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
 
     }, 3000);                       // wait 5 seconds
+  }
+  executeQueryV6(cohortId: number) {
+    this.dataAnalysisService.executeQueryV6(cohortId).subscribe({
+      next: (response) => {
+        console.log('V6 Query executed successfully', response);
+        this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+        this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
+      },
+      error: (error) => {
+        console.error('Error executing V6 query', error);
+        this.showNotification('red', 'Error executing cohort', 'bottom', 'center');
+      }
+    });
+    
+
   }
   // Button to navigate to the previous page (Data Analysis main page)
   backAnalysis() {

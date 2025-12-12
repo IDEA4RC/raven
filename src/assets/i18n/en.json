@@ -138,7 +138,6 @@
         "create": "Create"
       },
       "data-quality": "Data Quality",
-      "analysis-results": "Analysis Results",
       "search_by_name": "Search by name",
       "go_nlp_cohort": "NLP Cohort Builder",
       "go_cohort_manager": "Go to Cohort Manager",
@@ -152,6 +151,7 @@
         "action": "Action",
         "status_created": "Created",
         "status_executed": "Executed",
+        "status-v6-error": "Partially Executed",
         "execute_query": "Execute Query",
         "continue": "Continue",
         "back": "Back"
@@ -192,6 +192,10 @@
         "save-execute": "Save & Execute",
         "continue": "Continue",
         "back": "Back"
+      },
+      "analysis-results": {
+        "analysis-results": "Analysis Results",
+        "summary-statistics": "Summary Statistics"
       }
     }
   }

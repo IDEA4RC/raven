@@ -39,7 +39,7 @@ export class MetadataSearchService {
   getVariablesMetadata() {
     // const url = `${environment.apiBaseUrl}/variables?...`;
     const url = './assets/jsons/metadata_v0.3.json';
-    this.getRequest(url).subscribe((data) => {
+    return this.getRequest(url).subscribe((data) => {
         this.variablesMetadata.next(data);
     });
   }
@@ -63,10 +63,9 @@ export class MetadataSearchService {
      * @returns 
      */
     createWorkspace(data:any) {
-      console.log(data);
       
-      // const url = `${environment.base_url}${environment.raven_url}/workspaces/`;
-      const url = '/raven-api/v1/workspaces/';
+      // const url = `${environment.base_url}${environment.raven_url}/workspaces/`;    
+      const url = '/raven-api/v1/workspaces/create_workspace';
       return this.postRequest(url, data);
     }
 

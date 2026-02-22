@@ -53,7 +53,7 @@ export class DataAnalysisService {
    */
   createAnalysis(data:any) {
     // const url = `${environment.base_url}${environment.raven_url}/analysis/`;
-    const url = '/raven-api/v1/analyses/';
+    const url = '/raven-api/v1/analyses/create_analysis';
     return this.postRequest(url, data);
   }
 
@@ -103,48 +103,25 @@ export class DataAnalysisService {
         this.permit.next(data);
     });
   }
-  // TODO: create a dictionary on the API
-  getVariables(): Observable<any[]> {
-    const data = [
-      { value: "AGE", label: "Age", type: "numeric" },
-      { value: "TUMOR_SIZE", label: "Tumor Size", type: "numeric" },
-      { value: "LOCAL_RECURRENCE", label: "Local Recurrence", type: "categorical" },
-      { value: "MULTIFOCALITY", label: "Multifocality", type: "categorical" },
-      { value: "STATUS", label: "Status", type: "categorical" },
-      { value: "PRE_OPERATIVE_RADIO", label: "Pre Operative Radio", type: "categorical" },
-      { value: "HISTOLOGY", label: "Histology", type: "categorical" },
-      { value: "POST_OPERATIVE_RADIO", label: "Post Operative Radio", type: "categorical" },
-      { value: "PRE_OPERATIVE_CHEMO", label: "Pre Operative Chemo", type: "categorical" },
-      { value: "POST_OPERATIVE_CHEMO", label: "Post Operative Chemo", type: "categorical" },
-      { value: "COMPLETENESS_OF_RESECTION", label: "Completeness Of Resection", type: "categorical" },
-      { value: "DISTANT_METASTASIS", label: "Distant Metastasis", type: "categorical" },
-      { value: "FNCLCC_GRADE", label: "Fnclcc Grade", type: "categorical" },
-      { value: "TUMOR_RUPTURE", label: "Tumor Rupture", type: "categorical" },
-      { value: "SEX", label: "Sex", type: "categorical" }
-    ];
-
-    return of(data); // simula una API
-  }
 
 
-
-  /** //TODO: change get request
-   * Function to get metadata search
-   * @param workspace_id the workspace id
-   * @returns the metadata search of the given workspace id
-   */
-  getMetadataSearch(workspace_id: number) {
-    const url = `/raven-api/v1/metadata/workspace/${workspace_id}`;
-    // return this.getRequest(url);
-    return this.getVariables();
-  }
 
   /**
    * Function to get coEs granted for a workspace from the permit
    * @param workspace_id the workspace id
    * @returns the coEs granted
    */
-  getCoEsGranted(workspace_id: number) {
+  getVariablesGranted(workspace_id: number) {
+    const url = `/raven-api/v1/metadata/workspace/${workspace_id}`;
+    return this.getRequest(url)
+  }
+
+  /**
+   * Function to get coEs granted and variables for a workspace from the permit
+   * @param workspace_id the workspace id
+   * @returns the coEs granted
+   */
+  getDataPermitByWorkspace(workspace_id: number) {
     const url = `/raven-api/v1/permits/workspace/${workspace_id}`;
     return this.getRequest(url)
   }
@@ -159,6 +136,24 @@ export class DataAnalysisService {
     this.getRequest(url).subscribe((data) => {
         this.data_preparation_center.next(data);
     });
+  }
+
+  /**
+   * Function to get coEs granted and variables for a workspace from the permit
+   * @param workspace_id the workspace id
+   * @returns the coEs granted
+   */
+  getSummaryStatisticsV6(data:any) {
+    console.log("GET SUMMARY");
+    console.log(data);
+    
+    const url = `/raven-api/v1/data-preparation/create_summary`;
+    return this.postRequest(url, data)
+  }
+
+  getTaskStatus(task_id: number) {
+    const url = `/raven-api/v1/data-preparation/status_task/${task_id}`;
+    return this.getRequest(url)
   }
 
   /** // TODO this function will be replaced by getSummaryStatistics

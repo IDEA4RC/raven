@@ -116,7 +116,8 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     console.log('Navigating to Cohort Manager');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
-    window.location.href = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/web/advanced-query/${userId}/${this.analysisId}/${this.permitId}/${token}`;
+    const url = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/web/advanced-query/${userId}/${this.analysisId}/${this.permitId}/${token}`;
+    window.open(url, '_blank');
 
   }
   goToNLPCohort() {
@@ -124,7 +125,9 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     console.log('Navigating to Cohort Selection');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
-    window.location.href = `https://valhalla.deusto.es/nlp-cohort-builder/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
+    const url = `https://valhalla.deusto.es/nlp-cohort-builder/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
+    window.open(url, '_blank');
+
   }
 
   executeQuery(cohortId: number) {

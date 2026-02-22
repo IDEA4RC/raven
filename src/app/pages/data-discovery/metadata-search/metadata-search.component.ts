@@ -608,7 +608,8 @@ saveWorkspace() {
 
     const variablesSelected = this.selectionService.getDataSelected().map((variable: any) => variable.variable_id);
     const centersSelected = this.selectionService.getSelectedCenters();
-    
+    const typeCancer = (this.cancerType || '').replace(/\.$/, '');
+
 
     let wokspaceData = 
       {
@@ -619,10 +620,14 @@ saveWorkspace() {
         "data_analysis": 0,
         "results_report": 0,
         "status": "Data Permit",
-        "team_ids": []
+        "team_ids": [],
+        "id_variables": variablesSelected,
+        "selected_id_coes": centersSelected,
+        "type_cancer": typeCancer,
       }
       
-    
+    console.log("VARIABLES TO CREATE WORKSPACE: ")
+
     this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
       next: (response: any) => {
         console.log('Workspace created successfully:', response);

@@ -23,10 +23,11 @@ import { NewAnalysisComponent } from './data-analysis/new-analysis/new-analysis.
 import { Dialog } from '@angular/cdk/dialog';
 import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-delete-analysis/dialogform-delete-analysis.component';
 import { StatisticsTableComponent } from './data-analysis/individual-data-analysis/data-preparation/statistics-table/statistics-table.component';
+import { CreateVariableDialogComponent } from './data-analysis/individual-data-analysis/create-variable-dialog/create-variable-dialog.component';
 
 @NgModule({
   declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
-    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent],
+    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(AnalysisRoutes),
@@ -40,7 +41,7 @@ import { StatisticsTableComponent } from './data-analysis/individual-data-analys
     MatNativeDateModule,
     NgApexchartsModule,
     MatDialogModule,
-    MatChipsModule
+    MatChipsModule    
 ]
 })
 export class DataAnalysisModule { }

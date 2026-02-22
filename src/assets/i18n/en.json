@@ -37,7 +37,6 @@
       "quality_indicators": "Quality Indicators: Data quality metrics ensuring the reliability, completeness, and consistency of the datasets.",
       "login": "Login"
     }
-
   },
   "pages": {
     "metadata_search": {
@@ -96,11 +95,11 @@
       "workspace_saved_description": "Your workspace has been saved! Would you like to proceed directly to “Data Permit” now, or continue later?",
       "continue_later": "Continue later",
       "proceed": "Proceed to Data Access"
-
     },
     "workspace": {
       "new_workspace": "New Workspace",
       "workspace_name": "Workspace Name",
+      "next_step": "Next Step",
       "search_by_name": "Search by name",
       "open": "Open",
       "status": "Status",
@@ -117,18 +116,32 @@
         "message": "Are you sure you want to delete this workspace?",
         "cancel": "Cancel",
         "delete": "Delete"
-      }
-
+      },
+      "workspace_id": "Workspace ID"
     },
     "data-analysis": {
       "data_analysis": "Data Analysis",
       "new_analysis": "New Analysis",
+      "create_variables": {
+        "new_variable": "New Variable",
+        "create_variables": "Create Variables",
+        "grouping_for_new_categorical": "Grouping for new categorical variable",
+        "computed_variables": "Computed variables",
+        "conditional_variables": "Conditional variables",
+        "merging_variables": "Merging variables",
+        "new_variable_category": "New variable category",
+        "select_variables_to_process": "Select the variable/s  to process",
+        "chosse_method_for_processing": "Choose the method for processing",
+        "output_definition": "Output Definition",
+        "name_of_new_variable": "Name of the new variable",
+        "brief_description": "Brief description"
+      },
       "analysis_table": {
-         "id": "ID",
-          "name": "Name",
-          "creation_date": "Creation Date",
-          "update_date": "Update Date",
-          "action": "Action"
+        "id": "ID",
+        "name": "Name",
+        "creation_date": "Creation Date",
+        "update_date": "Update Date",
+        "action": "Action"
       },
       "create_analysis": {
         "title": "Create New Analysis",
@@ -199,7 +212,4 @@
       }
     }
   }
-
-  
-    
 }

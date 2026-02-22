@@ -1,0 +1,22 @@
+.form-table {
+  width: 100%;
+  border-collapse: collapse; /* Sin bordes extra */
+}
+
+.form-table td {
+  padding: 8px 16px; /* Espaciado entre label y campo */
+  vertical-align: top;
+}
+
+.form-table label {
+  font-weight: 500;
+  white-space: nowrap; /* No se rompen las etiquetas largas */
+}
+
+.form-table .full-width {
+  width: 100%; /* Que los mat-form-field ocupen todo el ancho de la columna */
+}
+
+.mat-form-field {
+  min-height: 56px; /* Valor base: 56px para inputs normales, 72px para multiline */
+}

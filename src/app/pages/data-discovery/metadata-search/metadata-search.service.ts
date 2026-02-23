@@ -81,6 +81,13 @@ export class MetadataSearchService {
     }
 
 
+    updatePermitStatus(workspaceId:any, status:any) {
+      let data = {
+        "status": status
+      }
+      const url = `/raven-api/v1/permits/${workspaceId}/status`;
+      return this.patchRequest(url, data);
+    }
 
 
 

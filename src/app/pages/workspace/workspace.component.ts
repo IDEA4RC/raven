@@ -30,11 +30,11 @@ export class WorkspaceComponent implements OnInit {
   });
 
   // Observables
-  observable_wokspace$ : Observable<any> | undefined;
+  observable_wokspace$: Observable<any> | undefined;
 
   // Table components
   dataSource = new MatTableDataSource<Workspace>();
-  displayedColumns: string[] = ['name', 'update_date', 'status', 'action'];
+  displayedColumns: string[] = ['id', 'name', 'update_date', 'status', 'action'];
 
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -54,39 +54,39 @@ export class WorkspaceComponent implements OnInit {
 
     // Subscribe to the observable patients
     this.observable_wokspace$.pipe(takeUntil(this.destroy$))
-    .subscribe((data) => {
-      let data_mapped = data.map((workspace: Workspace) => {
-        
-        switch (workspace.status) {
-          case 0:
-            workspace.status = 'Metadata Search';
-            break;
-          case 1:
-            workspace.status = 'Data Access';
-            break;
-          case 2:
-            workspace.status = 'Data Analysis';
-            break;
-          case 3:
-            workspace.status = 'Result Report';
-            break;
-        }
-        return workspace;
+      .subscribe((data) => {
+        let data_mapped = data.map((workspace: Workspace) => {
+
+          switch (workspace.status) {
+            case 0:
+              workspace.status = 'Metadata Search';
+              break;
+            case 1:
+              workspace.status = 'Data Access';
+              break;
+            case 2:
+              workspace.status = 'Data Analysis';
+              break;
+            case 3:
+              workspace.status = 'Result Report';
+              break;
+          }
+          return workspace;
+        });
+        // Sort data by id before assigning to dataSource
+        data_mapped.sort((a: Workspace, b: Workspace) => {
+          return a.id - b.id;
+        });
+        this.dataSource.data = data_mapped as Workspace[];
+
       });
-      // Sort data by id before assigning to dataSource
-      data_mapped.sort((a: Workspace, b: Workspace) => {
-        return a.id - b.id;
-      });
-      this.dataSource.data = data_mapped as Workspace[];
-      
-    });
 
     // Get the workspace data
     this.workspaceService.getWorkspace()
-    
 
 
-    
+
+
   }
 
   ngAfterViewInit(): void {
@@ -122,10 +122,14 @@ export class WorkspaceComponent implements OnInit {
   // Navigate to the user journey phase of the workspace
   goToStatus(workspace: Workspace) {
 
-    switch(workspace.status) {
+    switch (workspace.status) {
       case "Data Permit": {
         // Redirect to the data permit platform
-        window.location.href = `//idea4rc-data-permit-platform.iti.gr//auth/callback?access_token=${localStorage.getItem('access_token')}`;
+
+        console.log('Navigating to Data Permit plaform');
+        let token = localStorage.getItem('access_token');
+        const url = `//idea4rc-data-permit-platform.iti.gr//auth/callback?access_token=${token}`;
+        window.open(url, '_blank');
         break;
       }
       case "Data Analysis": {
@@ -133,7 +137,7 @@ export class WorkspaceComponent implements OnInit {
         break;
       }
     }
-   }
+  }
 
   // Navigate to the individual workspace
   openWorkspace(workspace: Workspace) {
@@ -143,7 +147,7 @@ export class WorkspaceComponent implements OnInit {
 
   // Remove the workspace from the database
   deleteWorkspace(workspace: Workspace) {
-  
+
     const dialogRef = this.dialogModel.open(DialogformDeleteComponent, {
       disableClose: true,
       data: {
@@ -152,7 +156,7 @@ export class WorkspaceComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((success: boolean) => {
 
-      if(success) {
+      if (success) {
         // Show success notification
         this.showNotification(
           "black",
@@ -168,13 +172,13 @@ export class WorkspaceComponent implements OnInit {
           "center")
       }
 
-      
+
       // Refresh the workspace data after deletion
       this.workspaceService.getWorkspace();
     });
-     
+
   }
- 
+
   /**
  * Function to show a notification in the frontend
  * @param colorName the color of the notification
@@ -182,14 +186,14 @@ export class WorkspaceComponent implements OnInit {
  * @param placementFrom the position from where the notification will appear
  * @param placementAlign the position where the notification will align
  */
-showNotification(colorName: string, text: string, placementFrom: any, placementAlign: any) {
-  this.snackBar.open(text, "", {
-    duration: 2000,
-    verticalPosition: placementFrom,
-    horizontalPosition: placementAlign,
-    panelClass: ['centered-snackbar', colorName]  // multiple classes if needed
-  });
-}
-  
+  showNotification(colorName: string, text: string, placementFrom: any, placementAlign: any) {
+    this.snackBar.open(text, "", {
+      duration: 2000,
+      verticalPosition: placementFrom,
+      horizontalPosition: placementAlign,
+      panelClass: ['centered-snackbar', colorName]  // multiple classes if needed
+    });
+  }
+
 
 }

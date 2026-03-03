@@ -22,7 +22,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export function HttpLoaderFactory(http: HttpClient): any {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -60,7 +60,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
   exports: [TablerIconsModule],
   bootstrap: [AppComponent],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideCharts(withDefaultRegisterables())
   ]
 })
 export class AppModule {}

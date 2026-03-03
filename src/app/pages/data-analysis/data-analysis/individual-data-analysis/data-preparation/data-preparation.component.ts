@@ -14,7 +14,16 @@ import { CreateVariableDialogComponent } from '../create-variable-dialog/create-
   styleUrl: './data-preparation.component.scss'
 })
 export class DataPreparationComponent implements OnInit, OnDestroy {
-
+  variableMapping: { [localId: string]: string } = {
+    'Patient_birthYear': 'year_of_birth',
+    'Patient_id': 'patient_id',
+    'Patient_sex': 'sex',
+    'Morphology': 'morphology',
+    'PatientFollowUp_newCancerTopography': 'topography',
+    'Life_status': 'life_status',
+    'Pathological_stage': 'pathological_stage',
+    'Clinical_stage': 'clinical_stage'
+  };
   @Output() nextStep = new EventEmitter<void>();
   @Output() previousStep = new EventEmitter<void>();
 
@@ -27,16 +36,18 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   optionsVariables: { variable_name: string; variable_id: string, datatype: string }[] = []; // Loaded from metadata search
 
 
-  taskStatus: string = ''; // Por ejemplo: "pending", "running", "complete", "failed"
+  taskStatus: string = '';
   isLoading: boolean = true; // Para mostrar/hide el loader
   isCrashed: boolean = false;
-
+  resultGlobal: any = [];
+  cohortNames: string;
+  resultLocal: any = [];
   pollingInterval: any;
   pollingFrequency: number = 3000; // 3 segundos
   // Variables for the filters
   selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
-
+  nodeData: any
   showCenters = true;
   showCohorts = true;
   variableList: any[] = [];
@@ -54,12 +65,14 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     { Statistics: 'Missing', field: "missing" },
   ];
 
+
   // Object to show the summary statistics by center
   centersTables: any = {};
 
   currentTaskId: number
   // Variable bound to the selected value
-  selectedValue: { variable_name: string; variable_id: string; datatype: string; variable_description: string };
+  //TODO: selectedValue: { variable_name: string; variable_id: string; datatype: string; variable_description: string };
+  selectedValue: any = null;
 
 
   // Table components
@@ -142,7 +155,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           this.optionsVariables = metadata.filter(v => grantedVariableIds.includes(v.variable_id));
 
 
-          this.createSummaryRequest()
+          this.createSummaryRequest();
 
 
         },
@@ -203,7 +216,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   onVariableSelected(value: any) {
     this.selectedValue = value;
     console.log("Selected value", this.selectedValue);
-
+    if (this.selectedValue) {
+      this.processResultLocal();
+    }
     this.updateCohortsTable();
     this.updateCentersTable();
 
@@ -219,11 +234,15 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     const variableId = this.selectedValue.variable_id;
     const variableType = this.selectedValue.datatype;
 
+    console.log("Updating cohorts table for variable:", variableName, "of type:", variableType);
+
     // Reset displayed columns
     this.displayedColumnsCohorts = [];
     this.dataSourceCohorts.data = [];
 
     if (this.selectedValue.datatype === 'Label') {
+      console.log("summary cohorts: ", this.summaryStatisticsCohorts);
+
       this.displayedColumnsCohorts.push(variableName);
       console.log("summaryStatisticsCohorts", this.summaryStatisticsCohorts);
 
@@ -281,11 +300,12 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
 
     } else if (this.selectedValue.datatype === 'Number') {
-      variableCohorts = this.summaryTableNum
+      variableCohorts = this.summaryTableNum;
+      console.log("summary cohorts: ", this.summaryStatisticsCohorts);
 
       this.displayedColumnsCohorts.push('Statistics');
       this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
-        const variableData = statistic.rps_cohort[this.selectedValue.datatype][this.selectedValue.variable_id];
+        const variableData = statistic.rps_cohort?.numeric?.[this.selectedValue.variable_id];
         this.displayedColumnsCohorts.push(`Cohort ${index + 1}`);
 
         variableCohorts = variableCohorts.map((row: any) => {
@@ -299,8 +319,41 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         });
 
       });
+      /* else if (this.selectedValue.datatype === 'Number') {
+   
+         variableCohorts = this.summaryTableNum;
+   
+         this.displayedColumnsCohorts.push('Statistics');
+         console.log("variableCohorts", variableCohorts);
+         console.log("summaryStatisticsCohorts", this.summaryStatisticsCohorts);
+   
+         this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
+           console.log("Processing statistic for index:", index, statistic);
+   
+           // Aquí se accede al nuevo backend manteniendo los nombres originales
+           const variableData =
+             statistic.rps_cohort?.numeric?.[this.selectedValue.variable_id];
+   
+           this.displayedColumnsCohorts.push(`Cohort ${index + 1}`);
+   
+           variableCohorts = variableCohorts.map((row: any) => {
+   
+             // Para median, q_25 y q_75 que son objetos { root, INT }
+             const rawValue = variableData?.[row.field];
+             const cohortValue =
+               typeof rawValue === 'object' && rawValue !== null
+                 ? rawValue.root
+                 : rawValue ?? 0;
+   
+             return {
+               ...row,
+               [`Cohort ${index + 1}`]: cohortValue
+             };
+           });
+   
+           console.log("variableCohorts after mapping:", variableCohorts);
+         });*/
     }
-
     // Update the data source for the cohorts table
     this.dataSourceCohorts.data = variableCohorts;
     this.dataSourceCohorts._updateChangeSubscription();
@@ -456,22 +509,22 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   createVariable() {
     // Logic to create a new variable
     console.log('Create Variable button clicked');
-     const dialogRef = this.dialog.open(CreateVariableDialogComponent, {
-    width: '600px',
-    disableClose: true, // evita cerrar al clicar fuera
-    data: {
-      // si necesitas pasar algo (centers, cohorts, etc.)
-      centers: this.allCenters,
-      cohorts: this.allCohorts
-    }
-  });
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      // aquí recibes la nueva variable creada
-      console.log('Variable creada:', result);
-      // refrescar lista de variables, llamar API, etc.
-    }
-  });
+    const dialogRef = this.dialog.open(CreateVariableDialogComponent, {
+      width: '600px',
+      disableClose: true, // evita cerrar al clicar fuera
+      data: {
+        // si necesitas pasar algo (centers, cohorts, etc.)
+        centers: this.allCenters,
+        cohorts: this.allCohorts
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // aquí recibes la nueva variable creada
+        console.log('Variable creada:', result);
+        // refrescar lista de variables, llamar API, etc.
+      }
+    });
   }
   // Function to get the keys of an object
   objectKeys(data: any) {
@@ -500,6 +553,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
 
   startPollingTaskStatus(taskId: number) {
+    clearInterval(this.pollingInterval);
+
     this.currentTaskId = taskId;
     this.isLoading = true;
     this.taskStatus = 'pending';
@@ -510,23 +565,44 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     }
 
     this.pollingInterval = setInterval(() => {
-      this.dataAnalysisService.getTaskStatus(this.currentTaskId!).subscribe({
+      this.dataAnalysisService.getTaskStatus(taskId).subscribe({
         next: (res: { status: string }) => {
           this.taskStatus = res.status;
           console.log("Estado del task:", this.taskStatus);
 
           // Si está completo o falló, detenemos el polling
-          if (this.taskStatus === 'completed' || this.taskStatus === 'crashed') {
+          if (this.taskStatus === 'completed') {
+            clearInterval(this.pollingInterval);
+            this.fetchTaskResult(taskId);
+            this.isLoading = false;
+            this.isCrashed = false;
+            // Primero obtenemos el subtask
+            this.dataAnalysisService.getSubTask(taskId).subscribe({
+              next: (subtaskNumber: any) => {
+                const subtaskId = Number(subtaskNumber); // <-- convertimos a número
+                // Ahora obtenemos el resultado del subtask
+                this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
+                  next: subtaskResult => {
+                    console.log("Result get subTaskREsults", subtaskResult);
+                    console.log("Object.keys(subtaskResult.result)[0]", Object.keys(subtaskResult)[0]);
+
+                    this.resultLocal = subtaskResult;
+                    this.processResultLocal();
+                  },
+                  error: err => console.error('Error fetching subtask result', err)
+                });
+              },
+              error: err => console.error('Error fetching subtask number', err)
+            });
+          }
+          else if (this.taskStatus === 'crashed') {
             clearInterval(this.pollingInterval);
             this.isLoading = false;
             this.isCrashed = this.taskStatus === 'crashed';
 
-            if (this.taskStatus === 'completed') {
-              // Aquí puedes llamar a tu servicio que obtiene el resultado
-              this.fetchTaskResult(this.currentTaskId!);
-            } else {
-              console.error("La tarea falló");
-            }
+
+            console.error("La tarea falló");
+
           }
         },
         error: (err) => {
@@ -536,8 +612,107 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     }, this.pollingFrequency);
   }
 
-  fetchTaskResult(taskId: number) {
+  processResultLocal() {
+    console.log("ProcessResultLocal", this.resultLocal);
+    console.log("ProcessResultLocal - selectedValue", this.selectedValue);
+    console.log("ProcessResultLocal - resultGlobal", this.resultGlobal);
 
+
+    if (!this.resultGlobal || !this.resultLocal) return;
+
+
+    if (!this.cohortNames) return;
+
+    const numericMapped: any = {};
+    const countsMapped: any = {};
+
+    
+
+
+
+    /*this.cohortNames.forEach(cohortName => {
+      console.log("Cohort name", cohortName);
+
+      const cohortData = this.resultLocal[cohortName];
+      if (!cohortData || !cohortData.length) return;
+
+      // Detectar variables numéricas y categóricas
+      const variables = Object.keys(cohortData[0]?.numeric || {});
+      const labelVariables = Object.keys(cohortData[0]?.label || {});
+
+      // Aquí decides qué crear
+      variables.forEach(variable => {
+        console.log("Variable: ", variable);
+
+        // this.createNumericTable(cohortData, variable, cohortName);
+      });
+
+      labelVariables.forEach(variable => {
+        console.log("labelVariables :", variable);
+
+        //this.createLabelTable(cohortData, variable, cohortName);
+      });
+    });*/
   }
 
+
+  fetchTaskResult(taskId: number) {
+    this.dataAnalysisService.getTaskResult(taskId).subscribe({
+      next: (result) => {
+        console.log("Resultado de la tarea:", result);
+        this.resultGlobal = result.result;
+        console.log("Object.keys(result.result)[0]", Object.keys(result.result)[0]);
+
+        this.cohortNames = Object.keys(result.result)[0];
+        console.log("nodekey ", this.cohortNames);
+        const nodeData = result.result[this.cohortNames];
+        console.log("nodeData", nodeData);
+
+        this.nodeData = nodeData;
+        
+       
+
+        // Mapeo para Number y Label
+        const numericMapped: any = {};
+        const countsMapped: any = {};
+
+        Object.entries(this.variableMapping).forEach(([localId, serverName]) => {
+          // Para numeric (Number)
+          console.log("Going to map variable:", localId, "with server name:", serverName);
+
+          if (nodeData.numeric && nodeData.numeric[serverName] !== undefined) {
+            numericMapped[localId] = nodeData.numeric[serverName];
+          }
+          // Para counts_unique_values (Label)
+          if (nodeData.counts_unique_values && nodeData.counts_unique_values[serverName] !== undefined) {
+            countsMapped[localId] = nodeData.counts_unique_values[serverName];
+          }
+        });
+
+        // Asignar a summaryStatisticsCohorts usando los nombres locales
+        this.summaryStatisticsCohorts = [
+          {
+            rps_cohort: {
+              numeric: numericMapped,
+              counts_unique_values: countsMapped
+            }
+          }
+        ];
+        console.log("result of summaryS: ", this.summaryStatisticsCohorts);
+
+
+        this.updateCohortsTable();
+        this.updateCentersTable();
+      },
+      error: (err) => {
+        console.error("Error obteniendo el resultado de la tarea:", err);
+      }
+    });
+  }
+
+  getCohortNames(resultGlobal: { [cohort: string]: any[] } | undefined): string[] {
+
+    if (!resultGlobal) return [];
+    return Object.keys(resultGlobal).filter(key => key && resultGlobal[key]?.length > 0);
+  }
 }

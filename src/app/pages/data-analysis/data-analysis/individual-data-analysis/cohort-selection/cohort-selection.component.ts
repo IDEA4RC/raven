@@ -135,6 +135,11 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
     this.loading = true;            // show spinner
 
+    let queryExecutionId = 123; // TODO: Get this ID from the backend after executing the query
+
+
+    const url = `https://api.fcb.orchestrator.idea.lst.tfo.upm.es/execute/${queryExecutionId}`;
+    window.open(url, '_blank');
     setTimeout(() => {
       this.loading = false;         // hide spinner
       this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);

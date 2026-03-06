@@ -102,16 +102,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
 
 
-    this.dataSourceCohorts.data = [
-      { Statistics: 'N', Total: 1500, 'Cohort 1': 800, 'Cohort 2': 700 },
-      { Statistics: 'Mean', Total: 45.5, 'Cohort 1': 46.2, 'Cohort 2': 44.8 },
-      { Statistics: 'Median', Total: 44, 'Cohort 1': 45, 'Cohort 2': 43 },
-      { Statistics: 'Min', Total: 18, 'Cohort 1': 19, 'Cohort 2': 18 },
-      { Statistics: 'Max', Total: 80, 'Cohort 1': 78, 'Cohort 2': 80 },
-      { Statistics: 'Std Dev', Total: 12.3, 'Cohort 1': 11.8, 'Cohort 2': 12.7 }
-    ];
-
-
     // Extract workspace ID from the current URL
     const urlSegments = this.router.url.split('/');
     const workspaceIndex = urlSegments.indexOf('workspace');
@@ -126,12 +116,15 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         return;
       }
 
+
+
       forkJoin({
         coes: this.dataAnalysisService.getDataPermitByWorkspace(this.workspaceId),
-        variables: this.dataAnalysisService.getVariablesGranted(this.workspaceId),
-        metadata: this.http.get<any[]>('./assets/jsons/metadata_v0.3.json')
+        variables: this.dataAnalysisService.getMetadataByWorkspace(this.workspaceId),
+        //metadata: this.http.get<any[]>('./assets/jsons/metadata_v0.3.json')
       }).subscribe({
-        next: ({ coes, variables, metadata }) => {
+        next: ({ coes, variables }) => {//, metadata }) => {
+
           if (!coes) {
             console.warn('No data returned from permits API');
             this.allCenters = [];
@@ -146,18 +139,22 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             return;
           }
 
-
           const firstRecord = coes[0];
+
           this.allCenters = firstRecord.coes_granted || [];
+          console.log("all centers length: ", this.allCenters.length);
 
+          if (!this.allCenters.length) {
+            console.warn('No COES granted for this workspace');
+            this.allCenters = [];
+            this.optionsVariables = [];
+            return;
+          }
+          else {
+            this.createSummaryRequest();
+          }
           const grantedVariableIds: string[] = variables.id_variables || [];
-
-          this.optionsVariables = metadata.filter(v => grantedVariableIds.includes(v.variable_id));
-
-
-          this.createSummaryRequest();
-
-
+          // this.optionsVariables = metadata.filter(v => grantedVariableIds.includes(v.variable_id));
         },
         error: (err) => {
           console.error('Error loading workspace metadata:', err);
@@ -172,9 +169,29 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     // Subscribe to the observable from the service
     this.selectionService.selectedItems$.subscribe(items => {
+      
       this.allCohorts = items;
+      const cohortDataframeIds = this.allCohorts.map(cohort => cohort.dataframe_vantage_id);
 
-      // TODO: Aquí puedes hacer cualquier cosa con los datos
+
+      this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
+        next: (variables: any) => {
+          const seen = new Set<string>();
+          this.optionsVariables = variables.variablesList
+            .filter((v: any) => {
+              if (seen.has(v.name)) return false;
+              seen.add(v.name);
+              return true;
+            })
+            .map((v: any) => ({
+              variable_name: v.name,
+              variable_id: v.name,
+              datatype: this.mapDatatype(v.dtype)
+            }));
+
+        },
+        error: err => console.error('Error fetching subtask number', err)
+      });
     });
 
     this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort
@@ -183,11 +200,14 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     // Subscribe to the observable data preparation by cohort
     this.dataPreparationSubscriptionCohort = this.observable_data_preparation_cohort$.subscribe((data: any) => {
+      console.log("dataPreparationSubscriptionCohort", data);
+
       this.summaryStatisticsCohorts = data;
       this.updateCohortsTable();
     });
     // Subscribe to the observable data preparation by center
     this.dataPreparationSubscriptionCenter = this.observable_data_preparation_center$.subscribe((data: any) => {
+      console.log("dataPreparationSubscriptionCenter", data);
       this.summaryStatisticsCenters = data;
       this.updateCentersTable();
     });
@@ -213,6 +233,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   goNext() {
     this.nextStep.emit();
   }
+
   onVariableSelected(value: any) {
     this.selectedValue = value;
     console.log("Selected value", this.selectedValue);
@@ -240,17 +261,21 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.displayedColumnsCohorts = [];
     this.dataSourceCohorts.data = [];
 
-    if (this.selectedValue.datatype === 'Label') {
+    if (this.selectedValue.datatype === 'Categorical') {
       console.log("summary cohorts: ", this.summaryStatisticsCohorts);
-
+      const totalRow: any = { [variableName]: 'Total' };
+      const missingRow: any = { [variableName]: 'Missing' };
       this.displayedColumnsCohorts.push(variableName);
-      console.log("summaryStatisticsCohorts", this.summaryStatisticsCohorts);
 
       this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
+        console.log("statistics :", statistic, " index :", index);
+
         const variableData = statistic.rps_cohort?.counts_unique_values?.[variableId] || {};
         const cohortLabel = `Cohort ${index + 1}`;
+        const variableCounts = statistic.rps_cohort?.categorical_count?.[variableId] || {};
         this.displayedColumnsCohorts.push(cohortLabel);
-        const variableValues = Object.keys(variableData).filter(v => v !== 'N/A');
+        const variableValues = Object.keys(variableData);
+        console.log("variableCounts ", variableCounts);
 
         //const variableData = statistic.rps_cohort?.counts_unique_values?.[this.selectedValue.variable_id];
 
@@ -270,33 +295,45 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             variableCohorts[i][cohortLabel] = variableData[val];
           }
         });
-      });
 
+        let total = variableCounts['count'] || 0;
+        let missing = variableCounts['missing'] || 0;
+        const missingPerc = total > 0 ? (missing / total) * 100 : 0;
+
+        totalRow[cohortLabel] = total
+
+        missingRow[cohortLabel] = `${variableCounts['missing']} (${missingPerc.toFixed(1)}%)`;
+
+
+
+      });
+      variableCohorts.push(totalRow);
+      variableCohorts.push(missingRow);
       // === Add Total and Missing rows ===
-      const totalRow: any = { [variableName]: 'Total' };
-      const missingRow: any = { [variableName]: 'Missing' };
+
 
       // Compute totals and missings per cohort
-      this.displayedColumnsCohorts.slice(1).forEach((cohortLabel: string, index: number) => {
+      /*this.displayedColumnsCohorts.slice(1).forEach((cohortLabel: string, index: number) => {
         const variableData = this.summaryStatisticsCohorts[index].rps_cohort?.counts_unique_values?.[variableId] || {};
+        console.log("variable data for cohort", cohortLabel, variableData);
+
         let total = 0;
         let missing = 0;
 
         Object.entries(variableData).forEach(([key, value]: [string, any]) => {
+          console.log("Processing key:", key, "with value:", value);
           if (key === 'N/A') missing += value;
           else total += value;
         });
 
         const totalPlusMissing = total + missing;
-        const missingPerc = totalPlusMissing > 0 ? (missing / totalPlusMissing) * 100 : 0;
 
-        totalRow[cohortLabel] = total;
-        missingRow[cohortLabel] = `${missing} (${missingPerc.toFixed(1)}%)`;
+
+
+
       });
-
+*/
       // Add summary rows at the end
-      variableCohorts.push(totalRow);
-      variableCohorts.push(missingRow);
 
 
     } else if (this.selectedValue.datatype === 'Number') {
@@ -359,11 +396,38 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCohorts._updateChangeSubscription();
   }
 
+
+  mapDatatype(dtype: string): string {
+
+    if (!dtype) return 'String';
+
+    if (dtype.startsWith('dictionary')) {
+      return 'Categorical';
+    }
+
+    if (dtype.startsWith('timestamp')) {
+      return 'Date';
+    }
+
+    if (dtype.includes('int')) {
+      return 'Number';
+    }
+
+    if (dtype.includes('double') || dtype.includes('float')) {
+      return 'Float';
+    }
+
+    return 'String';
+  }
+
+
   updateCentersTable() {
     // Update the centers table based on the selected variable
     if (this.selectedValue) {
       let variableCenters: any[] = [];
-      if (this.selectedValue.datatype === 'categorical') {
+      if (this.selectedValue.datatype === 'Categorical') {
+        console.log("centersCategorical: ", this.summaryStatisticsCenters);
+
         // Reset displayed columns
         this.displayedColumnsCenters = [];
         this.dataSourceCenters.data = [];
@@ -378,6 +442,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           variableCenters = [];
 
           let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
+          console.log("centers", centers);
+
           // Add center names to displayed columns (only once)
           if (index === 0) {
             this.displayedColumnsCenters.push(...centers);
@@ -392,9 +458,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
             variableValues.forEach((val: any) => {
               // Skip 'N/A' entries — will handle later in Missing
-              if (val === "N/A") return;
 
-              if (variableCenters.length < variableValues.length - (variableValues.includes("N/A") ? 1 : 0)) {
+
+              if (variableCenters.length < variableValues.length) {
                 let row = {
                   [this.selectedValue.variable_name]: val,
                   [center]: variableData[val],
@@ -538,17 +604,21 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       "analysis_id": this.analysisId,
       "cohorts_ids": cohortsIds
     }
-    this.dataAnalysisService.getSummaryStatisticsV6(dataApplication).subscribe({
+
+    let currentTaskID = 850; // ID de tarea simulado para testing el otro 825
+    this.startPollingTaskStatus(currentTaskID);
+    /*this.dataAnalysisService.getSummaryStatisticsV6(dataApplication).subscribe({
       next: (result: { task_id: number; job_id: number }) => {
-
+  
         let currentTaskID = result.task_id;
+        currentTaskID = 822
         this.startPollingTaskStatus(currentTaskID);
-
+  
       },
       error: (err) => {
         console.error("Error creando summary statistics:", err);
       }
-    });
+    });*/
   }
 
 
@@ -626,30 +696,30 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     const numericMapped: any = {};
     const countsMapped: any = {};
 
-    
+
 
 
 
     /*this.cohortNames.forEach(cohortName => {
       console.log("Cohort name", cohortName);
-
+  
       const cohortData = this.resultLocal[cohortName];
       if (!cohortData || !cohortData.length) return;
-
+  
       // Detectar variables numéricas y categóricas
       const variables = Object.keys(cohortData[0]?.numeric || {});
       const labelVariables = Object.keys(cohortData[0]?.label || {});
-
+  
       // Aquí decides qué crear
       variables.forEach(variable => {
         console.log("Variable: ", variable);
-
+  
         // this.createNumericTable(cohortData, variable, cohortName);
       });
-
+  
       labelVariables.forEach(variable => {
         console.log("labelVariables :", variable);
-
+  
         //this.createLabelTable(cohortData, variable, cohortName);
       });
     });*/
@@ -659,45 +729,54 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   fetchTaskResult(taskId: number) {
     this.dataAnalysisService.getTaskResult(taskId).subscribe({
       next: (result) => {
-        console.log("Resultado de la tarea:", result);
-        this.resultGlobal = result.result;
-        console.log("Object.keys(result.result)[0]", Object.keys(result.result)[0]);
-
-        this.cohortNames = Object.keys(result.result)[0];
-        console.log("nodekey ", this.cohortNames);
-        const nodeData = result.result[this.cohortNames];
-        console.log("nodeData", nodeData);
-
-        this.nodeData = nodeData;
-        
-       
-
-        // Mapeo para Number y Label
         const numericMapped: any = {};
         const countsMapped: any = {};
+        const categoricalCount: any = {};
+        const summary: any[] = [];
 
-        Object.entries(this.variableMapping).forEach(([localId, serverName]) => {
-          // Para numeric (Number)
-          console.log("Going to map variable:", localId, "with server name:", serverName);
 
-          if (nodeData.numeric && nodeData.numeric[serverName] !== undefined) {
-            numericMapped[localId] = nodeData.numeric[serverName];
-          }
-          // Para counts_unique_values (Label)
-          if (nodeData.counts_unique_values && nodeData.counts_unique_values[serverName] !== undefined) {
-            countsMapped[localId] = nodeData.counts_unique_values[serverName];
-          }
-        });
+        this.resultGlobal = result.result;
+        console.log("Result global : ", this.resultGlobal);
 
-        // Asignar a summaryStatisticsCohorts usando los nombres locales
-        this.summaryStatisticsCohorts = [
-          {
+
+        Object.keys(result.result).forEach(cohortName => {
+          const nodeData = result.result[cohortName];
+
+          this.optionsVariables.forEach(v => {
+            // Para numeric (Number)
+
+            const key = v.variable_id;
+
+
+            if (nodeData.numeric && nodeData.numeric[key] !== undefined) {
+              numericMapped[key] = nodeData.numeric[key];
+            }
+            // Para counts_unique_values (Label)
+            if (nodeData.counts_unique_values && nodeData.counts_unique_values[key] !== undefined) {
+              countsMapped[key] = nodeData.counts_unique_values[key];
+            }
+            // Para categorical_count (Categorical)
+            if (nodeData.categorical && nodeData.categorical[key] !== undefined) {
+              categoricalCount[key] = nodeData.categorical[key];
+            }
+          });
+
+          summary.push({
+            cohort_name: cohortName,
             rps_cohort: {
               numeric: numericMapped,
-              counts_unique_values: countsMapped
+              counts_unique_values: countsMapped,
+              categorical_count: categoricalCount
             }
-          }
-        ];
+          });
+
+
+        }
+        );
+
+        this.summaryStatisticsCohorts = summary;
+
+
         console.log("result of summaryS: ", this.summaryStatisticsCohorts);
 
 
@@ -710,9 +789,5 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCohortNames(resultGlobal: { [cohort: string]: any[] } | undefined): string[] {
 
-    if (!resultGlobal) return [];
-    return Object.keys(resultGlobal).filter(key => key && resultGlobal[key]?.length > 0);
-  }
 }

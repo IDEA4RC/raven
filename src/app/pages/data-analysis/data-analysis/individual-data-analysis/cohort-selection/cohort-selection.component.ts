@@ -22,14 +22,14 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   permitId: string | undefined;
 
   // Observables cohort
-  observable_cohort$ : Observable<any> | undefined;
-  observable_permit$ : Observable<any> | undefined;
+  observable_cohort$: Observable<any> | undefined;
+  observable_permit$: Observable<any> | undefined;
   private cohortSubscription: any;
   private permitSubscription: any;
 
   // Table components
   dataSource = new MatTableDataSource<Cohort>();
-  displayedColumns: string[] = ['select', 'id','cohort_name', 'creation_date', 'update_date', 'status', 'action'];
+  displayedColumns: string[] = ['select', 'id', 'cohort_name', 'creation_date', 'update_date', 'status', 'action'];
 
   selection = new SelectionModel<any>(true, []);
 
@@ -46,7 +46,7 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     private router: Router,
     public selectionService: SelectionService
   ) { }
-  
+
   ngOnInit(): void {
 
     // Extract segments
@@ -63,22 +63,27 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     const analysisIndex = urlSegments.indexOf('data-analysis');
     if (analysisIndex !== -1 && urlSegments.length > analysisIndex + 1) {
       this.analysisId = urlSegments[analysisIndex + 1];
+      console.log("analysisIndex !== -1 && urlSegments.length > analysisIndex + 1");
+      
       this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
 
     }
+
+
 
     // Get the observable from the service
     this.observable_cohort$ = this.dataAnalysisService.cohort
     // Subscribe to the observable patients
     this.cohortSubscription = this.observable_cohort$.subscribe((data) => {
       this.dataSource.data = data;
+      console.log("this.dataSource.data:", this.dataSource.data);
     });
 
     // Get the observable permit from the service
     this.observable_permit$ = this.dataAnalysisService.permit
     // Subscribe to the observable permit
     this.permitSubscription = this.observable_permit$.subscribe((data) => {
-      
+
       this.permitId = data.length > 0 ? data[0].id : undefined;
     });
 
@@ -130,28 +135,33 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   }
 
-  executeQuery(cohortId: number) {
-    console.log(`Executing query for cohort ID: ${cohortId}`);
+  executeQuery(queryExecutionId: number) {
+    console.log(`Executing query for cohort ID: ${queryExecutionId}`);
 
     this.loading = true;            // show spinner
 
-    let queryExecutionId = 123; // TODO: Get this ID from the backend after executing the query
+    console.log("queryExecutionId: ", queryExecutionId);
+    
+    if (queryExecutionId) {
+      const url = `https://api.fcb.orchestrator.idea.lst.tfo.upm.es/execute/${queryExecutionId}`;
+      window.open(url, '_blank');
+     /* setTimeout(() => {
+        this.loading = false;         // hide spinner
+        this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+        this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
 
+      }, 3000);*/
+    }
 
-    const url = `https://api.fcb.orchestrator.idea.lst.tfo.upm.es/execute/${queryExecutionId}`;
-    window.open(url, '_blank');
-    setTimeout(() => {
-      this.loading = false;         // hide spinner
-      this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
-      this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
-
-    }, 3000);                       // wait 5 seconds
+    this.loading = false;
+    
   }
   executeQueryV6(cohortId: number) {
     this.dataAnalysisService.executeQueryV6(cohortId).subscribe({
       next: (response) => {
         console.log('V6 Query executed successfully', response);
         this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+        
         this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
       },
       error: (error) => {
@@ -159,12 +169,12 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
         this.showNotification('red', 'Error executing cohort', 'bottom', 'center');
       }
     });
-    
+
 
   }
   // Button to navigate to the previous page (Data Analysis main page)
   backAnalysis() {
-     this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
+    this.router.navigate([`/workspace/${this.workspaceId}/data-analysis`]);
   }
   goNext() {
     // Update the selection in the service
@@ -194,9 +204,8 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
-      row.id + 1
-    }`;
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1
+      }`;
   }
 
   /**

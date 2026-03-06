@@ -115,7 +115,7 @@
                 <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
                 <td mat-cell *matCellDef="let element">
                     <!-- Execute query in Cohort builder-->
-                    <button mat-button class="execute-button" *ngIf="element.status === 0" (click)="executeQuery(element.id)" [disabled]="loading">
+                    <button mat-button class="execute-button" *ngIf="element.status === 0" (click)="executeQuery(element.query_execution_id)" [disabled]="loading">
                         <span class="cohort-text">
                             {{'pages.data-analysis.cohort-selection.execute_query' | translate}} 
                             <mat-icon class="cohort-icon">chevron_right</mat-icon>

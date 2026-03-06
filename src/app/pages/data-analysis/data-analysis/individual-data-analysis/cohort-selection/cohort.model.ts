@@ -10,6 +10,8 @@ export class Cohort {
   user_id: string;
   analysis_id: number;
   workspace_id: number;
+  query_execution_id: number;
+  dataframe_vantage_id: number;
 
 
   constructor(Cohort: any) { 
@@ -25,6 +27,8 @@ export class Cohort {
       this.user_id = Cohort.user_id || '';
       this.analysis_id = Cohort.analysis_id || 0;
       this.workspace_id = Cohort.workspace_id || 0;
+      this.query_execution_id = Cohort.query_execution_id || 0;
+      this.dataframe_vantage_id = Cohort.dataframe_vantage_id || 0;
     }
   }
  

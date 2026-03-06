@@ -44,7 +44,7 @@
             <mat-form-field appearance="outline">
               <mat-label class="variables-search-label">{{'pages.data-analysis.data_preparation.select' |
                 translate}}</mat-label>
-              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)">
+              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)" [disabled]="isLoading">
                 <mat-option *ngFor="let option of optionsVariables" [value]="option">
                   {{ option.variable_name}}
                 </mat-option>

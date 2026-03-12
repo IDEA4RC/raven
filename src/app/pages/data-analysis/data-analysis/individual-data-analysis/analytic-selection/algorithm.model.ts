@@ -1,26 +1,31 @@
 
 export class Algorithm {
   id: number;
-  algorithm_name: string;
-  algorithm_description: string;
+  method_name: string;
+  description: string;
   creation_date: string;
-  update_date: string;
-  user_id: string;
-  analysis_id: number;
-  workspace_id: number;
+  version_date: string;
+  input: string;
+  output: string;
+  new_dataframe_vantage_id: number;
+  task_id: number;
+  status_task: string;
+  subtask_id: number;
+  status_subtask: string;
 
-  constructor(Algorithm: any) { 
-    
+  constructor(Algorithm: any) {
+
     {
       this.id = Algorithm.id || 0;
-      this.algorithm_name = Algorithm.algorithm_name || '';
-      this.algorithm_description = Algorithm.algorithm_description || '';
-      this.creation_date = Algorithm.creation_date || '';
-      this.update_date = Algorithm.update_date || '';
-      this.user_id = Algorithm.user_id || '';
-      this.analysis_id = Algorithm.analysis_id || 0;
-      this.workspace_id = Algorithm.workspace_id || 0;
+      this.method_name = Algorithm.method_name || '';
+      this.description = Algorithm.description || '';
+      this.input = Algorithm.input || '';
+      this.output = Algorithm.output || '';
+      this.new_dataframe_vantage_id = Algorithm.new_dataframe_vantage_id || 0;
+      this.task_id = Algorithm.task_id || 0;
+      this.status_task = Algorithm.status_task || '';
+      this.subtask_id = Algorithm.subtask_id || 0;
+      this.status_subtask = Algorithm.status_subtask || '';
     }
   }
- 
 }

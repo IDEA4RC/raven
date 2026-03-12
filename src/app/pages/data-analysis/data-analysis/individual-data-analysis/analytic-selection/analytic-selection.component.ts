@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatChipsModule } from '@angular/material/chips';
+import { interval, forkJoin, of } from 'rxjs';
+import { switchMap, takeWhile, catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-analytic-selection',
@@ -17,6 +19,10 @@ import { MatChipsModule } from '@angular/material/chips';
   styleUrl: './analytic-selection.component.scss'
 })
 export class AnalyticSelectionComponent implements OnInit, OnDestroy {
+  private readonly METHOD_CROSSTAB = 'crosstabulation';
+  private readonly METHOD_TTEST = 't-test';
+  private readonly METHOD_TABLE1 = 'table1';
+  private readonly METHOD_SUMMARY = 'summary';
 
   // Variable to store the current workspace ID from the route
   workspaceId: number | undefined;
@@ -28,9 +34,9 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   // Table components
   dataSource = new MatTableDataSource<Algorithm>();
-  displayedColumns: string[] = ['id', 'algorithm_name', 'creation_date', 'update_date', 'action'];
+  displayedColumns: string[] = ['id', 'algorithm_name', 'creation_date', 'update_date', 'status_task', 'action'];
   allCohorts: any[] = []; // Loaded from cohort selection
-
+  algorithmsList: Algorithm[] = []
   //Selection forms
   selectedMethod: string | null = null;
   selectedMethodInfo: string | null = null;
@@ -45,11 +51,21 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     //   label: "Kaplan-Meier",
     //   info: "The Kaplan-Meier estimator computes survival probabilities over time for one or more groups, typically used in time-to-event analysis."
     // },
-    // {
-    //   value: "chi-squared",
-    //   label: "Chi-squared",
-    //   info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
-    // },
+    /* {
+       value: "chi-squared",
+       label: "Chi-squared",
+       info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
+     },*/
+    {
+      value: "t-test",
+      label: "T-test",
+      info: "The T-test compares the means of two groups to determine if they are statistically different from each other, assuming normally distributed data."
+    },
+     {
+      value: "table1",
+      label: "Table 1",
+      info: "This algorithm generates a summary table (Table 1) for descriptive statistics, typically used to present baseline characteristics of study groups."
+    }
     // {
     //   value: "glm",
     //   label: "GLM",
@@ -64,6 +80,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     //   value: "log-rank-test",
     //   label: "Log-rank test",
     //   info: "The Log-rank test compares the survival distributions of two or more groups to determine if there are statistically significant differences."
+    // },
+    // {
+    //   value: "time-delta",
+    //   label: "Time Delta",
+    //   info: ""
     // }
   ];
 
@@ -85,8 +106,12 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     { "value": "SEX", "label": "Sex", "type": "categorical" }*/
   ];
   loading = false;
+  isLoading: boolean = true; // Para mostrar/hide el loader
+  taskStatus: string = '';
 
-  selectedVariables: any[] = [];
+
+  selectedColumnVariable: string | null = null;
+  selectedRowVariables: string[] = [];
 
   selection = new SelectionModel<any>(true, []);
   selectAlhorithm = false;
@@ -109,7 +134,15 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
     this.selectionService.selectedItems$.subscribe(items => {
       this.allCohorts = items;
+      if (!this.allCohorts || this.allCohorts.length === 0) {
+        return;
+      }
+
       const cohortDataframeIds = this.allCohorts.map(cohort => cohort.dataframe_vantage_id);
+      if (!cohortDataframeIds[0]) {
+        return;
+      }
+
       this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
         next: (variables: any) => {
           const seen = new Set<string>();
@@ -146,24 +179,26 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
         return;
       }
     }
-      // Get the observable from the service
-      this.observable_algorithm$ = this.dataAnalysisService.algorithm
-      // Subscribe to the observable patients
-      this.algorithmSubscription = this.observable_algorithm$.subscribe((data) => {
-        this.dataSource.data = data;
-      });
-      this.dataAnalysisService.getAlgorithms(1); // TODO Pass the analysis ID here
-    }
 
-    ngAfterViewInit() {
-      // Set the paginator and sort for the data source
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-    }
+    this.getAlgorithmsList()
+    // Get the observable from the service
+    this.observable_algorithm$ = this.dataAnalysisService.algorithm
 
-    ngOnDestroy(): void {
-      // Unsubscribe from the observable to prevent memory leaks
-      if(this.algorithmSubscription) {
+    // Subscribe to the observable patients
+    this.algorithmSubscription = this.observable_algorithm$.subscribe((data) => {
+      this.dataSource.data = this.getVisibleAlgorithms(data || []);
+    });
+  }
+
+  ngAfterViewInit() {
+    // Set the paginator and sort for the data source
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe from the observable to prevent memory leaks
+    if (this.algorithmSubscription) {
       this.algorithmSubscription.unsubscribe();
     }
   }
@@ -173,7 +208,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filterPredicate = (data: Algorithm, filter: string) =>
-      data.algorithm_name.toLowerCase().includes(filter.trim().toLowerCase());
+      data.method_name.toLowerCase().includes(filter.trim().toLowerCase());
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -189,6 +224,17 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     this.selectAlhorithm = false;
   }
   openAlgorithm(algorithm_id: number) {
+    console.log("algorithm id: ", algorithm_id);
+    
+    // Obtener el algoritmo seleccionado de la lista
+    const selectedAlgorithm = this.algorithmsList.find(alg => alg.id === algorithm_id);
+    
+    if (selectedAlgorithm) {
+      // Pasar el algoritmo a través del servicio
+      this.selectionService.setSelected([selectedAlgorithm]);
+      console.log("Selected algorithm:", selectedAlgorithm);
+    }
+    
     this.nextStep.emit();
   }
   deleteAlgorithm(algorithm_id: number) {
@@ -198,40 +244,191 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   onMethodChange(value: string) {
     const method = this.methods.find(m => m.value === value);
     this.selectedMethodInfo = method ? method.info : null;
+
+    if (!this.shouldShowVariableSelector()) {
+      this.selectedColumnVariable = null;
+      this.selectedRowVariables = [];
+    }
   }
   onVariablesSelected(value: any) {
   }
   onSelectionChange(event: any) {
-    if (this.selectedVariables.length > 2) {
-      // Remove the last selected value if over the limit
-      this.selectedVariables.pop();
-    }
+    void event;
   }
   removeVariable(variable: string) {
-    const index = this.selectedVariables.indexOf(variable);
+    const index = this.selectedRowVariables.indexOf(variable);
     if (index >= 0) {
-      this.selectedVariables.splice(index, 1);
+      this.selectedRowVariables.splice(index, 1);
       // Trigger Angular change detection to update the <mat-select>
-      this.selectedVariables = [...this.selectedVariables];
+      this.selectedRowVariables = [...this.selectedRowVariables];
     }
+  }
+
+  onColumnVariableChange(variable: string | null): void {
+    this.selectedColumnVariable = variable;
+    if (!variable) {
+      return;
+    }
+
+    if (this.selectedRowVariables.includes(variable)) {
+      this.selectedRowVariables = this.selectedRowVariables.filter(rowVariable => rowVariable !== variable);
+    }
+  }
+
+  getAvailableRowVariables() {
+    if (!this.selectedColumnVariable) {
+      return this.variables;
+    }
+
+    return this.variables.filter(variable => variable.value !== this.selectedColumnVariable);
+  }
+
+  getVariableLabel(variableValue: string): string {
+    const variable = this.variables.find(v => v.value === variableValue);
+    return variable ? variable.label : variableValue;
   }
 
   saveAlgorithm() {
     // Logic to save the selected algorithm and variables
-    this.loading = true;            // show spinner    
-    this.createCrosstabRequest(); // make the API call to create the crosstabulation request
-    setTimeout(() => {
-      this.loading = false;         // hide spinner
-      this.nextStep.emit();
+    this.loading = true;
 
-    }, 5000);
+    if (!this.selectedMethod) {
+      console.error('No analysis method selected');
+      this.loading = false;
+      return;
+    }
+
+    if (this.selectedMethod === this.METHOD_CROSSTAB) {
+      this.createCrosstabRequest();
+      return;
+    }
+
+    if (this.selectedMethod === this.METHOD_TTEST) {
+      this.createTTestRequest();
+      return;
+    }
+
+    if (this.selectedMethod === this.METHOD_TABLE1) {
+      this.createTable1Request();
+      return;
+    }
+
+    console.error('Method not supported yet:', this.selectedMethod);
+    this.loading = false;
+  }
+
+  shouldShowVariableSelector(): boolean {
+    return this.selectedMethod === this.METHOD_CROSSTAB;
+  }
+
+  private getBaseAlgorithmRequestBody() {
+    const cohortsIds = this.allCohorts.map(cohort => cohort.id);
+    return {
+      workspace_id: this.workspaceId,
+      analysis_id: this.analysisId,
+      cohorts_ids: cohortsIds
+    };
+  }
+
+  private handleAlgorithmCreationSuccess(): void {
+    this.getAlgorithmsList();
+    this.selectAlhorithm = false;
+    this.loading = false;
+  }
+
+  private handleAlgorithmCreationError(err: any): void {
+    console.error('Error creando algoritmo:', err);
+    this.loading = false;
+  }
+
+  createTTestRequest() {
+    const dataApplication = this.getBaseAlgorithmRequestBody();
+    this.dataAnalysisService.createT_tableRequest(dataApplication).subscribe({
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
+    });
+  }
+
+  createTable1Request() {
+    const dataApplication = this.getBaseAlgorithmRequestBody();
+    this.dataAnalysisService.createTable1Request(dataApplication).subscribe({
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
+    });
+
   }
 
   goBack() {
     this.previousStep.emit();
   }
 
+  getAlgorithmsList() {
+    const cohortsIds = this.allCohorts.map(cohort => cohort.id);
+    console.log("cohorts id:", cohortsIds);
 
+    let body = {
+      cohort_ids: cohortsIds
+    }
+    this.dataAnalysisService.getAlgorithmsList(body).subscribe({
+      next: (result) => {
+        console.log("result getAlgorithmsList: ", result);
+        this.algorithmsList = result
+        this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+        this.checkAlgorithmsStatus()
+      },
+      error: (err) => {
+        console.error("Error creando summary statistics:", err);
+      }
+    });
+  }
+
+  checkAlgoritmsStatus() {
+    clearInterval(this.pollingInterval);
+    // Limpiar cualquier polling previo
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
+
+    this.pollingInterval = setInterval(() => {
+      console.log("SET INTERVAL");
+
+      this.algorithmsList.forEach((algorithm: any, index: number) => {
+        console.log("Algoritm: ", algorithm, " index : ", index);
+
+        let status = algorithm.status_task
+        let taskId = algorithm.task_id
+
+        this.startPollingTaskStatus(taskId, status, index)
+
+
+
+        /* this.dataAnalysisService.getTaskStatus(taskId).subscribe({
+           next: (res: { status: string }) => {
+             if (status != res.status) {
+               let bodyUpdateAlgorithm =
+               {
+                 "task_id": taskId,
+                 "status_task": res.status,
+               }
+               this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+                 next: updateTaskResult => {
+                   console.log("updateAlgorithmsStatus: ", updateTaskResult);
+                   this.algorithmsList[index] = updateTaskResult
+                   this.dataSource.data = this.algorithmsList
+                 },
+                 error: err => console.error('Error updateAlgorithmsStatus', err)
+               });
+ 
+ 
+             }
+             if (status === 'completed' || status === 'crashed') {
+               clearInterval(this.pollingInterval);
+             }
+           }
+         });*/
+      });
+    }, this.pollingFrequency);
+  }
 
 
   mapDatatype(dtype: string): string {
@@ -259,83 +456,118 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
 
   createCrosstabRequest() {
-    const cohortsIds = this.allCohorts.map(cohort => cohort.id);
-    let dataApplication = {
-      "workspace_id": this.workspaceId,
-      "analysis_id": this.analysisId,
-      "cohorts_ids": cohortsIds,
-      "variablesList": ["sex", "clinical_stage", "pathological_stage"],
-      "results_col": "sex",
-      "group_cols": ["clinical_stage", "pathological_stage"]
+    if (!this.selectedColumnVariable) {
+      console.error('Crosstabulation requires selecting one column variable');
+      this.loading = false;
+      return;
     }
 
-    let currentTaskID = 850; // ID de tarea simulado para testing el otro 825
+    if (this.selectedRowVariables.length === 0) {
+      console.error('Crosstabulation requires at least one row variable');
+      this.loading = false;
+      return;
+    }
 
+    const baseRequest = this.getBaseAlgorithmRequestBody();
+    const variablesList = [this.selectedColumnVariable, ...this.selectedRowVariables];
+
+    let dataApplication = {
+      ...baseRequest,
+      "variablesList": variablesList,
+      "results_col": this.selectedColumnVariable,
+      "group_cols": this.selectedRowVariables
+    }
+
+    console.log("dataAplication", dataApplication);
+    
     this.dataAnalysisService.createCrosstabRequest(dataApplication).subscribe({
-      next: (result: { task_id: number; job_id: number }) => {
-
-        let currentTaskID = result.task_id;
-        currentTaskID = 822
-        this.startPollingTaskStatus(currentTaskID);
-
-      },
-      error: (err) => {
-        console.error("Error creando summary statistics:", err);
-      }
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
     });
   }
 
-  startPollingTaskStatus(taskId: number) {
-    clearInterval(this.pollingInterval);
+  startPollingTaskStatus(taskId: number, task_status: string, index: number) {
 
-
-
-    // Limpiar cualquier polling previo
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-    }
-
-    this.pollingInterval = setInterval(() => {
-      this.dataAnalysisService.getTaskStatus(taskId).subscribe({
-        next: (res: { status: string }) => {
-          let taskStatus = res.status;
-          console.log("Estado del task:", taskStatus);
-
-          // Si está completo o falló, detenemos el polling
-          if (taskStatus === 'completed') {
-            clearInterval(this.pollingInterval);
-            this.fetchTaskResult(taskId);
-
-            // Primero obtenemos el subtask
-            this.dataAnalysisService.getSubTask(taskId).subscribe({
-              next: (subtaskNumber: any) => {
-                const subtaskId = Number(subtaskNumber); // <-- convertimos a número
-                // Ahora obtenemos el resultado del subtask
-                this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
-                  next: subtaskResult => {
-                    console.log("Result get subTaskREsults", subtaskResult);
-                    console.log("Object.keys(subtaskResult.result)[0]", Object.keys(subtaskResult)[0]);
-
-
-                  },
-                  error: err => console.error('Error fetching subtask result', err)
-                });
-              },
-              error: err => console.error('Error fetching subtask number', err)
-            });
+    this.dataAnalysisService.getTaskStatus(taskId).subscribe({
+      next: (res: { status: string }) => {
+        if (task_status != res.status) {
+          let bodyUpdateAlgorithm =
+          {
+            "task_id": taskId,
+            "status_task": res.status,
           }
-          else if (taskStatus === 'crashed') {
-            clearInterval(this.pollingInterval);
-
-            console.error("La tarea falló");
-
-          }
-        },
-        error: (err) => {
-          console.error("Error consultando el status:", err);
+          this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+            next: updateTaskResult => {
+              console.log("updateAlgorithmsStatus: ", updateTaskResult);
+              this.algorithmsList[index] = updateTaskResult
+              this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList)
+            },
+            error: err => console.error('Error updateAlgorithmsStatus', err)
+          });
         }
-      });
-    }, this.pollingFrequency);
+        console.log("Estado del task:", res.status);
+
+        // Si está completo o falló, detenemos el polling
+        if (this.taskStatus === 'completed') {
+
+          this.fetchTaskResult(taskId);
+
+          // Primero obtenemos el subtask
+          this.dataAnalysisService.getSubTask(taskId).subscribe({
+            next: (subtaskNumber: any) => {
+              const subtaskId = Number(subtaskNumber); // <-- convertimos a número
+
+              let bodyUpdateAlgorithm =
+              {
+                "task_id": taskId,
+                "subtask_id": subtaskId,
+                "status_subtask": "completed"
+              }
+              this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+                next: updateTaskResult => {
+                  console.log("updateTaskResult subtask: ", updateTaskResult);
+
+                },
+                error: err => console.error('Error updateTaskResult', err)
+              });
+              // Ahora obtenemos el resultado del subtask
+              this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
+                next: subtaskResult => {
+                  console.log("Result get subTaskREsults", subtaskResult);
+                  console.log("Object.keys(subtaskResult.result)[0]", Object.keys(subtaskResult)[0]);
+
+                  let bodyUpdateAlgorithm =
+                  {
+                    "task_id": taskId,
+                    "subtask_id": subtaskId,
+                    "status_subtask": "completed"
+                  }
+                  this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+                    next: updateTaskResult => {
+                      console.log("updateTaskResult subtask: ", updateTaskResult);
+
+                    },
+                    error: err => console.error('Error updateTaskResult', err)
+                  });
+
+                },
+                error: err => console.error('Error fetching subtask result', err)
+              });
+            },
+            error: err => console.error('Error fetching subtask number', err)
+          });
+        }
+
+
+        return res.status
+      },
+      error: (err) => {
+        console.error("Error consultando el status:", err);
+        return "Error2"
+      }
+    });
+
+
   }
 
   fetchTaskResult(taskId: number) {
@@ -365,5 +597,89 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
 
+  checkAlgorithmsStatus(): void {
+    this.algorithmsList.forEach((algorithm: any, index: number) => {
+      console.log("Algoritm: ", algorithm, " index : ", index);
 
+      const taskId = algorithm.task_id;
+
+      interval(this.pollingFrequency)
+        .pipe(
+          switchMap(() => this.dataAnalysisService.getTaskStatus(taskId).pipe(
+            catchError(err => {
+              console.error('Error fetching task status', err);
+              return of({ status: 'error' });
+            })
+          )),
+          takeWhile(res => res.status !== 'completed' && res.status !== 'crashed', true),
+          map(res => ({ res, index }))
+        )
+        .subscribe(async ({ res, index }) => {
+
+          const currentAlg = this.algorithmsList[index];
+
+          // Actualizamos status principal si cambió
+          if (currentAlg.status_task !== res.status) {
+            currentAlg.status_task = res.status;
+
+            const updateBody = { task_id: taskId, status_task: res.status };
+            try {
+              const updatedAlg = await this.dataAnalysisService.updateAlgorithmsStatus(updateBody).toPromise();
+              this.algorithmsList[index] = updatedAlg;
+              this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+            } catch (err) {
+              console.error('Error updating main task status', err);
+            }
+
+            if (res.status === 'completed' && algorithm.method_name === "summary" ) {
+            this.handleSubtask(algorithm, index);
+          }
+
+          if (res.status === 'crashed') {
+            console.error(`Task ${taskId} crashed`);
+          }
+          }
+
+          // Si task completado, hacer polling de subtask y resultados
+          
+        });
+
+    });
+  }
+
+  async handleSubtask(algorithm: any, index: number) {
+    const taskId = algorithm.task_id;
+
+    try {
+      // 1️⃣ Obtener subtaskId
+      const subtaskNumber = await this.dataAnalysisService.getSubTask(taskId).toPromise();
+      const subtaskId = Number(subtaskNumber);
+      console.log("subtaskId: ",subtaskId);
+      
+      // 2️⃣ Actualizar subtask status
+      const bodySubtaskUpdate = {
+        task_id: taskId,
+        subtask_id: subtaskId,
+        status_subtask: 'completed'
+      };
+      const updatedAlgSubtask = await this.dataAnalysisService.updateAlgorithmsStatus(bodySubtaskUpdate).toPromise();
+      this.algorithmsList[index] = updatedAlgSubtask;
+      this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+
+      // 3️⃣ Obtener resultados del subtask
+      const subtaskResult = await this.dataAnalysisService.getSubTaskResults(subtaskId).toPromise();
+      console.log('Subtask result:', subtaskResult);
+
+    } catch (err) {
+      console.error('Error handling subtask', err);
+    }
+  }
+
+  getVisibleAlgorithms(algorithms: any[]): any[] {
+    return (algorithms || []).filter(algorithm => algorithm?.method_name !== this.METHOD_SUMMARY);
+  }
+
+  canShowAction(algorithm: any): boolean {
+    return (algorithm?.status_task || '').toLowerCase() === 'completed';
+  }
 }

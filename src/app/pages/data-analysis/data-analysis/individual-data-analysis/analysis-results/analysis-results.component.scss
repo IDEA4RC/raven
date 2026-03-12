@@ -186,6 +186,13 @@
 
 .table-container {
   width: 100%;
+  margin-top: 16px;
+}
+
+.secondary-label {
+  margin: 8px 0 12px;
+  color: #596f79;
+  font-size: 14px;
 }
 
 h2 {
@@ -241,6 +248,11 @@ background-color: #f1f1f1;
   background-color: #efefef;
 }
 
+.total-row td {
+  font-weight: 600;
+  background: rgba(37, 94, 135, 0.08);
+}
+
 .grid-layout {
     display: grid;
     grid-template-columns: 1fr 1fr; /* left column = 1, right = 2 */
@@ -255,4 +267,21 @@ background-color: #f1f1f1;
 }
 .card-content, .footer {
   padding: 0 !important;
+}
+
+.under-construction {
+  border: 1px dashed #99abb4;
+  border-radius: 10px;
+  padding: 24px;
+  background: #f8fafb;
+}
+
+.under-construction h4 {
+  margin: 0 0 8px;
+  color: #255e87;
+}
+
+.under-construction p {
+  margin: 0;
+  color: #596f79;
 }

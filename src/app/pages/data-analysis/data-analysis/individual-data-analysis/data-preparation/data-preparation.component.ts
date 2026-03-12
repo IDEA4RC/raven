@@ -44,6 +44,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   resultLocal: any = [];
   pollingInterval: any;
   pollingFrequency: number = 3000; // 3 segundos
+  summaryFlowInitialized = false;
   // Variables for the filters
   selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
@@ -150,9 +151,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             this.optionsVariables = [];
             return;
           }
-          else {
-            this.createSummaryRequest();
-          }
+          this.tryInitializeSummaryFlow();
           const grantedVariableIds: string[] = variables.id_variables || [];
           // this.optionsVariables = metadata.filter(v => grantedVariableIds.includes(v.variable_id));
         },
@@ -169,9 +168,15 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     // Subscribe to the observable from the service
     this.selectionService.selectedItems$.subscribe(items => {
-      
+
       this.allCohorts = items;
+      this.tryInitializeSummaryFlow();
+
       const cohortDataframeIds = this.allCohorts.map(cohort => cohort.dataframe_vantage_id);
+
+      if (!cohortDataframeIds.length || !cohortDataframeIds[0]) {
+        return;
+      }
 
 
       this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
@@ -575,26 +580,126 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   createVariable() {
     // Logic to create a new variable
     console.log('Create Variable button clicked');
+    const dataframeId = Number(this.allCohorts?.[0]?.dataframe_vantage_id || 0);
+
+    if (!dataframeId) {
+      console.error('No dataframe_id available for variable creation');
+      return;
+    }
+
     const dialogRef = this.dialog.open(CreateVariableDialogComponent, {
       width: '600px',
       disableClose: true, // evita cerrar al clicar fuera
       data: {
-        // si necesitas pasar algo (centers, cohorts, etc.)
+        dataframe_id: dataframeId,
+        variables: this.optionsVariables,
         centers: this.allCenters,
         cohorts: this.allCohorts
       }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // aquí recibes la nueva variable creada
-        console.log('Variable creada:', result);
-        // refrescar lista de variables, llamar API, etc.
+        this.dataAnalysisService.createBasicArithmeticRequest(result).subscribe({
+          next: (response) => {
+            console.log('Variable creada:', response);
+
+            // Refresh available variables for this dataframe after creation.
+            this.dataAnalysisService.getVariablesByDataframe(dataframeId).subscribe({
+              next: (variables: any) => {
+                const seen = new Set<string>();
+                this.optionsVariables = variables.variablesList
+                  .filter((v: any) => {
+                    if (seen.has(v.name)) return false;
+                    seen.add(v.name);
+                    return true;
+                  })
+                  .map((v: any) => ({
+                    variable_name: v.name,
+                    variable_id: v.name,
+                    datatype: this.mapDatatype(v.dtype)
+                  }));
+              },
+              error: err => console.error('Error refreshing variables after creation', err)
+            });
+          },
+          error: (err) => {
+            console.error('Error creating variable:', err);
+          }
+        });
       }
     });
   }
   // Function to get the keys of an object
   objectKeys(data: any) {
     return Object.keys(data);
+  }
+
+  tryInitializeSummaryFlow() {
+    if (this.summaryFlowInitialized) {
+      return;
+    }
+
+    if (!this.workspaceId || !this.analysisId) {
+      return;
+    }
+
+    if (!this.allCenters.length || !this.allCohorts.length) {
+      return;
+    }
+
+    this.summaryFlowInitialized = true;
+    this.checkExistingSummaryOrCreate();
+  }
+
+  checkExistingSummaryOrCreate() {
+    const cohortsIds = this.allCohorts
+      .map(cohort => cohort?.id)
+      .filter((cohortId: unknown) => cohortId !== null && cohortId !== undefined);
+
+    if (!cohortsIds.length) {
+      console.warn('No cohorts selected to check/create summary');
+      this.isLoading = false;
+      return;
+    }
+
+    const body = { cohort_ids: cohortsIds };
+
+    this.dataAnalysisService.existsSummaryByCohort(body).subscribe({
+      next: (result: any) => {
+        const summaries = Array.isArray(result)
+          ? result
+          : (Array.isArray(result?.summaries)
+            ? result.summaries
+            : (Array.isArray(result?.algorithms)
+              ? result.algorithms
+              : []));
+
+        if (summaries.length === 0) {
+          this.createSummaryRequest();
+          return;
+        }
+
+        const latestSummary = [...summaries].sort((left: any, right: any) => {
+          const leftId = Number(left?.id ?? 0);
+          const rightId = Number(right?.id ?? 0);
+          return rightId - leftId;
+        })[0];
+
+        const latestTaskId = Number(latestSummary?.task_id ?? 0);
+        console.log("latestTaskId", latestTaskId);
+        
+        if (latestTaskId > 0) {
+          this.startPollingTaskStatus(latestTaskId);
+          return;
+        }
+
+        this.createSummaryRequest();
+      },
+      error: (err) => {
+        console.error('Error checking existing summaries:', err);
+        this.createSummaryRequest();
+      }
+    });
   }
 
   createSummaryRequest() {
@@ -605,20 +710,17 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       "cohorts_ids": cohortsIds
     }
 
-    let currentTaskID = 850; // ID de tarea simulado para testing el otro 825
-    this.startPollingTaskStatus(currentTaskID);
-    /*this.dataAnalysisService.getSummaryStatisticsV6(dataApplication).subscribe({
+    this.dataAnalysisService.getSummaryStatisticsV6(dataApplication).subscribe({
       next: (result: { task_id: number; job_id: number }) => {
-  
+
         let currentTaskID = result.task_id;
-        currentTaskID = 822
         this.startPollingTaskStatus(currentTaskID);
-  
+
       },
       error: (err) => {
         console.error("Error creando summary statistics:", err);
       }
-    });*/
+    });
   }
 
 
@@ -637,8 +739,23 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.pollingInterval = setInterval(() => {
       this.dataAnalysisService.getTaskStatus(taskId).subscribe({
         next: (res: { status: string }) => {
+          if (this.taskStatus != res.status) {
+            let bodyUpdateAlgorithm =
+            {
+              "task_id": taskId,
+              "status_task": res.status,
+            }
+            this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+              next: updateTaskResult => {
+                console.log("updateTaskResult: ", updateTaskResult);
+
+              },
+              error: err => console.error('Error updateTaskResult', err)
+            });
+          }
           this.taskStatus = res.status;
           console.log("Estado del task:", this.taskStatus);
+
 
           // Si está completo o falló, detenemos el polling
           if (this.taskStatus === 'completed') {
@@ -651,6 +768,20 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
               next: (subtaskNumber: any) => {
                 const subtaskId = Number(subtaskNumber); // <-- convertimos a número
                 // Ahora obtenemos el resultado del subtask
+
+                let bodyUpdateAlgorithm =
+                {
+                  "task_id": taskId,
+                  "subtask_id": subtaskId,
+                  "status_subtask": "completed"
+                }
+                this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
+                  next: updateTaskResult => {
+                    console.log("updateTaskResult subtask: ", updateTaskResult);
+
+                  },
+                  error: err => console.error('Error updateTaskResult', err)
+                });
                 this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
                   next: subtaskResult => {
                     console.log("Result get subTaskREsults", subtaskResult);

@@ -1,95 +1,97 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Inject, Component, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { MetadataSearchService } from '../../../../data-discovery/metadata-search/metadata-search.service';
-import { Observable } from 'rxjs';
+import { Inject, Component, OnInit } from '@angular/core';
+
+interface VariableOption {
+  variable_name: string;
+  variable_id: string;
+  datatype: string;
+}
+
+interface OperationOption {
+  label: string;
+  value: 'add' | 'subtract' | 'multiply' | 'divide';
+}
 
 @Component({
   selector: 'app-create-variable-dialog',
   templateUrl: './create-variable-dialog.component.html',
   styleUrl: './create-variable-dialog.component.scss'
 })
-export class CreateVariableDialogComponent implements OnInit, OnDestroy {
+export class CreateVariableDialogComponent implements OnInit {
   form: FormGroup;
-  categoryOptions = [
-    'grouping_for_new_categorical',
-    'computed_variables',
-    'conditional_variables',
-    'merging_variables'
+
+  // Prepared for future categories; for now only computed variables are enabled.
+  categoryOptions = ['computed_variables'];
+
+  operationOptions: OperationOption[] = [
+    { label: 'Add', value: 'add' },
+    { label: 'Subtract', value: 'subtract' },
+    { label: 'Multiply', value: 'multiply' },
+    { label: 'Divide', value: 'divide' }
   ];
-  methodOptions: string[] = [];
-  outputOptions = ['numeric', 'categorical'];
-  observable_metadata_variables$: Observable<any> | undefined
 
-  variables: any
+  variables: VariableOption[] = [];
+  numericVariables: VariableOption[] = [];
+
   constructor(
-    public metadataSearchService: MetadataSearchService,
-
     private fb: FormBuilder,
-    private http: HttpClient,
-
     private dialogRef: MatDialogRef<CreateVariableDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-     this.metadataSearchService.getVariablesMetadata();
-     this.observable_metadata_variables$ = this.metadataSearchService.variablesMetadata$;
-     this.observable_metadata_variables$.subscribe(data => {
-      this.variables = data;
-
-    })
-
-
     this.form = this.fb.group({
-      category: [null, Validators.required],
-      variablesToProcess: [[], Validators.required],
-      method: [null, Validators.required],
-      outputType: [null, Validators.required],
-      name: ['', Validators.required],
+      category: ['computed_variables', Validators.required],
+      column1: [null, Validators.required],
+      column2: [null, Validators.required],
+      operation: ['add', Validators.required],
+      outputColumn: ['', Validators.required],
       description: ['']
     });
-
-
-    this.observable_metadata_variables$
-    console.log("variables: ", this.variables);
-
-
   }
 
-
   ngOnInit(): void {
-    metadata: this.http.get<any[]>('./assets/jsons/metadata_v0.3.json')
-    this.form.get('category')?.valueChanges.subscribe(cat => {
-      switch (cat) {
-        case 'Conditional variables':
-          this.methodOptions = ['If-Else', 'Switch'];
-          break;
-        case 'Computed variables':
-          this.methodOptions = ['Sum', 'Mean', 'Custom'];
-          break;
-        case 'Grouping for new categorical variables':
-          this.methodOptions = ['Group by', 'Aggregate categories'];
-          break;
-        case 'Merging variables (new categories)':
-          this.methodOptions = ['Merge categories', 'Map categories'];
-          break;
-        default:
-          this.methodOptions = [];
-      }
-      this.form.get('method')?.reset();
+    this.variables = Array.isArray(this.data?.variables) ? this.data.variables : [];
+
+    this.numericVariables = this.variables.filter(variable => {
+      const datatype = (variable?.datatype || '').toLowerCase();
+      return datatype === 'number' || datatype === 'float' || datatype.includes('int') || datatype.includes('double');
     });
   }
 
-  ngOnDestroy(): void { }
+  getAvailableColumn2(): VariableOption[] {
+    const selectedColumn1 = this.form.get('column1')?.value;
+    if (!selectedColumn1) {
+      return this.numericVariables;
+    }
+
+    return this.numericVariables.filter(variable => variable.variable_id !== selectedColumn1);
+  }
 
   cancel(): void {
     this.dialogRef.close();
   }
 
   submit(): void {
-    if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+    if (this.form.invalid) {
+      return;
     }
+
+    const dataframeId = Number(this.data?.dataframe_id || 0);
+    const column1 = this.form.get('column1')?.value;
+    const column2 = this.form.get('column2')?.value;
+
+    if (!dataframeId || !column1 || !column2 || column1 === column2) {
+      return;
+    }
+
+    const payload = {
+      dataframe_id: dataframeId,
+      column1,
+      column2,
+      operation: this.form.get('operation')?.value,
+      output_column: this.form.get('outputColumn')?.value
+    };
+
+    this.dialogRef.close(payload);
   }
 }

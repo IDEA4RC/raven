@@ -111,7 +111,7 @@ export class DataAnalysisService {
    * @param workspace_id the workspace id
    * @returns the coEs granted
    */
-  getVariablesGranted(workspace_id: number) {
+  getMetadataByWorkspace(workspace_id: number) {
     const url = `/raven-api/v1/metadata/workspace/${workspace_id}`;
     return this.getRequest(url)
   }
@@ -171,6 +171,11 @@ export class DataAnalysisService {
     const url = `/raven-api/v1/data-preparation/get_subtask_results/${sub_task_id}`;
     return this.getRequest(url)
   }
+
+  getVariablesByDataframe(dataframe_id: number) {
+    const url = `/raven-api/v1/data-preparation/get_variables_dataframe/${dataframe_id}`;
+    return this.getRequest(url)
+  }
   /** // TODO this function will be replaced by getSummaryStatistics
    * Function to get summary statistics for data preparation by cohort
    * @param data list of cohorts
@@ -194,26 +199,6 @@ export class DataAnalysisService {
       this.data_summary_statistics.next(data);
     });
   }
-
-
-  /**
-   * Function to get algorithms for algorithm selection
-   * @param analysis_id id of the analysis
-   * @returns the list of algorithms of an analysis
-   */
-  getAlgorithms(analysis_id: number) {
-    //TODO: replace with API endpoint
-    const url = './assets/jsons/algorithms.json';
-    this.getRequest(url).subscribe((data) => {
-      // Emit the data through the algorithm subject
-      this.algorithm.next(data);
-    });
-  }
-
-
-
-
-
 
   // HTTP requests
 
@@ -289,17 +274,54 @@ export class DataAnalysisService {
     return of(data); // simula una API
   }
 
+  createCrosstabRequest(data: any) {
+    console.log("createCrosstabRequest ", data);
 
-  /** //TODO: change get request
-    * Function to get metadata search
-    * @param workspace_id the workspace id
-    * @returns the metadata search of the given workspace id
-    */
-  getMetadataSearch(workspace_id: number) {
-    const url = `/raven-api/v1/metadata/workspace/${workspace_id}`;
-    // return this.getRequest(url);
-    return this.getVariables();
+    const url = `/raven-api/v1/data-preparation/create_crosstab`;
+    return this.postRequest(url, data)
   }
 
 
+  createT_tableRequest(data: any) {
+    console.log("createT_tableRequest ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_t_test`;
+    return this.postRequest(url, data)
+  }
+
+  createTable1Request(data: any) {
+    console.log("createTTable1Request ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_table_1`;
+    return this.postRequest(url, data)
+  }
+
+  createBasicArithmeticRequest(data: any) {
+    console.log("createBasicArithmeticRequest ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_basic_arithmetic`;
+    return this.postRequest(url, data)
+  }
+
+  
+  getAlgorithmsList(data: any) {
+    console.log("getAlgorithmsList ", data);
+
+    const url = `/raven-api/v1/algorithms/by_cohorts_list`;
+    return this.postRequest(url, data)
+  }
+
+  updateAlgorithmsStatus(data: any) {
+    console.log("updateAlgorithmsStatus ", data);
+
+    const url = `/raven-api/v1/algorithms/update_algorithm`;
+    return this.patchRequest(url, data)
+  }
+
+  existsSummaryByCohort(data: any) {
+     console.log("existsSummaryByCohort ", data);
+
+    const url = `/raven-api/v1/algorithms/is_summary`;
+    return this.postRequest(url, data)
+  }
 }

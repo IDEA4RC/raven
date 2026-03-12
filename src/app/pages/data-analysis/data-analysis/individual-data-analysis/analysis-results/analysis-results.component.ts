@@ -1,405 +1,551 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
-import { Observable } from 'rxjs';
+import { SelectionService } from '../selection.service';
+
+const ALGORITHMS = {
+    CROSSTABULATION: 'crosstabulation',
+    TTEST: 't-test',
+    CHI_SQUARED: 'chi-squared',
+    KAPLAN_MEIER: 'kaplan-meier',
+    LOG_RANK_TEST: 'log-rank-test',
+    GLM: 'glm',
+    TIME_DELTA: 'time-delta',
+    TABLE1: 'table1',
+    BASIC_ARITHMETIC: 'basic_arithmetic',
+    SUMMARY: 'summary'
+} as const;
+
+type AlgorithmMethod = typeof ALGORITHMS[keyof typeof ALGORITHMS];
+
+interface SelectedAlgorithm {
+    id?: number;
+    method_name?: string;
+    description?: string;
+    input?: unknown;
+    col_var?: string;
+    row_var_list?: string;
+    task_id?: number;
+    creation_date?: string;
+    version_date?: string;
+    status_task?: string;
+    cohort_ids?: number[];
+}
+
+interface CrosstabDisplayRow {
+    rowValues: Record<string, string>;
+    valueValues: Record<string, string>;
+    isTotalRow: boolean;
+}
+
+interface CrosstabDisplayTable {
+    cohortName: string;
+    rowHeaders: string[];
+    valueHeaders: string[];
+    columnVariable: string;
+    rows: CrosstabDisplayRow[];
+    chi2?: string | number;
+    pValue?: string | number;
+}
+
+interface TTestDisplayRow {
+    variableName: string;
+    metrics: Record<string, string>;
+}
+
+interface TTestDisplayTable {
+    cohortName: string;
+    metricHeaders: string[];
+    rows: TTestDisplayRow[];
+}
+
+interface ExecutionInfoRow {
+    id: string;
+    name: string;
+    status: string;
+    org: string;
+    user: string;
+    created: string;
+}
 
 @Component({
-  selector: 'app-analysis-results',
-  templateUrl: './analysis-results.component.html',
-  styleUrl: './analysis-results.component.scss'
+    selector: 'app-analysis-results',
+    templateUrl: './analysis-results.component.html',
+    styleUrl: './analysis-results.component.scss'
 })
 export class AnalysisResultsComponent implements OnInit {
+    algorithms = ALGORITHMS;
 
+    selectedAlgorithm: SelectedAlgorithm | null = null;
+    name_algorithm = '';
+    cohorts_string = 'Pending result';
+    list_variables_text = '';
+    row_variables_text = '';
+    column_variable_text = '';
 
-  allCohorts: any[] = []; // Loaded from cohort selection
-  allCenters: any[] = [
-    {center_name: "APH P"},
-    {center_name: "INT"},
-    {center_name: "ISS-FJD"}
-  ] // Loaded from cohort selection
-  
-  displayedColumns = ['id', 'name', 'status', 'org', 'user', 'created'];
-  data = [
-    { id: 450, name: 'Crosstabulation', status: 'Completed', org: 'INT', user: 'J. Perez', created: '21/11/2025' }
-  ];
+    currentView: 'empty' | 'crosstab' | 'ttest' | 'placeholder' = 'empty';
+    underConstructionMessage = 'Under construction';
+    rawTaskResult: any = null;
+    crosstabTables: CrosstabDisplayTable[] = [];
+    tTestTables: TTestDisplayTable[] = [];
 
-  subtasks = [
-    { name: 'INT', status: 'Completed' },
-    { name: 'ISS-FJF', status: 'Completed' },
-    { name: 'APHP', status: 'Completed' }
-  ];
-
-
-  displayedColumns2: string[] = ['site', 'total', 'longBones', 'pelvis', 'ribs', 'spine'];
-
-  dataTables:any[] = [
-  {
-    Pelvis: {
-      contingency_table: [
-        { fnclcc_grade: "Grade 1 tumor", MALE: "82", FEMALE: "84", Total: "166" },
-        { fnclcc_grade: "Grade 2 tumor", MALE: "78", FEMALE: "106", Total: "184" },
-        { fnclcc_grade: "Grade 3 tumor", MALE: "98", FEMALE: "114", Total: "212" },
-        { fnclcc_grade: "N/A", MALE: "6", FEMALE: "4", Total: "10" },
-        { fnclcc_grade: "Total", MALE: "264", FEMALE: "308", Total: "572" }
-      ],
-      chi2: { chi2: "2.522825698669517", "P-value": "0.4711800884562277" }
-    },
-    Pelvis_RPS: {
-      contingency_table: [
-        { fnclcc_grade: "Grade 1 tumor", MALE: "200", FEMALE: "208", Total: "408" },
-        { fnclcc_grade: "Grade 2 tumor", MALE: "172", FEMALE: "208", Total: "380" },
-        { fnclcc_grade: "Grade 3 tumor", MALE: "196", FEMALE: "204", Total: "400" },
-        { fnclcc_grade: "N/A", MALE: "8", FEMALE: "4", Total: "12" },
-        { fnclcc_grade: "Total", MALE: "576", FEMALE: "624", Total: "1200" }
-      ],
-      chi2: { chi2: "3.145755603185945", "P-value": "0.3696938750012461" }
-    },
-    RPS: {
-      contingency_table: [
-        { fnclcc_grade: "Grade 1 tumor", MALE: "118", FEMALE: "124", Total: "242" },
-        { fnclcc_grade: "Grade 2 tumor", MALE: "94", FEMALE: "102", Total: "196" },
-        { fnclcc_grade: "Grade 3 tumor", MALE: "98", FEMALE: "90", Total: "188" },
-        { fnclcc_grade: "N/A", MALE: "2", FEMALE: "0", Total: "2" },
-        { fnclcc_grade: "Total", MALE: "312", FEMALE: "316", Total: "628" }
-      ],
-      chi2: { chi2: "2.7903519711872944", "P-value": "0.4250906180348766" }
-    }
-  }
-];
-
-
-summaryTableCat : any[] = [
-  { Statistics: 'N', field: "count", Total: 0},
-  { Statistics: 'Missing', field: "missing", Total: 0 }
-];
-summaryTableNum: any[] = [
-  { Statistics: 'N', field: "count" },
-  { Statistics: 'Mean', field: "mean" },
-  { Statistics: 'Min', field: "min" },
-  { Statistics: 'Max', field: "max" },
-  { Statistics: 'Missing', field: "missing" },
-];
-
-// Observables cohort
-observable_data_summary_statistics$ : Observable<any> | undefined;
-private dataSummaryStatisticsSubscription: any;
-
-summaryStatistics: any;
-optionsVariables: { value: string; label: string; type: string; }[];
-displayedColumnsCohorts: string[] = [];
-
-constructor(
-  private dataAnalysisService: DataAnalysisService,
-) { }
-ngOnInit(): void {
-
-
-
-  //TODO get variables
-    // Example: load data dynamically (could be from a service)
-    this.optionsVariables = [
-      { "value": "AGE", "label": "Age", "type": "numeric" },
-      { "value": "TUMOR_SIZE", "label": "Tumor Size", "type": "numeric" },
-      { "value": "LOCAL_RECURRENCE", "label": "Local Recurrence", "type": "categorical" },
-      { "value": "MULTIFOCALITY", "label": "Multifocality", "type": "categorical" },
-      { "value": "STATUS", "label": "Status", "type": "categorical" },
-      { "value": "PRE_OPERATIVE_RADIO", "label": "Pre Operative Radio", "type": "categorical" },
-      { "value": "HISTOLOGY", "label": "Histology", "type": "categorical" },
-      { "value": "POST_OPERATIVE_RADIO", "label": "Post Operative Radio", "type": "categorical" },
-      { "value": "PRE_OPERATIVE_CHEMO", "label": "Pre Operative Chemo", "type": "categorical" },
-      { "value": "POST_OPERATIVE_CHEMO", "label": "Post Operative Chemo", "type": "categorical" },
-      { "value": "COMPLETENESS_OF_RESECTION", "label": "Completeness Of Resection", "type": "categorical" },
-      { "value": "DISTANT_METASTASIS", "label": "Distant Metastasis", "type": "categorical" },
-      { "value": "FNCLCC_GRADE", "label": "Fnclcc Grade", "type": "categorical" },
-      { "value": "TUMOR_RUPTURE", "label": "Tumor Rupture", "type": "categorical" },
-      { "value": "SEX", "label": "Sex", "type": "categorical" }
+    displayedColumns = ['id', 'name', 'status', 'org', 'user', 'created'];
+    data: ExecutionInfoRow[] = [
+        { id: '-', name: '-', status: '-', org: '-', user: '-', created: '-' }
     ];
 
-  this.observable_data_summary_statistics$ = this.dataAnalysisService.data_summary_statistics
+    subtasks = [
+        { name: 'INT', status: 'Completed' },
+        { name: 'ISS-FJF', status: 'Completed' },
+        { name: 'APHP', status: 'Completed' }
+    ];
 
+    @Output() previousStep = new EventEmitter<void>();
 
-  // Subscribe to the observable summary statistics
-  this.dataSummaryStatisticsSubscription = this.observable_data_summary_statistics$.subscribe((data:any) => {
-    this.summaryStatistics = data;
-    this.updateCohortsTable();
-  });
-  
+    constructor(
+        private dataAnalysisService: DataAnalysisService,
+        public selectionService: SelectionService
+    ) { }
 
-  //TODO remove hardcoded taskId
-  let taskId = 1;
-  // Initial data fetch
-  this.dataAnalysisService.getSummaryStatistics(taskId);
-  
-}
+    ngOnInit(): void {
+        this.selectionService.selectedItems$.subscribe(items => {
+            if (!items || items.length === 0) {
+                this.currentView = 'empty';
+                this.underConstructionMessage = 'No algorithm selected.';
+                return;
+            }
 
-getTableKeys(): any[] {
-  return Object.keys(this.dataTables[0]) as any[];
-}
+            this.selectedAlgorithm = items[0] as SelectedAlgorithm;
+            this.initializeSelectedAlgorithm(this.selectedAlgorithm);
 
-updateCohortsTable() {
+            if (this.selectedAlgorithm.task_id) {
+                this.fetchTaskResult(this.selectedAlgorithm.task_id);
+                return;
+            }
 
-    // Update the cohorts table based on the selected variable
-    let variableCohorts: any[] = [];
+            this.setPlaceholderView(this.selectedAlgorithm.method_name, 'This algorithm does not have a task result yet.');
+        });
+    }
 
-    // Handle numeric and categoric variables separately      
+    initializeSelectedAlgorithm(selectedAlgorithm: SelectedAlgorithm): void {
+        this.name_algorithm = selectedAlgorithm.method_name || '';
 
-    let cohorts = Object.keys(this.summaryStatistics[0].by_cohort);
-    
-    cohorts.forEach((cohort: any, index: number) => {
-      
-      let numVariables = Object.keys(this.summaryStatistics[0]["by_cohort"][cohort]["numeric"]);
-      let catVariables = Object.keys(this.summaryStatistics[0]["by_cohort"][cohort]["counts_unique_values"]);
+        const rowVariables = this.parseRowVariables(selectedAlgorithm);
+        this.row_variables_text = rowVariables.map(variable => this.formatLabel(variable)).join(', ');
+        this.list_variables_text = this.row_variables_text;
+        this.column_variable_text = this.formatLabel(selectedAlgorithm.col_var || '');
 
-      console.log("numVariables:", numVariables);
-      
-      
-      // Numeric variables
-      this.displayedColumnsCohorts = [];
-      // this.dataSourceCohorts.data = [];
-      this.displayedColumnsCohorts.push( 'Statistics' );
-      variableCohorts = numVariables
-     
-      numVariables.forEach((variable: any, index: number) => {
+        if (Array.isArray(selectedAlgorithm.cohort_ids) && selectedAlgorithm.cohort_ids.length > 0) {
+            this.cohorts_string = selectedAlgorithm.cohort_ids.join(', ');
+        }
 
-        // Create a fresh copy of the statistics template
-        let variableCohorts = [...this.summaryTableNum.map(item => ({ ...item }))];
+        this.data = [
+            {
+                id: String(selectedAlgorithm.id ?? '-'),
+                name: this.formatLabel(selectedAlgorithm.method_name || '-'),
+                status: selectedAlgorithm.status_task || '-',
+                org: '-',
+                user: '-',
+                created: this.formatDate(selectedAlgorithm.creation_date)
+            }
+        ];
+    }
 
-        // Get data for this variable
-        const variableData = this.summaryStatistics[0]["by_cohort"][cohort]["numeric"][variable];
+    fetchTaskResult(taskId: number): void {
+        this.dataAnalysisService.getTaskResult(taskId).subscribe({
+            next: (result) => {
+                this.rawTaskResult = result?.result ?? result ?? {};
+                console.log("Raw task results", this.rawTaskResult);
+                
+                const cohortNames = Object.keys(this.rawTaskResult || {});
+                if (cohortNames.length > 0) {
+                    this.cohorts_string = cohortNames.map(cohort => this.formatLabel(cohort)).join('; ');
+                }
 
-        // Add new displayed column
-        this.displayedColumnsCohorts.push(`Cohort ${index + 1}`);
+                this.renderSelectedAlgorithm(this.rawTaskResult);
+            },
+            error: (err) => {
+                console.error('Error obteniendo el resultado de la tarea:', err);
+                this.setPlaceholderView(this.name_algorithm, 'Result could not be loaded.');
+            }
+        });
+    }
 
-        // Add cohort value to each statistics row
-        variableCohorts = variableCohorts.map((row: any) => {
-          const cohortValue = variableData[row.field] ?? 0;
-          return {
-            ...row,
-            [`Cohort ${index + 1}`]: cohortValue
-          };
+    renderSelectedAlgorithm(resultData: any): void {
+        switch (this.name_algorithm as AlgorithmMethod) {
+            case ALGORITHMS.CROSSTABULATION:
+                this.renderCrosstabulation(resultData);
+                break;
+            case ALGORITHMS.TTEST:
+                this.renderTTest(resultData);
+                break;
+            case ALGORITHMS.CHI_SQUARED:
+                this.renderChiSquared(resultData);
+                break;
+            case ALGORITHMS.KAPLAN_MEIER:
+                this.renderKaplanMeier(resultData);
+                break;
+            case ALGORITHMS.LOG_RANK_TEST:
+                this.renderLogRankTest(resultData);
+                break;
+            case ALGORITHMS.GLM:
+                this.renderGlm(resultData);
+                break;
+            case ALGORITHMS.TIME_DELTA:
+                this.renderTimeDelta(resultData);
+                break;
+            case ALGORITHMS.TABLE1:
+                this.renderTable1(resultData);
+                break;
+            case ALGORITHMS.BASIC_ARITHMETIC:
+                this.renderBasicArithmetic(resultData);
+                break;
+            case ALGORITHMS.SUMMARY:
+                this.renderSummary(resultData);
+                break;
+            default:
+                this.setPlaceholderView(this.name_algorithm, 'This algorithm renderer is not implemented yet.');
+                break;
+        }
+    }
+
+    renderCrosstabulation(resultData: any): void {
+        this.crosstabTables = this.buildCrosstabTables(resultData);
+
+        if (this.crosstabTables.length === 0) {
+            this.setPlaceholderView(ALGORITHMS.CROSSTABULATION, 'No contingency table data was returned for this crosstabulation.');
+            return;
+        }
+
+        this.currentView = 'crosstab';
+    }
+
+    renderTTest(resultData: any): void {
+        this.tTestTables = this.buildTTestTables(resultData);
+
+        if (this.tTestTables.length === 0) {
+            this.setPlaceholderView(ALGORITHMS.TTEST, 'No t-test data was returned for this analysis.');
+            return;
+        }
+
+        this.currentView = 'ttest';
+    }
+
+    renderChiSquared(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.CHI_SQUARED);
+    }
+
+    renderKaplanMeier(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.KAPLAN_MEIER);
+    }
+
+    renderLogRankTest(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.LOG_RANK_TEST);
+    }
+
+    renderGlm(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.GLM);
+    }
+
+    renderTimeDelta(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.TIME_DELTA);
+    }
+
+    renderTable1(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.TABLE1);
+    }
+
+    renderBasicArithmetic(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.BASIC_ARITHMETIC);
+    }
+
+    renderSummary(resultData: any): void {
+        void resultData;
+        this.setPlaceholderView(ALGORITHMS.SUMMARY);
+    }
+
+    setPlaceholderView(methodName?: string, message?: string): void {
+        this.currentView = 'placeholder';
+        this.crosstabTables = [];
+        this.tTestTables = [];
+        const algorithmLabel = this.formatLabel(methodName || 'This algorithm');
+        this.underConstructionMessage = message || `${algorithmLabel} is under construction.`;
+    }
+
+    buildTTestTables(resultData: any): TTestDisplayTable[] {
+        const resultEntries = Object.entries(resultData || {});
+        const tables: TTestDisplayTable[] = [];
+
+        resultEntries.forEach(([cohortName, cohortData]: [string, any]) => {
+            if (!cohortData || typeof cohortData !== 'object' || Array.isArray(cohortData)) {
+                return;
+            }
+
+            const variableEntries = Object.entries(cohortData).filter(([, metrics]) => {
+                return metrics && typeof metrics === 'object' && !Array.isArray(metrics);
+            }) as Array<[string, Record<string, unknown>]>;
+
+            if (variableEntries.length === 0) {
+                return;
+            }
+
+            const metricHeaders = this.getTTestMetricHeaders(variableEntries);
+            const rows = variableEntries
+                .map(([variableName, metrics]) => ({
+                    variableName,
+                    metrics: metricHeaders.reduce((acc, metricName) => {
+                        acc[metricName] = this.formatTTestMetric(metrics[metricName]);
+                        return acc;
+                    }, {} as Record<string, string>)
+                }))
+                .sort((left, right) => left.variableName.localeCompare(right.variableName));
+
+            tables.push({
+                cohortName,
+                metricHeaders,
+                rows
+            });
         });
 
-        console.log("variableCohorts for", variable, variableCohorts);
-      });
+        return tables;
+    }
 
-      console.log("displayed columns:", this.displayedColumnsCohorts);
-      
+    getTTestMetricHeaders(variableEntries: Array<[string, Record<string, unknown>]>): string[] {
+        const metricSet = new Set<string>();
 
-    });
+        variableEntries.forEach(([, metrics]) => {
+            Object.keys(metrics).forEach(metric => metricSet.add(metric));
+        });
 
-    console.log("variableCohorts:", variableCohorts);
-      
+        const headers = Array.from(metricSet);
+        const orderedHeaders: string[] = [];
 
-      // if(this.selectedValue.type === 'categorical'){
-      //   variableCohorts = [];
+        ['p_value', 't_score'].forEach(preferred => {
+            if (headers.includes(preferred)) {
+                orderedHeaders.push(preferred);
+            }
+        });
 
-      //   // Reset displayed columns
-      //   this.displayedColumnsCohorts = [];
-      //   this.dataSourceCohorts.data = [];
-      //   this.displayedColumnsCohorts.push(this.selectedValue.label);
-        
-      //   this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
-      //     const variableData = statistic.rps_cohort["counts_unique_values"][this.selectedValue.value];
+        headers
+            .filter(header => !orderedHeaders.includes(header))
+            .sort((left, right) => left.localeCompare(right))
+            .forEach(header => orderedHeaders.push(header));
 
-      //     this.displayedColumnsCohorts.push( `Cohort ${index + 1}` );
-          
-          
-      //     let variableValue = Object.keys(variableData);
-          
-      //     variableValue.forEach((val: any) => {
-      //       // Skip N/A category (we'll handle it later)
-      //       if (val === 'N/A') return;
+        return orderedHeaders;
+    }
 
-      //       if(variableCohorts.length < variableValue.length ) {
-      //         let row = { 
-      //           [this.selectedValue.label]: val, 
-      //           [`Cohort ${index + 1}`]: variableData[val]
-      //         };
-      //         variableCohorts.push(row);
-      //       } else {
-      //         variableCohorts = variableCohorts.map((row: any) => {
-      //           if(row[this.selectedValue.label] === val){
-      //             row = {...row, [`Cohort ${index + 1}`]: variableData[val]};
-      //           };
-      //           return row;
-      //         });
-      //       }
-            
-      //     });
-      //   });
+    formatTTestMetric(value: unknown): string {
+        if (value === null || value === undefined || value === '') {
+            return '';
+        }
 
-      //   // === Add Total and Missing rows ===
-      //   const totalRow: any = { [this.selectedValue.label]: 'Total' };
-      //   const missingRow: any = { [this.selectedValue.label]: 'Missing' };
+        if (typeof value === 'number' && Number.isFinite(value)) {
+            return Number(value.toFixed(3)).toString();
+        }
 
-      //   // Compute totals and missings per cohort
-      //   this.displayedColumnsCohorts.slice(1).forEach((cohortLabel: string, index: number) => {
-      //     const variableData = this.summaryStatisticsCohorts[index].rps_cohort["counts_unique_values"][this.selectedValue.value];
+        if (typeof value === 'string') {
+            const numericValue = Number(value);
+            if (!Number.isNaN(numericValue) && value.trim() !== '') {
+                return Number(numericValue.toFixed(3)).toString();
+            }
+        }
 
-      //     let total = 0;
-      //     let missing = 0;
+        return String(value);
+    }
 
-      //     Object.entries(variableData).forEach(([key, value]: [string, any]) => {
-      //       if (key === 'N/A') missing += value;
-      //       else total += value;
-      //     });
+    buildCrosstabTables(resultData: any): CrosstabDisplayTable[] {
+        const rowHeaders = this.parseRowVariables(this.selectedAlgorithm);
+        console.log("rowHeaders:", rowHeaders);
 
-      //     const totalPlusMissing = total + missing;
-      //     const missingPerc = totalPlusMissing > 0 ? (missing / totalPlusMissing) * 100 : 0;
+        const resultEntries = Object.entries(resultData || {});
+        console.log("resultEntries:", resultEntries);
 
-      //     totalRow[cohortLabel] = total;
-      //     missingRow[cohortLabel] = `${missing} (${missingPerc.toFixed(1)}%)`;
-      //   });
+        const tables: CrosstabDisplayTable[] = [];
 
-      //   // Add summary rows at the end
-      //   variableCohorts.push(totalRow);
-      //   variableCohorts.push(missingRow);
+        resultEntries.forEach(([cohortName, cohortData]: [string, any]) => {
+            console.log("cohortName:", cohortName);
+            console.log("cohortData:", cohortData);
 
-        
-      // }
-      
-      // Update the data source for the cohorts table
-      // this.dataSourceCohorts.data = variableCohorts;
-      // this.dataSourceCohorts._updateChangeSubscription();
-    
-    
-  }
+            const contingencyTable = Array.isArray(cohortData?.contingency_table) ? cohortData.contingency_table : [];
+            if (contingencyTable.length === 0) {
+                return;
+            }
+            console.log("contingencyTable:", contingencyTable);
 
-  // updateCentersTable() {
-  //   // Update the centers table based on the selected variable
-  //   if(this.selectedValue) {
-  //     let variableCenters: any[] = [];
-  //     if(this.selectedValue.type === 'categorical') {
-  //       // Reset displayed columns
-  //         this.displayedColumnsCenters = [];
-  //         this.dataSourceCenters.data = [];
-  //         // Add Statistics as first column
-  //         this.displayedColumnsCenters.push(this.selectedValue.label);
+            const resolvedRowHeaders = rowHeaders.length > 0 ? rowHeaders : this.detectRowHeaders(contingencyTable);
+            const valueHeaders = this.getOrderedValueColumns(contingencyTable, resolvedRowHeaders);
+            const columnVariable = cohortData?.col_var || this.selectedAlgorithm?.col_var || '';
+            console.log("resolvedRowHeaders:", resolvedRowHeaders);
+            console.log("valueHeaders:", valueHeaders);
+            console.log("columnVariable:", columnVariable);
+            tables.push({
+                cohortName,
+                rowHeaders: resolvedRowHeaders,
+                valueHeaders,
+                columnVariable,
+                rows: contingencyTable.map((row: Record<string, unknown>) => this.buildCrosstabRow(row, resolvedRowHeaders, valueHeaders)),
+                chi2: cohortData?.chi2?.chi2,
+                pValue: cohortData?.chi2?.['P-value']
+            });
+        });
 
-  //         let centersTable: any = {};
+        return tables;
+    }
 
-  //         let cohorts = Object.keys(this.summaryStatisticsCenters[0]);
+    buildCrosstabRow(row: Record<string, unknown>, rowHeaders: string[], valueHeaders: string[]): CrosstabDisplayRow {
+        const rowValues = rowHeaders.reduce((acc, header) => {
+            acc[header] = this.toDisplayValue(row[header]);
+            return acc;
+        }, {} as Record<string, string>);
 
-  //         cohorts.forEach((cohort: any, index: number) => {
-  //           variableCenters = [];
+        const valueValues = valueHeaders.reduce((acc, header) => {
+            acc[header] = this.toDisplayValue(row[header]);
+            return acc;
+        }, {} as Record<string, string>);
 
-  //           let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
-  //            // Add center names to displayed columns (only once)
-  //            if (index === 0) {
-  //              this.displayedColumnsCenters.push(...centers);
-  //            }
+        const isTotalRow = rowHeaders.some(header => this.toDisplayValue(row[header]).toLowerCase() === 'total');
 
-  //           // === Build variable rows per cohort ===
-  //           centers.forEach((center: any) => {
-  //             const variableData =
-  //               this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
+        return {
+            rowValues,
+            valueValues,
+            isTotalRow
+        };
+    }
 
-  //             const variableValues = Object.keys(variableData);
+    parseRowVariables(selectedAlgorithm: SelectedAlgorithm | null): string[] {
+        if (!selectedAlgorithm) {
+            return [];
+        }
 
-  //             variableValues.forEach((val: any) => {
-  //               // Skip 'N/A' entries — will handle later in Missing
-  //               if (val === "N/A") return;
+        if (selectedAlgorithm.row_var_list) {
+            return selectedAlgorithm.row_var_list
+                .split(',')
+                .map(variable => variable.trim())
+                .filter(variable => variable.length > 0);
+        }
 
-  //               if (variableCenters.length < variableValues.length - (variableValues.includes("N/A") ? 1 : 0)) {
-  //                 let row = {
-  //                   [this.selectedValue.label]: val,
-  //                   [center]: variableData[val],
-  //                 };
-  //                 variableCenters.push(row);
-  //               } else {
-  //                 variableCenters = variableCenters.map((row: any) => {
-  //                   if (row[this.selectedValue.label] === val) {
-  //                     row = { ...row, [center]: variableData[val] };
-  //                   }
-  //                   return row;
-  //                 });
-  //               }
-  //             });
-  //           });
+        return this.parseInputVariables(selectedAlgorithm.input);
+    }
 
-  //           // === Add Total and Missing rows ===
-  //           const totalRow: any = { [this.selectedValue.label]: "Total" };
-  //           const missingRow: any = { [this.selectedValue.label]: "Missing" };
+    parseInputVariables(input: unknown): string[] {
+        if (Array.isArray(input)) {
+            return input.map(value => String(value).trim()).filter(value => value.length > 0);
+        }
 
-  //           centers.forEach((center: any) => {
-  //             const variableData =
-  //               this.summaryStatisticsCenters[0][cohort][center]["counts_unique_values"][this.selectedValue.value];
+        if (typeof input !== 'string') {
+            return [];
+        }
 
-  //             let total = 0;
-  //             let missing = 0;
+        try {
+            const parsedInput = JSON.parse(input);
+            if (Array.isArray(parsedInput)) {
+                return parsedInput.map(value => String(value).trim()).filter(value => value.length > 0);
+            }
 
-  //             Object.entries(variableData).forEach(([key, value]: [string, any]) => {
-  //               if (key === "N/A") missing += value;
-  //               else total += value;
-  //             });
+            if (parsedInput?.variablesList && Array.isArray(parsedInput.variablesList)) {
+                return parsedInput.variablesList.map((value: unknown) => String(value).trim()).filter((value: string) => value.length > 0);
+            }
+        } catch (error) {
+            void error;
+        }
 
-  //             const totalPlusMissing = total + missing;
-  //             const missingPerc = totalPlusMissing > 0 ? (missing / totalPlusMissing) * 100 : 0;
+        return input
+            .split(',')
+            .map(value => value.trim())
+            .filter(value => value.length > 0);
+    }
 
-  //             totalRow[center] = total;
-  //             missingRow[center] = `${missing} (${missingPerc.toFixed(1)}%)`;
-  //           });
+    detectRowHeaders(contingencyTable: Array<Record<string, unknown>>): string[] {
+        if (!contingencyTable.length) {
+            return [];
+        }
 
-  //           // Append summary rows at the end
-  //           variableCenters.push(totalRow);
-  //           variableCenters.push(missingRow);
+        return Object.keys(contingencyTable[0]).filter(column => {
+            const values = contingencyTable.map(row => this.toDisplayValue(row[column]).trim());
+            const numericLikeRatio = values.filter(value => /^-?\d+(\.\d+)?$/.test(value)).length / values.length;
+            return numericLikeRatio <= 0.5;
+        });
+    }
 
-  //           // Save this cohort's centers table
-  //           centersTable[cohort] = variableCenters;
-  //         });
-  //         this.centersTables = centersTable;
-  //     } else
-  //       if(this.selectedValue.type === 'numeric'){
-          
-  //         // Reset displayed columns
-  //         this.displayedColumnsCenters = [];
-  //         this.dataSourceCenters.data = [];
-  //         // Add Statistics as first column
-  //         this.displayedColumnsCenters.push( 'Statistics' );
+    getOrderedValueColumns(contingencyTable: Array<Record<string, unknown>>, rowHeaders: string[]): string[] {
+        const rowHeaderSet = new Set(rowHeaders);
+        const valueColumns = new Set<string>();
 
-  //         let centersTable: any = {};
+        contingencyTable.forEach(row => {
+            Object.keys(row).forEach(column => {
+                if (!rowHeaderSet.has(column)) {
+                    valueColumns.add(column);
+                }
+            });
+        });
 
-  //         let cohorts = Object.keys(this.summaryStatisticsCenters[0]);
+        const columns = Array.from(valueColumns);
+        const regularColumns = columns
+            .filter(column => column !== 'N/A' && column !== 'Total')
+            .sort((left, right) => left.localeCompare(right));
 
-  //         cohorts.forEach((cohort: any, index: number) => {
-  //           let variableCenters = [...this.summaryTableNum];
-  //           let centers = Object.keys(this.summaryStatisticsCenters[0][cohort]);
-  //            if (index === 0) {
-  //              this.displayedColumnsCenters.push(...centers);
-  //            }
+        if (columns.includes('N/A')) {
+            regularColumns.push('N/A');
+        }
 
-  //           centers.forEach((center: any) => {
-  //             const variableData =
-  //               this.summaryStatisticsCenters[0][cohort][center][this.selectedValue.type][this.selectedValue.value];
+        if (columns.includes('Total')) {
+            regularColumns.push('Total');
+        }
 
-  //             variableCenters = variableCenters.map((row: any) => {
-  //               const centerValue = variableData[row.field] || 0;
-  //               return {
-  //                 ...row,
-  //                 [center]: centerValue,
-  //               };
-  //             });
-  //           });
+        return regularColumns;
+    }
 
-  //           // Save this centers' table
-  //           centersTable[cohort] = variableCenters;
-  //         });
+    formatLabel(value: string): string {
+        if (!value) {
+            return '';
+        }
 
-  //         console.log(centersTable);
-  //         this.centersTables = centersTable;
+        if (value === 'N/A') {
+            return 'N/A';
+        }
 
-  //     }
-      
-  //   }
-  // }
+        return value
+            .replace(/_/g, ' ')
+            .split(' ')
+            .filter(part => part.length > 0)
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(' ');
+    }
 
+    formatDate(value?: string): string {
+        if (!value) {
+            return '-';
+        }
 
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
 
-  // dataSource = new MatTableDataSource<any>([
-  //   { site: 'Cohort 1 - No metastatic', total: 305, longBones: '79 (25.90%)', pelvis: '70 (22.95%)', ribs: '73 (23.93%)', spine: '83 (27.21%)' },
-  //   { site: 'Cohort 1 - Metastatic', total: 139, longBones: '32 (23.02%)', pelvis: '41 (29.50%)', ribs: '38 (27.34%)', spine: '28 (20.14%)', alt: true },
-  //   { site: 'Cohort 2 - No metastatic', total: 410, longBones: '99 (24.15%)', pelvis: '107 (26.10%)', ribs: '97 (23.66%)', spine: '107 (26.10%)' },
-  //   { site: 'Cohort 2 - Metastatic', total: 190, longBones: '51 (26.84%)', pelvis: '43 (22.63%)', ribs: '53 (27.89%)', spine: '43 (22.63%)', alt: true }
-  // ]);
+        return date.toLocaleDateString('es-ES');
+    }
 
+    toDisplayValue(value: unknown): string {
+        if (value === null || value === undefined || value === '') {
+            return '';
+        }
+
+        return String(value);
+    }
+
+    goBack(): void {
+        this.previousStep.emit();
+    }
+
+    /*
+     * V1 reference intentionally kept in history:
+     * the previous version rendered a fixed contingency table shape directly from dataTables.
+     * This component now dispatches by method_name and builds the crosstab structure dynamically.
+     */
 }

@@ -138,56 +138,88 @@
                 </div>
 
             </div>
-            <div class="right-column" *ngIf="shouldShowVariableSelector(); else noVariableParams">
-                <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.crosstab-parameters-title' | translate}}</p>
-                <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-column-help' | translate}}</p>
-                <div class="variable-selector">
-                    <mat-form-field appearance="outline" class="algorithm-select">
-                        <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-column-variable-label' | translate}}</mat-label>
-                        <mat-select [(value)]="selectedColumnVariable"
-                            (selectionChange)="onColumnVariableChange($event.value)">
+            <ng-container [ngSwitch]="selectedMethod">
+                <div class="right-column" *ngSwitchCase="'crosstabulation'">
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.crosstab-parameters-title' | translate}}</p>
+                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-column-help' | translate}}</p>
+                    <div class="variable-selector">
+                        <mat-form-field appearance="outline" class="algorithm-select">
+                            <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-column-variable-label' | translate}}</mat-label>
+                            <mat-select [(value)]="selectedColumnVariable"
+                                (selectionChange)="onColumnVariableChange($event.value)">
 
-                            <mat-option *ngFor="let variable of variables" [value]="variable.value">
-                                {{ variable.label }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                                <mat-option *ngFor="let variable of getCategoricalVariables()" [value]="variable.value">
+                                    {{ variable.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-row-help' | translate}}</p>
-                    <mat-form-field appearance="outline" class="algorithm-select">
-                        <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-row-variables-label' | translate}}</mat-label>
-                        <mat-select [(value)]="selectedRowVariables" multiple
-                            (selectionChange)="onSelectionChange($event)">
+                        <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-row-help' | translate}}</p>
+                        <mat-form-field appearance="outline" class="algorithm-select">
+                            <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-row-variables-label' | translate}}</mat-label>
+                            <mat-select [(value)]="selectedRowVariables" multiple
+                                (selectionChange)="onSelectionChange($event)">
 
-                            <mat-option *ngFor="let variable of getAvailableRowVariables()" [value]="variable.value">
-                                {{ variable.label }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                                <mat-option *ngFor="let variable of getAvailableRowVariables()" [value]="variable.value">
+                                    {{ variable.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-                    <!-- Selected variables shown as chips outside -->
-                    <div class="selected-chips">
-                        <mat-chip-set>
-                            <mat-chip class="variables-chips" *ngFor="let variable of selectedRowVariables"
-                                (removed)="removeVariable(variable)">
-                                {{ getVariableLabel(variable) }}
-                                <button matChipRemove aria-label="Remove">
-                                    <mat-icon>close</mat-icon>
-                                </button>
-                            </mat-chip>
-                        </mat-chip-set>
+                        <div class="selected-chips">
+                            <mat-chip-set>
+                                <mat-chip class="variables-chips" *ngFor="let variable of selectedRowVariables"
+                                    (removed)="removeVariable(variable)">
+                                    {{ getVariableLabel(variable) }}
+                                    <button matChipRemove aria-label="Remove">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </mat-chip>
+                            </mat-chip-set>
+                        </div>
                     </div>
                 </div>
 
+                <div class="right-column" *ngSwitchCase="'kaplan-meier'">
+                    <p class="algorithm-text">Kaplan-Meier Parameters</p>
+                    <p class="algorithm-subtext"></p>
+                </div>
 
-
-            </div>
-            <ng-template #noVariableParams>
-                <div class="right-column">
+                <div class="right-column" *ngSwitchCase="'t-test'">
                     <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
                     <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' | translate}}</p>
                 </div>
-            </ng-template>
+
+                <div class="right-column" *ngSwitchCase="'table1'">
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
+                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' | translate}}</p>
+                </div>
+
+                <div class="right-column" *ngSwitchCase="'glm'">
+                    <p class="algorithm-text">GLM Parameters</p>
+                    <p class="algorithm-subtext"></p>
+                </div>
+
+                <div class="right-column" *ngSwitchCase="'coxph'">
+                    <p class="algorithm-text">CoxPH Parameters</p>
+                    <p class="algorithm-subtext"></p>
+                </div>
+
+                <div class="right-column" *ngSwitchCase="'log-rank-test'">
+                    <p class="algorithm-text">Log-rank test Parameters</p>
+                    <p class="algorithm-subtext"></p>
+                </div>
+
+                <div class="right-column" *ngSwitchCase="'time-delta'">
+                    <p class="algorithm-text">Time Delta Parameters</p>
+                    <p class="algorithm-subtext"></p>
+                </div>
+
+                <div class="right-column" *ngSwitchDefault>
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
+                    <p class="algorithm-subtext">Select a method to configure its parameters.</p>
+                </div>
+            </ng-container>
 
         </div>
 

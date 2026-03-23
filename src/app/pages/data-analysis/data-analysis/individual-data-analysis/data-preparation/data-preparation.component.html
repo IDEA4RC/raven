@@ -19,8 +19,8 @@
               {{'pages.data-analysis.data_preparation.centers' | translate}}
             </mat-card-title>
             <mat-card-content>
-              <section class="filter-checkbox-group" *ngFor="let center of allCenters">
-                <mat-checkbox checked>{{center}}</mat-checkbox>
+              <section class="filter-checkbox-group" *ngFor="let center of centerFilters">
+                <mat-checkbox [(ngModel)]="center.selected" (change)="onCentersChange()">{{center.label}}</mat-checkbox>
               </section>
             </mat-card-content>
           </div>
@@ -29,8 +29,8 @@
               {{'pages.data-analysis.data_preparation.cohorts' | translate}}
             </mat-card-title>
             <mat-card-content *ngIf="showCohorts">
-              <section class="filter-checkbox-group" *ngFor="let cohort of allCohorts">
-                <mat-checkbox checked>{{cohort.cohort_name}}</mat-checkbox>
+              <section class="filter-checkbox-group" *ngFor="let cohort of cohortFilters">
+                <mat-checkbox [(ngModel)]="cohort.selected" (change)="onCohortsChange()">{{cohort.label}}</mat-checkbox>
               </section>
             </mat-card-content>
           </div>
@@ -137,15 +137,34 @@
               <!-- Centers table -->
               <div class="table-container" *ngIf="showCenters">
                 <span>
-                  Centers Statistics
+                  {{'pages.data-analysis.data_preparation.centers_statistics' | translate}}
                 </span>
                 <div *ngFor="let cohort of objectKeys(centersTables)">
                   <div>
-                    <h4>Centers statistics for cohort: {{ cohort }}</h4>
+                    <h4>{{'pages.data-analysis.data_preparation.centers_statistics_for_cohort' | translate}}: {{ cohort }}</h4>
                   </div>
                   <!-- Table -->
                   <app-statistics-table [type]="'centers'" [data]=centersTables[cohort]
                     [columns]=displayedColumnsCenters></app-statistics-table>
+                </div>
+
+                <div class="numeric-center-charts" *ngIf="isNumericVariableSelected() && numericCenterCharts.length">
+                  <div class="cohort-chart-group" *ngFor="let cohortCharts of numericCenterCharts">
+                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}: {{ cohortCharts.cohort }}</h4>
+                    <div class="chart-grid">
+                      <div class="chart-card" *ngFor="let chartData of cohortCharts.charts">
+                        <p class="chart-title">{{ chartData.title }}</p>
+                        <apx-chart
+                          [series]="chartData.series"
+                          [chart]="chartData.chart"
+                          [xaxis]="chartData.xaxis"
+                          [plotOptions]="chartData.plotOptions"
+                          [dataLabels]="chartData.dataLabels"
+                          [colors]="chartData.colors">
+                        </apx-chart>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -163,7 +182,7 @@
     <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' |
       translate}}</button>
     <!-- Continue button -->
-    <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()">
+    <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="isLoading || isCrashed">
       {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
   </mat-card-actions>
 </mat-card>

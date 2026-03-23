@@ -20,6 +20,7 @@ import { switchMap, takeWhile, catchError, map } from 'rxjs/operators';
 })
 export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   private readonly METHOD_CROSSTAB = 'crosstabulation';
+  private readonly METHOD_KAPLAN_MEIER = 'kaplan-meier';
   private readonly METHOD_TTEST = 't-test';
   private readonly METHOD_TABLE1 = 'table1';
   private readonly METHOD_SUMMARY = 'summary';
@@ -52,9 +53,9 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     //   info: "The Kaplan-Meier estimator computes survival probabilities over time for one or more groups, typically used in time-to-event analysis."
     // },
     /* {
-       value: "chi-squared",
-       label: "Chi-squared",
-       info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
+      value: "chi-squared",
+      label: "Chi-squared",
+      info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
      },*/
     {
       value: "t-test",
@@ -276,11 +277,15 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   getAvailableRowVariables() {
+    const baseVariables = this.shouldShowVariableSelector()
+      ? this.getCategoricalVariables()
+      : this.variables;
+
     if (!this.selectedColumnVariable) {
-      return this.variables;
+      return baseVariables;
     }
 
-    return this.variables.filter(variable => variable.value !== this.selectedColumnVariable);
+    return baseVariables.filter(variable => variable.value !== this.selectedColumnVariable);
   }
 
   getVariableLabel(variableValue: string): string {
@@ -319,6 +324,18 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   shouldShowVariableSelector(): boolean {
     return this.selectedMethod === this.METHOD_CROSSTAB;
+  }
+
+  shouldShowKaplanSelector(): boolean {
+    return this.selectedMethod === this.METHOD_KAPLAN_MEIER;
+  }
+
+  shouldShowNoVariableParams(): boolean {
+    return this.selectedMethod === this.METHOD_TTEST || this.selectedMethod === this.METHOD_TABLE1;
+  }
+
+  getCategoricalVariables() {
+    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'categorical');
   }
 
   private getBaseAlgorithmRequestBody() {

@@ -191,7 +191,10 @@
         "q1_q3": "Q1-Q3",
         "missing": "Missing",
         "median_center": "Median per Center",
-        "missing_center": "Missing per Center"
+        "missing_center": "Missing per Center",
+        "centers_statistics": "Centers Statistics",
+        "centers_statistics_for_cohort": "Centers statistics for cohort",
+        "center_charts_for_cohort": "Center charts for cohort"
       },
       "analytic-selection": {
         "analytic-selection": "Analytic Selection",

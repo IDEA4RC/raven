@@ -130,7 +130,7 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     console.log('Navigating to Cohort Selection');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
-    const url = `https://idea-nlp-cohort-builder.d.lst.tfo.upm.es/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
+    const url = `https://cohort-builder-idea4rc.duckdns.org/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
     window.open(url, '_blank');
 
   }

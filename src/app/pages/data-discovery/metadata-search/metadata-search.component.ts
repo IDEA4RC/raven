@@ -640,7 +640,6 @@ export class MetadataSearchComponent implements OnInit {
       "type_cancer": typeCancer,
     }
 
-    console.log("VARIABLES TO CREATE WORKSPACE: ")
     let workspaceCreateSuscess = false
     let workspaceIdCreated: any = null;
     this.metadataSearchService.createWorkspace(wokspaceData).subscribe({
@@ -655,7 +654,7 @@ export class MetadataSearchComponent implements OnInit {
         // Create the data application object
         let dataApplication = {
           "user_id": keyUserId,
-          "workspace_id": response.id + response.name,
+          "workspace_id": response.id,
           "workspace_name": response.name,
           "metadata": {
             "type_cancer": typeCancer,
@@ -753,7 +752,6 @@ export class MetadataSearchComponent implements OnInit {
       detailedDataMapped.push(centerObject);
     });
 
-    console.log("detailedDataMapped", detailedDataMapped);
     return detailedDataMapped;
   }
 

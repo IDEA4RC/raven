@@ -24,6 +24,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   private readonly METHOD_TTEST = 't-test';
   private readonly METHOD_TABLE1 = 'table1';
   private readonly METHOD_SUMMARY = 'summary';
+  private readonly METHOD_GLM = 'glm';
 
   // Variable to store the current workspace ID from the route
   workspaceId: number | undefined;
@@ -47,31 +48,31 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       label: "Crosstabulation",
       info: "This algorithm computes a cross-table (contingency table) for two or more categorical variables. It returns a table of counts showing the frequency of each combination of categories."
     },
-    // {
-    //   value: "kaplan-meier",
-    //   label: "Kaplan-Meier",
-    //   info: "The Kaplan-Meier estimator computes survival probabilities over time for one or more groups, typically used in time-to-event analysis."
-    // },
-    /* {
+    {
+      value: "kaplan-meier",
+      label: "Kaplan-Meier",
+      info: "The Kaplan-Meier estimator computes survival probabilities over time for one or more groups, typically used in time-to-event analysis."
+    },
+    /*{
       value: "chi-squared",
       label: "Chi-squared",
       info: "The Chi-squared test measures whether there is a significant association between two categorical variables by comparing observed and expected frequencies."
-     },*/
+    },*/
     {
       value: "t-test",
       label: "T-test",
       info: "The T-test compares the means of two groups to determine if they are statistically different from each other, assuming normally distributed data."
     },
-     {
+    {
       value: "table1",
       label: "Table 1",
       info: "This algorithm generates a summary table (Table 1) for descriptive statistics, typically used to present baseline characteristics of study groups."
-    }
-    // {
-    //   value: "glm",
-    //   label: "GLM",
-    //   info: "The Generalized Linear Model (GLM) fits a linear model to data using a specified link function, allowing analysis of outcomes that are not normally distributed."
-    // },
+    },
+    {
+      value: "glm",
+      label: "GLM",
+      info: "The Generalized Linear Model (GLM) fits a linear model to data using a specified link function, allowing analysis of outcomes that are not normally distributed."
+    },
     // {
     //   value: "coxph",
     //   label: "CoxPH",
@@ -88,6 +89,17 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     //   info: ""
     // }
   ];
+
+  // Kaplan-Meier selections
+  selectedTimeColumn: string | null = null;
+  selectedCensorColumn: string | null = null;
+  selectedStrataColumn: string | null = null;
+
+  // GLM selections
+  selectedFamily: string | null = null;
+  selectedPredictors: string[] = [];
+  selectedOutcome: string | null = null;
+  glmFamilies = ['gaussian', 'binomial', 'poisson', 'survival'];
 
   //TODO get variables
   // Example: load data dynamically (could be from a service)
@@ -226,16 +238,16 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
   openAlgorithm(algorithm_id: number) {
     console.log("algorithm id: ", algorithm_id);
-    
+
     // Obtener el algoritmo seleccionado de la lista
     const selectedAlgorithm = this.algorithmsList.find(alg => alg.id === algorithm_id);
-    
+
     if (selectedAlgorithm) {
       // Pasar el algoritmo a través del servicio
       this.selectionService.setSelected([selectedAlgorithm]);
       console.log("Selected algorithm:", selectedAlgorithm);
     }
-    
+
     this.nextStep.emit();
   }
   deleteAlgorithm(algorithm_id: number) {
@@ -249,6 +261,18 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     if (!this.shouldShowVariableSelector()) {
       this.selectedColumnVariable = null;
       this.selectedRowVariables = [];
+    }
+
+    if (!this.shouldShowKaplanSelector()) {
+      this.selectedTimeColumn = null;
+      this.selectedCensorColumn = null;
+      this.selectedStrataColumn = null;
+    }
+
+    if (!this.shouldShowGLMSelector()) {
+      this.selectedFamily = null;
+      this.selectedPredictors = [];
+      this.selectedOutcome = null;
     }
   }
   onVariablesSelected(value: any) {
@@ -308,6 +332,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.selectedMethod === this.METHOD_KAPLAN_MEIER) {
+      this.createKaplanMeierRequest();
+      return;
+    }
+
     if (this.selectedMethod === this.METHOD_TTEST) {
       this.createTTestRequest();
       return;
@@ -315,6 +344,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
     if (this.selectedMethod === this.METHOD_TABLE1) {
       this.createTable1Request();
+      return;
+    }
+
+    if (this.selectedMethod === this.METHOD_GLM) {
+      this.createGLMRequest();
       return;
     }
 
@@ -330,12 +364,119 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     return this.selectedMethod === this.METHOD_KAPLAN_MEIER;
   }
 
+  shouldShowGLMSelector(): boolean {
+    return this.selectedMethod === this.METHOD_GLM;
+  }
+
+  /**
+   * Returns true if family has been selected for GLM
+   */
+  isGLMFamilySelected(): boolean {
+    return this.shouldShowGLMSelector() && this.selectedFamily !== null;
+  }
+
+  /**
+   * Get allowed outcome variable types based on selected family
+   */
+  getAllowedOutcomeTypes(): string[] {
+    switch (this.selectedFamily) {
+      case 'gaussian':
+        return ['number', 'float', 'int', 'int64', 'float64'];
+      case 'binomial':
+        return ['bool', 'boolean', 'categorical'];
+      case 'poisson':
+        return ['number', 'int', 'int64'];
+      case 'survival':
+        return ['number', 'float', 'int', 'int64', 'float64'];
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Get allowed predictor variable types based on selected family
+   * Predictors can be any type except bool/boolean
+   */
+  getAllowedPredictorTypes(): string[] {
+    // Predictors can be any type except boolean for consistency
+    return ['number', 'float', 'int', 'int64', 'float64', 'categorical', 'string'];
+  }
+
+  /**
+   * Get outcome variables filtered by family type
+   */
+  getOutcomeVariables(): any[] {
+    const allowedTypes = this.getAllowedOutcomeTypes();
+    if (allowedTypes.length === 0) {
+      return [];
+    }
+    return this.variables.filter(variable => {
+      const type = (variable.type || '').toLowerCase();
+      return allowedTypes.some(allowed => type.includes(allowed.toLowerCase()));
+    });
+  }
+
+  /**
+   * Get predictor variables filtered by family type
+   */
+  getPredictorVariables(): any[] {
+    const allowedTypes = this.getAllowedPredictorTypes();
+    if (allowedTypes.length === 0) {
+      return this.variables;
+    }
+    return this.variables.filter(variable => {
+      const type = (variable.type || '').toLowerCase();
+      return allowedTypes.some(allowed => type.includes(allowed.toLowerCase()));
+    });
+  }
+
+  /**
+   * Get help text for outcome variable based on family
+   */
+  getOutcomeHelpText(): string {
+    switch (this.selectedFamily) {
+      case 'gaussian':
+        return 'Outcome: Numerical (int64 or float64)';
+      case 'binomial':
+        return 'Outcome: Boolean';
+      case 'poisson':
+        return 'Outcome: Integer (int64)';
+      case 'survival':
+        return 'Outcome: Numerical';
+      default:
+        return '';
+    }
+  }
+
   shouldShowNoVariableParams(): boolean {
     return this.selectedMethod === this.METHOD_TTEST || this.selectedMethod === this.METHOD_TABLE1;
   }
 
   getCategoricalVariables() {
+    console.log("this.variables: ", this.variables);
+    
     return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'categorical');
+  }
+
+  getNumericVariables() {
+    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'number' || (variable.type || '').toLowerCase() === 'float');
+  }
+
+  getDateVariables() {
+    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'date');
+  }
+
+  getBooleanVariables() {
+    console.log("this.variables: ", this.variables);
+    
+    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'boolean');
+  }
+
+  getTimeAndDateVariables() {
+    return this.variables.filter(variable => {
+      const type = (variable.type || '').toLowerCase();
+      return type === 'date' || type === 'number' || type === 'float';
+    });
   }
 
   private getBaseAlgorithmRequestBody() {
@@ -372,7 +513,46 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       next: () => this.handleAlgorithmCreationSuccess(),
       error: (err) => this.handleAlgorithmCreationError(err)
     });
+  }
 
+  createKaplanMeierRequest() {
+    if (!this.selectedTimeColumn || !this.selectedCensorColumn) {
+      console.error('Time column and censor column are required for Kaplan-Meier');
+      this.loading = false;
+      return;
+    }
+
+    const dataApplication = {
+      ...this.getBaseAlgorithmRequestBody(),
+      time_column_name: this.selectedTimeColumn,
+      censor_column_name: this.selectedCensorColumn,
+      strata_column_name: this.selectedStrataColumn || null
+    };
+
+    this.dataAnalysisService.createKaplanMeier(dataApplication).subscribe({
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
+    });
+  }
+
+  createGLMRequest() {
+    if (!this.selectedFamily || this.selectedPredictors.length === 0 || !this.selectedOutcome) {
+      console.error('Family, at least one predictor, and outcome variable are required for GLM');
+      this.loading = false;
+      return;
+    }
+
+    const dataApplication = {
+      ...this.getBaseAlgorithmRequestBody(),
+      family: this.selectedFamily,
+      predictor_variables: this.selectedPredictors,
+      outcome_variable: this.selectedOutcome
+    };
+
+    this.dataAnalysisService.createGLM(dataApplication).subscribe({
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
+    });
   }
 
   goBack() {
@@ -468,8 +648,14 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       return 'Float';
     }
 
+     if (dtype.includes('bool')) {
+      return 'Boolean';
+    }
+
     return 'String';
   }
+
+
 
 
   createCrosstabRequest() {
@@ -496,7 +682,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     }
 
     console.log("dataAplication", dataApplication);
-    
+
     this.dataAnalysisService.createCrosstabRequest(dataApplication).subscribe({
       next: () => this.handleAlgorithmCreationSuccess(),
       error: (err) => this.handleAlgorithmCreationError(err)
@@ -648,17 +834,17 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
               console.error('Error updating main task status', err);
             }
 
-            if (res.status === 'completed' && algorithm.method_name === "summary" ) {
-            this.handleSubtask(algorithm, index);
-          }
+            if (res.status === 'completed' && algorithm.method_name === "summary") {
+              this.handleSubtask(algorithm, index);
+            }
 
-          if (res.status === 'crashed') {
-            console.error(`Task ${taskId} crashed`);
-          }
+            if (res.status === 'crashed') {
+              console.error(`Task ${taskId} crashed`);
+            }
           }
 
           // Si task completado, hacer polling de subtask y resultados
-          
+
         });
 
     });
@@ -671,8 +857,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       // 1️⃣ Obtener subtaskId
       const subtaskNumber = await this.dataAnalysisService.getSubTask(taskId).toPromise();
       const subtaskId = Number(subtaskNumber);
-      console.log("subtaskId: ",subtaskId);
-      
+      console.log("subtaskId: ", subtaskId);
+
       // 2️⃣ Actualizar subtask status
       const bodySubtaskUpdate = {
         task_id: taskId,

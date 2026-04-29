@@ -9,22 +9,22 @@
         <td><label>{{'pages.data-analysis.create_variables.new_variable_category'|translate}}</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
-
             <mat-select formControlName="category" class="full-width big-field">
-              <mat-option *ngFor="let cat of categoryOptions" [value]="cat">
-                {{'pages.data-analysis.create_variables.' + cat | translate}}
+              <mat-option *ngFor="let cat of categoryOptions" [value]="cat.value">
+                {{cat.label}}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </td>
       </tr>
 
-      <tr>
-        <td><label>First numeric variable</label></td>
+      <!-- TimeDelta-->
+      <tr *ngIf="isTimeDelta()">
+        <td><label>Select date variable</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="column1">
-              <mat-option *ngFor="let variable of numericVariables" [value]="variable.variable_id">
+              <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
                 {{variable.variable_name}}
               </mat-option>
             </mat-select>
@@ -32,12 +32,13 @@
         </td>
       </tr>
 
-      <tr>
-        <td><label>Second numeric variable</label></td>
+      <!-- One Hot Encoding -->
+      <tr *ngIf="isOneHotEncoding()">
+        <td><label>Select categorical variable</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="column2">
-              <mat-option *ngFor="let variable of getAvailableColumn2()" [value]="variable.variable_id">
+            <mat-select formControlName="column1">
+              <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
                 {{variable.variable_name}}
               </mat-option>
             </mat-select>
@@ -45,18 +46,108 @@
         </td>
       </tr>
 
-      <tr>
-        <td><label>Operation</label></td>
+      <tr *ngIf="isOneHotEncoding()">
+        <td><label>Column prefix</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-select formControlName="operation">
-              <mat-option *ngFor="let op of operationOptions" [value]="op.value">{{op.label}}</mat-option>
+            <mat-label>Prefix for encoded columns</mat-label>
+            <input matInput formControlName="prefixValue">
+          </mat-form-field>
+        </td>
+      </tr>
+
+      <!-- To Boolean -->
+      <tr *ngIf="isToBoolean()">
+        <td><label>Select categorical variable</label></td>
+        <td>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="column1">
+              <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
+                {{variable.variable_name}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </td>
       </tr>
 
-      <tr>
+      <tr *ngIf="isToBoolean()">
+        <td><label>True values (that evaluate to true)</label></td>
+        <td>
+          <div class="true-values-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Add true value</mat-label>
+              <input matInput formControlName="trueValueInput" (keyup.enter)="addTrueValue()">
+            </mat-form-field>
+            <button mat-icon-button color="primary" (click)="addTrueValue()" type="button">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <div class="chips-container">
+            <mat-chip-set aria-label="True values selection">
+              <mat-chip 
+                *ngFor="let value of trueValues" 
+                removable 
+                (removed)="removeTrueValue(value)">
+                {{value}}
+                <button matChipRemove [attr.aria-label]="'remove ' + value">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Computed y Merge -->
+      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean()">
+        <tr>
+          <td>
+            <label>
+              {{isComputedVariables() ? 'First numeric variable' : 'First categorical variable'}}
+            </label>
+          </td>
+          <td>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="column1">
+                <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
+                  {{variable.variable_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              {{isComputedVariables() ? 'Second numeric variable' : 'Second categorical variable'}}
+            </label>
+          </td>
+          <td>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="column2">
+                <mat-option *ngFor="let variable of getAvailableColumn2()" [value]="variable.variable_id">
+                  {{variable.variable_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </tr>
+
+        <tr *ngIf="isComputedVariables()">
+          <td><label>Operation</label></td>
+          <td>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="operation">
+                <mat-option *ngFor="let op of operationOptions" [value]="op.value">{{op.label}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </tr>
+      </ng-container>
+
+      <!-- Output column -->
+      <tr *ngIf="!isOneHotEncoding()">
         <td><label>Name of the new variable</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
@@ -69,7 +160,7 @@
         <td><label>Brief description</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
-            <textarea matInput formControlName="description" rows="3"></textarea>
+            <input matInput formControlName="description">
           </mat-form-field>
         </td>
       </tr>

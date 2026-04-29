@@ -19,14 +19,14 @@
           <mat-radio-group [formControl]="firstCtrl">
             <!-- Head and neck cancer checkbox-->
             <div class="checkbox">
-              <mat-radio-button value="H&N" color="primary"
+              <mat-radio-button [value]="CancerTypeConstant.HNC" color="primary"
                 >{{'pages.metadata_search.head_and_neck' | translate}}</mat-radio-button
               >
               <p class="checkbox-subtitle">- {{numberOfPatientsHNC}} {{'pages.metadata_search.patients' | translate}}</p>
             </div>
             <!-- Sarcoma checkbox-->
             <div class="checkbox">
-              <mat-radio-button value="Sarc." color="primary"
+              <mat-radio-button [value]="CancerTypeConstant.SARCOMA" color="primary"
                 >{{'pages.metadata_search.sarcoma' | translate}}</mat-radio-button
               >
               <p class="checkbox-subtitle">- {{numberOfPatientsSarcoma}} {{'pages.metadata_search.patients' | translate}}</p>

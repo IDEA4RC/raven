@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { SelectionService } from '../selection.service';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 const ALGORITHMS = {
     CROSSTABULATION: 'crosstabulation',
@@ -58,6 +59,37 @@ interface TTestDisplayTable {
     rows: TTestDisplayRow[];
 }
 
+interface KaplanMeierPoint {
+    time: number;
+    survival: number;
+    atRisk: number;
+    censored: number;
+    observed: number;
+    ciLower?: number;
+    ciUpper?: number;
+}
+
+interface KaplanMeierCurve {
+    cohortName: string;
+    points: KaplanMeierPoint[];
+}
+
+interface KaplanMeierDisplayTable {
+    cohortName: string;
+    curves: KaplanMeierCurve[];
+}
+
+interface LogRankDisplayRow {
+    cohort1: string;
+    cohort2: string;
+    pValue: string;
+}
+
+interface LogRankDisplayTable {
+    cohortNames: string[];
+    rows: LogRankDisplayRow[];
+}
+
 interface ExecutionInfoRow {
     id: string;
     name: string;
@@ -82,11 +114,63 @@ export class AnalysisResultsComponent implements OnInit {
     row_variables_text = '';
     column_variable_text = '';
 
-    currentView: 'empty' | 'crosstab' | 'ttest' | 'placeholder' = 'empty';
+    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'placeholder' = 'empty';
     underConstructionMessage = 'Under construction';
     rawTaskResult: any = null;
     crosstabTables: CrosstabDisplayTable[] = [];
     tTestTables: TTestDisplayTable[] = [];
+    kaplanMeierTables: KaplanMeierDisplayTable[] = [];
+    logRankTables: LogRankDisplayTable[] = [];
+
+    // Kaplan-Meier Chart
+    kaplanMeierChartData: ChartData<'line'> = { labels: [], datasets: [] };
+    kaplanMeierChartOptions: ChartConfiguration<'line'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'linear',
+                title: {
+                    display: true,
+                    text: 'Time'
+                }
+            },
+            y: {
+                min: -0.05,
+                max: 1.05,
+                title: {
+                    display: true,
+                    text: 'Survival S(t)'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 10
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'Results Kaplan Meier'
+            }
+        },
+        elements: {
+            point: {
+                radius: 3,
+                hoverRadius: 5
+            },
+            line: {
+                borderWidth: 2,
+                tension: 0
+            }
+        }
+    };
+
+
 
     displayedColumns = ['id', 'name', 'status', 'org', 'user', 'created'];
     data: ExecutionInfoRow[] = [
@@ -155,7 +239,7 @@ export class AnalysisResultsComponent implements OnInit {
             next: (result) => {
                 this.rawTaskResult = result?.result ?? result ?? {};
                 console.log("Raw task results", this.rawTaskResult);
-                
+
                 const cohortNames = Object.keys(this.rawTaskResult || {});
                 if (cohortNames.length > 0) {
                     this.cohorts_string = cohortNames.map(cohort => this.formatLabel(cohort)).join('; ');
@@ -171,6 +255,7 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderSelectedAlgorithm(resultData: any): void {
+        console.log("renderSelectedAlgorithm called with algorithm:", this.name_algorithm, "and data:", resultData);
         switch (this.name_algorithm as AlgorithmMethod) {
             case ALGORITHMS.CROSSTABULATION:
                 this.renderCrosstabulation(resultData);
@@ -236,13 +321,367 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderKaplanMeier(resultData: any): void {
-        void resultData;
-        this.setPlaceholderView(ALGORITHMS.KAPLAN_MEIER);
+        console.log("Rendering Kaplan-Meier with data:", resultData);
+        this.kaplanMeierTables = this.buildKaplanMeierTables(resultData);
+        console.log("Kaplan-Meier tables built:", this.kaplanMeierTables);
+
+        if (this.kaplanMeierTables.length === 0) {
+            this.setPlaceholderView(ALGORITHMS.KAPLAN_MEIER, 'No Kaplan-Meier data was returned for this analysis.');
+            return;
+        }
+
+        // Build chart data
+        this.buildKaplanMeierChart();
+
+        this.currentView = 'kaplan-meier';
+    }
+
+    /*buildKaplanMeierChart(): void {
+        const colors = [
+            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+            '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+        ];
+
+        const datasets: ChartData<'line'>['datasets'] = [];
+        const allTimes = new Set<number>();
+
+        // Collect all unique time points
+        this.kaplanMeierTables.forEach(table => {
+            table.curves.forEach(curve => {
+                const color = colors[colorIndex % colors.length];
+                curve.points.forEach(point => allTimes.add(point.time));
+            });
+        });
+
+        const sortedTimes = Array.from(allTimes).sort((a, b) => a - b);
+        const labels = sortedTimes.map(t => t.toString());
+
+        let colorIndex = 0;
+        this.kaplanMeierTables.forEach(table => {
+            table.curves.forEach(curve => {
+                // Create step data for the curve (post step)
+                const stepData: { x: number; y: number }[] = [];
+
+                // Build step data: for each time point, the value stays constant until the next point
+                curve.points.forEach((point, index) => {
+                    stepData.push({ x: point.time, y: point.survival });
+                    // Add intermediate step point for "post" step effect
+                    if (index < curve.points.length - 1) {
+                        stepData.push({ x: curve.points[index + 1].time, y: point.survival });
+                    }
+                });
+
+                const data = sortedTimes.map(time => {
+                    const point = curve.points.find(p => p.time === time);
+                    return point ? point.survival : null;
+                });
+
+                datasets.push({
+                    label: this.formatLabel(curve.cohortName),
+                    data: data,
+                    borderColor: colors[colorIndex % colors.length],
+                    backgroundColor: colors[colorIndex % colors.length] + '33',
+                    fill: false,
+                    stepped: 'after' as const,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0
+                });
+
+                colorIndex++;
+            });
+        });
+
+        this.kaplanMeierChartData = {
+            labels: labels,
+            datasets: datasets
+        };
+
+        // Update chart options with title
+        this.kaplanMeierChartOptions = {
+            ...this.kaplanMeierChartOptions,
+            plugins: {
+                ...this.kaplanMeierChartOptions?.plugins,
+                title: {
+                    display: true,
+                    text: 'Kaplan-Meier Survival Curves'
+                }
+            }
+        };
+    }*/
+
+    buildKaplanMeierChart(): void {
+        const colors = [
+            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+            '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+        ];
+
+        const datasets: any[] = [];
+        let colorIndex = 0;
+        console.log("kaplanMeierTables ", this.kaplanMeierTables);
+
+        this.kaplanMeierTables.forEach(table => {
+            table.curves.forEach(curve => {
+
+                const color = colors[colorIndex % colors.length];
+
+                const survivalData = curve.points.map(p => ({
+                    x: p.time,
+                    y: p.survival
+                }));
+
+                datasets.push({
+                    label: this.formatLabel(curve.cohortName),
+                    data: survivalData,
+                    borderColor: color,
+                    backgroundColor: color,
+                    stepped: 'after',
+                    fill: false,
+                    tension: 0,
+                    pointRadius: 0
+                });
+
+                // ✅ CI (si existe)
+                const hasCI = curve.points.some(p => p.ciLower !== undefined);
+
+                if (hasCI) {
+                    const upper = curve.points.map(p => ({
+                        x: p.time,
+                        y: p.ciUpper ?? null
+                    }));
+
+                    const lower = curve.points.map(p => ({
+                        x: p.time,
+                        y: p.ciLower ?? null
+                    }));
+
+                    // Upper line (invisible)
+                    datasets.push({
+                        label: `${curve.cohortName} CI Upper`,
+                        data: upper,
+                        borderColor: 'transparent',
+                        pointRadius: 0,
+                        stepped: 'after',
+                        fill: false
+                    });
+
+                    // Lower line (fills to previous dataset)
+                    datasets.push({
+                        label: `${curve.cohortName} CI`,
+                        data: lower,
+                        borderColor: 'transparent',
+                        backgroundColor: color + '33',
+                        stepped: 'after',
+                        fill: '-1', // 🔥 clave: rellena entre upper y lower
+                        pointRadius: 0
+                    });
+                }
+
+                colorIndex++;
+            });
+        });
+
+        this.kaplanMeierChartData = {
+            datasets
+        };
     }
 
     renderLogRankTest(resultData: any): void {
-        void resultData;
-        this.setPlaceholderView(ALGORITHMS.LOG_RANK_TEST);
+        console.log("Rendering Log-Rank with data:", resultData);
+        this.logRankTables = this.buildLogRankTables(resultData);
+        console.log("Log-Rank tables built:", this.logRankTables);
+
+        if (this.logRankTables.length === 0) {
+            this.setPlaceholderView(ALGORITHMS.LOG_RANK_TEST, 'No Log-Rank data was returned for this analysis.');
+            return;
+        }
+
+        this.currentView = 'log-rank';
+    }
+
+    buildKaplanMeierTables(resultData: any): KaplanMeierDisplayTable[] {
+        const kaplanMeierData = resultData?.kaplan_meier;
+
+        if (!kaplanMeierData || typeof kaplanMeierData !== 'object') {
+            return [];
+        }
+
+        const curves: KaplanMeierCurve[] = [];
+
+        // 🔥 IMPORTANTE: iteras cohortes → generas curvas (NO tablas)
+        Object.entries(kaplanMeierData).forEach(([cohortName, cohortData]: [string, any]) => {
+
+            const indexKeys = Object.keys(cohortData.year_of_birth || {})
+                .sort((a, b) => Number(a) - Number(b));
+
+            const points: KaplanMeierPoint[] = indexKeys.map(key => {
+
+                const lowerVal = cohortData.ci_lower?.[key];
+                const upperVal = cohortData.ci_upper?.[key];
+
+                return {
+                    time: Number(cohortData.year_of_birth?.[key] ?? 0),
+                    survival: Number(cohortData.survival_cdf?.[key] ?? 1),
+                    atRisk: Number(cohortData.at_risk?.[key] ?? 0),
+                    censored: Number(cohortData.censored?.[key] ?? 0),
+                    observed: Number(cohortData.observed?.[key] ?? 0),
+                    ciLower: lowerVal != null ? Number(lowerVal) : undefined,
+                    ciUpper: upperVal != null ? Number(upperVal) : undefined
+                };
+            });
+
+            curves.push({
+                cohortName,
+                points
+            });
+        });
+
+        // ✅ SOLO UNA TABLE
+        return [{
+            cohortName: 'Kaplan-Meier',
+            curves
+        }];
+    }
+
+    /*buildKaplanMeierTables(resultData: any): KaplanMeierDisplayTable[] {
+        console.log("buildKaplanMeierTables called with:", resultData);
+        const tables: KaplanMeierDisplayTable[] = [];
+        const kaplanMeierData = resultData?.kaplan_meier;
+        console.log("kaplan_meier key exists:", kaplanMeierData);
+
+        if (!kaplanMeierData || typeof kaplanMeierData !== 'object') {
+            console.log("No kaplan_meier data found or not an object");
+            return tables;
+        }
+
+        // Each key in kaplan_meier is a cohort name (e.g., "bold_knuth_sex=FEMALE")
+        Object.entries(kaplanMeierData).forEach(([cohortName, cohortData]: [string, any]) => {
+            if (!cohortData || typeof cohortData !== 'object') {
+                return;
+            }
+
+            const curves: KaplanMeierCurve[] = [];
+
+            // cohortData contains the data columns as objects with string keys ("0", "1", "2", ...)
+            // Convert to array format for rendering
+            const times: number[] = [];
+            const survival: number[] = [];
+            const atRisk: number[] = [];
+            const censored: number[] = [];
+            const observed: number[] = [];
+            const ciLower: (number | undefined)[] = [];
+            const ciUpper: (number | undefined)[] = [];
+
+            // Get all index keys and sort numerically
+            const indexKeys = Object.keys(cohortData.year_of_birth || {}).sort((a, b) => Number(a) - Number(b));
+
+            for (const key of indexKeys) {
+                times.push(Number(cohortData.year_of_birth?.[key] || 0));
+                survival.push(Number(cohortData.survival_cdf?.[key] ?? 1));
+                atRisk.push(Number(cohortData.at_risk?.[key] ?? 0));
+                censored.push(Number(cohortData.censored?.[key] ?? 0));
+                observed.push(Number(cohortData.observed?.[key] ?? 0));
+
+                const lowerVal = cohortData.ci_lower?.[key];
+                ciLower.push(lowerVal !== null && lowerVal !== undefined ? Number(lowerVal) : undefined);
+
+                const upperVal = cohortData.ci_upper?.[key];
+                ciUpper.push(upperVal !== null && upperVal !== undefined ? Number(upperVal) : undefined);
+            }
+
+            const points: KaplanMeierPoint[] = times.map((time, index) => ({
+                time,
+                survival: survival[index] !== undefined ? survival[index] : 1,
+                atRisk: atRisk[index] !== undefined ? atRisk[index] : 0,
+                censored: censored[index] !== undefined ? censored[index] : 0,
+                observed: observed[index] !== undefined ? observed[index] : 0,
+                ciLower: ciLower[index],
+                ciUpper: ciUpper[index]
+            }));
+
+            curves.push({
+                cohortName: cohortName,
+                points: points
+            });
+
+            if (curves.length > 0) {
+                tables.push({
+                    cohortName: cohortName,
+                    curves: curves
+                });
+            }
+        });
+
+        console.log("Final kaplan tables:", tables);
+        return tables;
+    }*/
+
+    buildLogRankTables(resultData: any): LogRankDisplayTable[] {
+        console.log("buildLogRankTables called with:", resultData);
+        const tables: LogRankDisplayTable[] = [];
+        const logRankData = resultData?.log_rank;
+        console.log("log_rank key exists:", logRankData);
+
+        if (!logRankData || typeof logRankData !== 'object') {
+            console.log("No log_rank data found or not an object");
+            return tables;
+        }
+
+        const cohortNames = Object.keys(logRankData);
+        const rows: LogRankDisplayRow[] = [];
+
+        // log_rank is a matrix where each cell contains the p-value between two cohorts
+        cohortNames.forEach(cohort1 => {
+            const cohort1Data = logRankData[cohort1];
+            if (!cohort1Data || typeof cohort1Data !== 'object') {
+                return;
+            }
+
+            cohortNames.forEach(cohort2 => {
+                if (cohort1 === cohort2) {
+                    return;
+                }
+
+                const pValue = cohort1Data[cohort2];
+                if (pValue !== undefined && pValue !== null) {
+                    rows.push({
+                        cohort1,
+                        cohort2,
+                        pValue: this.formatNumber(pValue)
+                    });
+                }
+            });
+        });
+
+        if (rows.length > 0) {
+            tables.push({
+                cohortNames,
+                rows
+            });
+        }
+
+        console.log("Final log rank tables:", tables);
+        return tables;
+    }
+
+    formatNumber(value: unknown): string {
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        if (typeof value === 'number') {
+            if (Number.isFinite(value)) {
+                return value.toExponential(3);
+            }
+            return String(value);
+        }
+
+        const numericValue = Number(value);
+        if (!Number.isNaN(numericValue)) {
+            return numericValue.toExponential(3);
+        }
+
+        return String(value);
     }
 
     renderGlm(resultData: any): void {
@@ -274,6 +713,8 @@ export class AnalysisResultsComponent implements OnInit {
         this.currentView = 'placeholder';
         this.crosstabTables = [];
         this.tTestTables = [];
+        this.kaplanMeierTables = [];
+        this.logRankTables = [];
         const algorithmLabel = this.formatLabel(methodName || 'This algorithm');
         this.underConstructionMessage = message || `${algorithmLabel} is under construction.`;
     }

@@ -24,6 +24,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-delete-analysis/dialogform-delete-analysis.component';
 import { StatisticsTableComponent } from './data-analysis/individual-data-analysis/data-preparation/statistics-table/statistics-table.component';
 import { CreateVariableDialogComponent } from './data-analysis/individual-data-analysis/create-variable-dialog/create-variable-dialog.component';
+import { BaseChartDirective } from 'ng2-charts';
 
 @NgModule({
   declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
@@ -33,6 +34,7 @@ import { CreateVariableDialogComponent } from './data-analysis/individual-data-a
     RouterModule.forChild(AnalysisRoutes),
     TranslateModule,
     FormsModule,
+    BaseChartDirective,
     ReactiveFormsModule,
     MaterialModule,
     MatTableModule,

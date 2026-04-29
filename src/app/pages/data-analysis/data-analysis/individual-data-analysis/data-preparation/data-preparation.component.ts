@@ -37,6 +37,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   pollingFrequency = 3000;
   summaryFlowInitialized = false;
 
+  // Track status details for each cohort
+  cohortStatusMap: Map<string, { status: string; message: string; taskId?: number }> = new Map();
+
   selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
   nodeData: any;
@@ -129,9 +132,12 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
       this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
         next: (variables: any) => {
+          console.log("Variables from server ", variables);
+          console.log("Variables from server list", variables.variablesList);
           const seen = new Set<string>();
           this.optionsVariables = variables.variablesList
             .filter((v: any) => {
+
               if (seen.has(v.name)) return false;
               seen.add(v.name);
               return true;
@@ -195,6 +201,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
     this.optionsVariables = [];
+    this.cohortStatusMap.clear();
   }
 
   goNext() {
@@ -230,7 +237,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.displayedColumnsCohorts = [];
     this.dataSourceCohorts.data = [];
 
-    if (this.selectedValue.datatype === 'Categorical') {
+    if (this.selectedValue.datatype === 'Categorical' || this.selectedValue.datatype === 'Boolean') {
       const totalRow: any = { [variableName]: 'Total' };
       const missingRow: any = { [variableName]: 'Missing' };
       this.displayedColumnsCohorts.push(variableName);
@@ -280,6 +287,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         });
       });
     }
+    
+    
 
     this.dataSourceCohorts.data = variableCohorts;
     this.dataSourceCohorts._updateChangeSubscription();
@@ -296,15 +305,17 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       return 'Date';
     }
 
-    if (dtype.includes('int')) {
+    if (dtype.includes('int') || dtype.includes('double') || dtype.includes('float')) {
       return 'Number';
     }
 
-    if (dtype.includes('double') || dtype.includes('float')) {
-      return 'Number';
+    if (dtype.includes('bool')) {
+      return 'Boolean';
     }
 
-    return 'String';
+
+
+    return 'unknown';
   }
 
   updateCentersTable() {
@@ -457,48 +468,48 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.numericCenterCharts = Object.keys(this.summaryStatisticsCenters)
       .filter(cohort => !selectedCohortKeys.size || selectedCohortKeys.has(cohort))
       .map(cohort => {
-      const cohortCenters = this.summaryStatisticsCenters[cohort] || {};
-      const centers = this.getEffectiveCentersForCohort(cohortCenters, selectedCenterKeys);
+        const cohortCenters = this.summaryStatisticsCenters[cohort] || {};
+        const centers = this.getEffectiveCentersForCohort(cohortCenters, selectedCenterKeys);
 
-      if (!centers.length) {
-        return null;
-      }
+        if (!centers.length) {
+          return null;
+        }
 
-      const charts = measureConfig.map((measure, index) => {
-        const values = centers.map(center => {
-          const numeric = cohortCenters[center]?.numeric?.[variableId] || {};
-          const raw = Number(numeric[measure.key] ?? 0);
-          return Number.isFinite(raw) ? Number(raw.toFixed(3)) : 0;
+        const charts = measureConfig.map((measure, index) => {
+          const values = centers.map(center => {
+            const numeric = cohortCenters[center]?.numeric?.[variableId] || {};
+            const raw = Number(numeric[measure.key] ?? 0);
+            return Number.isFinite(raw) ? Number(raw.toFixed(3)) : 0;
+          });
+
+          return {
+            title: measure.title,
+            series: [{ name: measure.title, data: values }],
+            chart: {
+              type: 'bar',
+              height: Math.max(180, centers.length * 44),
+              toolbar: { show: false }
+            },
+            plotOptions: {
+              bar: {
+                horizontal: true,
+                borderRadius: 4,
+                barHeight: '60%'
+              }
+            },
+            dataLabels: {
+              enabled: true,
+              formatter: (val: number) => Number(val).toFixed(2)
+            },
+            xaxis: {
+              categories: centers
+            },
+            colors: [index % 2 === 0 ? '#1ab5e5' : '#275b83']
+          };
         });
 
-        return {
-          title: measure.title,
-          series: [{ name: measure.title, data: values }],
-          chart: {
-            type: 'bar',
-            height: Math.max(180, centers.length * 44),
-            toolbar: { show: false }
-          },
-          plotOptions: {
-            bar: {
-              horizontal: true,
-              borderRadius: 4,
-              barHeight: '60%'
-            }
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: (val: number) => Number(val).toFixed(2)
-          },
-          xaxis: {
-            categories: centers
-          },
-          colors: [index % 2 === 0 ? '#1ab5e5' : '#275b83']
-        };
-      });
-
-      return { cohort, charts };
-    })
+        return { cohort, charts };
+      })
       .filter((item): item is { cohort: string; charts: Array<{ title: string; series: any[]; chart: any; xaxis: any; plotOptions: any; dataLabels: any; colors: string[] }> } => !!item);
   }
 
@@ -548,7 +559,30 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataAnalysisService.createBasicArithmeticRequest(result).subscribe({
+        const method = result.method;
+        const data = result.data;
+
+        let requestObservable;
+        switch (method) {
+          case 'merge_variables':
+            requestObservable = this.dataAnalysisService.createMergeVariables(data);
+            break;
+          case 'timedelta':
+            requestObservable = this.dataAnalysisService.createTimeDeltaVariables(data);
+            break;
+          case 'one_hot_encoding':
+            requestObservable = this.dataAnalysisService.createOneHotEncoding(data);
+            break;
+          case 'to_boolean':
+            requestObservable = this.dataAnalysisService.createToBoolean(data);
+            break;
+          case 'computed_variables':
+          default:
+            requestObservable = this.dataAnalysisService.createBasicArithmeticRequest(data);
+            break;
+        }
+
+        requestObservable.subscribe({
           next: () => {
             this.dataAnalysisService.getVariablesByDataframe(dataframeId).subscribe({
               next: (variables: any) => {
@@ -564,6 +598,10 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
                     variable_id: v.name,
                     datatype: this.mapDatatype(v.dtype)
                   }));
+
+                this.resetSummaryFlow();
+
+                this.tryInitializeSummaryFlow();
               },
               error: err => console.error('Error refreshing variables after creation', err)
             });
@@ -594,7 +632,173 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     }
 
     this.summaryFlowInitialized = true;
-    this.checkExistingSummaryOrCreate();
+    this.checkStatusDataFrame();
+  }
+
+  checkStatusDataFrame() {
+    console.log("all cohorts: ", this.allCohorts);
+
+    // Clear previous cohort status
+    this.cohortStatusMap.clear();
+
+    // Validate that all cohorts have task_id_vantage
+    const cohortsWithoutTaskId = this.allCohorts.filter(
+      cohort => !cohort?.task_id_vantage || cohort.task_id_vantage === 0 || cohort.task_id_vantage === null
+    );
+
+    if (cohortsWithoutTaskId.length > 0) {
+      // Some cohorts are missing task_id_vantage - store error info for each affected cohort
+      this.isLoading = false;
+      this.isCrashed = true;
+      this.taskStatus = 'dataframes_missing_taskid';
+
+      cohortsWithoutTaskId.forEach(cohort => {
+        const cohortName = cohort?.cohort_name || 'Unknown cohort';
+        this.cohortStatusMap.set(cohortName, {
+          status: 'error',
+          message: 'Data loading error: Failed to create correctly. The dataframe initialization appears to have failed.',
+          taskId: undefined
+        });
+      });
+
+      const missingCohortNames = cohortsWithoutTaskId
+        .map(cohort => cohort?.cohort_name || 'Unknown cohort')
+        .join(', ');
+
+      console.error(`Dataframes are not ready for cohorts: ${missingCohortNames}`);
+      console.error('Missing or invalid task_id_vantage for:', cohortsWithoutTaskId);
+      return;
+    }
+
+    // All cohorts have task_id_vantage, now check their status
+    const dataframeTaskIds = this.allCohorts
+      .map(cohort => ({ cohortName: cohort?.cohort_name || 'Unknown cohort', taskId: cohort.task_id_vantage }))
+      .filter((item: any) => item.taskId !== null && item.taskId !== undefined && item.taskId !== 0);
+
+    console.log("dataframeTaskIds (all present): ", dataframeTaskIds);
+
+    if (!dataframeTaskIds.length) {
+      // This shouldn't happen after validation, but handle it
+      this.isLoading = false;
+      this.isCrashed = true;
+      this.taskStatus = 'dataframes_no_tasks';
+      return;
+    }
+
+    // Check status of all dataframe tasks
+    this.isLoading = true;
+    this.taskStatus = 'checking_dataframe';
+    this.checkAllDataFrameStatuses(dataframeTaskIds);
+  }
+
+  private checkAllDataFrameStatuses(taskItems: Array<{ cohortName: string; taskId: number }>) {
+    const statusMap = new Map<number, { cohortName: string; status: string }>();
+
+    // Check status of each dataframe task
+    taskItems.forEach(item => {
+      this.dataAnalysisService.getTaskStatus(item.taskId).subscribe({
+        next: (res: { status: string }) => {
+          statusMap.set(item.taskId, { cohortName: item.cohortName, status: res.status });
+          console.log(`Dataframe task ${item.taskId} (${item.cohortName}) status:`, res.status);
+
+          // Check if all tasks have been checked
+          if (statusMap.size === taskItems.length) {
+            this.evaluateDataFrameStatuses(statusMap, taskItems);
+          }
+        },
+        error: (err) => {
+          console.error(`Error checking dataframe status for task ${item.taskId}:`, err);
+          statusMap.set(item.taskId, { cohortName: item.cohortName, status: 'error' });
+
+          if (statusMap.size === taskItems.length) {
+            this.evaluateDataFrameStatuses(statusMap, taskItems);
+          }
+        }
+      });
+    });
+  }
+
+  private evaluateDataFrameStatuses(statusMap: Map<number, { cohortName: string; status: string }>, taskItems: Array<{ cohortName: string; taskId: number }>) {
+    const statuses = Array.from(statusMap.values()).map(item => item.status);
+    const allCompleted = statuses.every(status => status === 'completed');
+    const anyFailed = statuses.some(status => status === 'crashed' || status === 'error');
+    const anyPending = statuses.some(status => status === 'pending');
+
+    console.log('Dataframe statuses:', Array.from(statusMap.values()));
+
+    if (allCompleted) {
+      // All dataframes completed, proceed
+      this.taskStatus = 'dataframes_completed';
+      this.cohortStatusMap.clear();
+      this.checkExistingSummaryOrCreate();
+    } else if (anyFailed) {
+      // At least one dataframe failed - store status for each affected cohort
+      this.isLoading = false;
+      this.isCrashed = true;
+      this.taskStatus = 'dataframes_failed';
+
+      statusMap.forEach((statusData, taskId) => {
+        if (statusData.status === 'crashed' || statusData.status === 'error') {
+          this.cohortStatusMap.set(statusData.cohortName, {
+            status: statusData.status,
+            message: `Vantage6 dataframe status: ${statusData.status}. The dataframe processing has failed.`,
+            taskId: taskId
+          });
+        }
+      });
+
+      const failedCohorts = Array.from(this.cohortStatusMap.keys()).join(', ');
+      console.error(`One or more dataframes failed for cohorts: ${failedCohorts}`);
+    } else if (anyPending) {
+      // At least one dataframe is still processing - store pending status
+      this.taskStatus = 'dataframes_pending';
+      console.log('Dataframes still processing, polling status...');
+
+      statusMap.forEach((statusData, taskId) => {
+        if (statusData.status === 'pending') {
+          this.cohortStatusMap.set(statusData.cohortName, {
+            status: statusData.status,
+            message: `Vantage6 dataframe status: pending. Processing is underway.`,
+            taskId: taskId
+          });
+        }
+      });
+
+      this.startPollingDataFrameStatus(taskItems);
+    } else {
+      // Unknown status, start polling
+      this.taskStatus = 'dataframes_checking';
+      console.log('Dataframes status unknown, polling...');
+      this.startPollingDataFrameStatus(taskItems);
+    }
+  }
+
+  private startPollingDataFrameStatus(taskItems: Array<{ cohortName: string; taskId: number }>) {
+    clearInterval(this.pollingInterval);
+
+    this.pollingInterval = setInterval(() => {
+      const statusMap = new Map<number, { cohortName: string; status: string }>();
+
+      taskItems.forEach(item => {
+        this.dataAnalysisService.getTaskStatus(item.taskId).subscribe({
+          next: (res: { status: string }) => {
+            statusMap.set(item.taskId, { cohortName: item.cohortName, status: res.status });
+
+            if (statusMap.size === taskItems.length) {
+              this.evaluateDataFrameStatuses(statusMap, taskItems);
+            }
+          },
+          error: (err) => {
+            console.error(`Error polling dataframe status for task ${item.taskId}:`, err);
+            statusMap.set(item.taskId, { cohortName: item.cohortName, status: 'error' });
+
+            if (statusMap.size === taskItems.length) {
+              this.evaluateDataFrameStatuses(statusMap, taskItems);
+            }
+          }
+        });
+      });
+    }, this.pollingFrequency);
   }
 
   checkExistingSummaryOrCreate() {
@@ -955,5 +1159,30 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         console.error('Error obteniendo el resultado de la tarea:', err);
       }
     });
+  }
+
+  private resetSummaryFlow(): void {
+    clearInterval(this.pollingInterval);
+
+    this.summaryFlowInitialized = false;
+    this.isLoading = true;
+    this.isCrashed = false;
+    this.taskStatus = '';
+
+    this.resultGlobal = [];
+    this.resultLocal = [];
+
+    this.summaryStatisticsCohorts = [];
+    this.summaryStatisticsCenters = {};
+    this.centersTables = {};
+    this.numericCenterCharts = [];
+
+    this.dataSourceCohorts.data = [];
+    this.displayedColumnsCohorts = [];
+
+    this.dataSourceCenters.data = [];
+    this.displayedColumnsCenters = [];
+
+    this.cohortStatusMap.clear();
   }
 }

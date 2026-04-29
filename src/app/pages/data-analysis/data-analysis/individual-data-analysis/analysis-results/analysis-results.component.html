@@ -145,6 +145,74 @@
               </div>
             </div>
 
+            <div *ngSwitchCase="'kaplan-meier'">
+              <div *ngFor="let table of kaplanMeierTables" class="table-container">
+                <h2>{{ formatLabel(table.cohortName) }}</h2>
+                
+                <!-- Kaplan-Meier Chart -->
+                <div class="chart-container" style="height: 400px; margin-bottom: 30px;">
+                  <canvas baseChart
+                    [data]="kaplanMeierChartData"
+                    [options]="kaplanMeierChartOptions"
+                    type="line">
+                  </canvas>
+                </div>
+
+                <!-- Data table below chart -->
+                <div *ngFor="let curve of table.curves" class="kaplan-meier-curve">
+                  <h3>{{ formatLabel(curve.cohortName) }}</h3>
+                  
+                  <table class="statistics-table">
+                    <thead>
+                      <tr>
+                        <th>{{ 'pages.data-analysis.analysis-results.time' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.survival' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.at-risk' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.censored' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.observed' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.ci-lower' | translate }}</th>
+                        <th>{{ 'pages.data-analysis.analysis-results.ci-upper' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let point of curve.points">
+                        <td>{{ point.time }}</td>
+                        <td>{{ point.survival | number:'1.4-4' }}</td>
+                        <td>{{ point.atRisk }}</td>
+                        <td>{{ point.censored }}</td>
+                        <td>{{ point.observed }}</td>
+                        <td>{{ point.ciLower !== undefined ? (point.ciLower | number:'1.4-4') : '-' }}</td>
+                        <td>{{ point.ciUpper !== undefined ? (point.ciUpper | number:'1.4-4') : '-' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div *ngSwitchCase="'log-rank'">
+              <div *ngFor="let table of logRankTables" class="table-container">
+                <h2>{{ 'pages.data-analysis.analysis-results.log-rank-results' | translate }}</h2>
+                
+                <table class="statistics-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'pages.data-analysis.analysis-results.cohort-1' | translate }}</th>
+                      <th>{{ 'pages.data-analysis.analysis-results.cohort-2' | translate }}</th>
+                      <th>{{ 'pages.data-analysis.analysis-results.p-value' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of table.rows">
+                      <td>{{ formatLabel(row.cohort1) }}</td>
+                      <td>{{ formatLabel(row.cohort2) }}</td>
+                      <td>{{ row.pValue }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div *ngSwitchCase="'placeholder'" class="under-construction">
               <h4>{{ formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.algorithm' | translate) }}</h4>
               <p>{{ underConstructionMessage }}</p>

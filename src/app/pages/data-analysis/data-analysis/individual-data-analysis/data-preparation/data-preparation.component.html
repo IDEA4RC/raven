@@ -80,7 +80,29 @@
         </div>
       </ng-container>
       <ng-container *ngIf="!isLoading&&isCrashed">
-        <p>CRASHED</p>
+        <div class="right-column">
+          <mat-card class="inner-card full-height">
+            <div class="summary-statistics-header">
+              <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.summary_statistics' |
+                translate}}</mat-card-title>
+              <mat-card-content>
+                <!-- Error Messages for each Cohort -->
+                <div class="cohort-error-messages">
+                  <div *ngFor="let item of cohortStatusMap | keyvalue" class="error-message-card">
+                    <div class="error-header">
+                      <mat-icon class="error-icon">error</mat-icon>
+                      <h4>{{ item.key }}</h4>
+                    </div>
+                    <p class="error-message">{{ item.value.message }}</p>
+                    <p class="error-status" [ngClass]="'status-' + item.value.status">
+                      Status: {{ item.value.status | uppercase }}
+                    </p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </div>
+          </mat-card>
+        </div>
       </ng-container>
       <ng-container *ngIf="!isLoading&& !isCrashed">
         <div class="right-column">

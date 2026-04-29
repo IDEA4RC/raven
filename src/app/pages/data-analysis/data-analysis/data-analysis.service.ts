@@ -303,7 +303,48 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
-  
+  createMergeVariables(data: any) {
+    console.log("createMergeVariables ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_merge_variables`;
+    return this.postRequest(url, data)
+  }
+
+  createTimeDeltaVariables(data: any) {
+    console.log("createTimeDeltaVariables ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_timedelta`;
+    return this.postRequest(url, data)
+  }
+
+  createOneHotEncoding(data: any) {
+    console.log("createOneHotEncoding ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_one_hot_encoding`;
+    return this.postRequest(url, data)
+  }
+
+  createToBoolean(data: any) {
+    console.log("createToBoolean ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_to_boolean`;
+    return this.postRequest(url, data)
+  }
+
+  createKaplanMeier(data: any) {
+    console.log("createKaplanMeier ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_kaplan_meier`;
+    return this.postRequest(url, data)
+  }
+
+  createGLM(data: any) {
+    console.log("createGLM ", data);
+
+    const url = `/raven-api/v1/data-preparation/create_glm`;
+    return this.postRequest(url, data)
+  }
+
   getAlgorithmsList(data: any) {
     console.log("getAlgorithmsList ", data);
 
@@ -319,7 +360,7 @@ export class DataAnalysisService {
   }
 
   existsSummaryByCohort(data: any) {
-     console.log("existsSummaryByCohort ", data);
+    console.log("existsSummaryByCohort ", data);
 
     const url = `/raven-api/v1/algorithms/is_summary`;
     return this.postRequest(url, data)

@@ -249,7 +249,17 @@
         "select-algorithm-to-load": "Select an algorithm to load its result structure.",
         "data-overview": "Data Overview",
         "under-construction-for": "Under construction for {{algorithm}}.",
-        "this-algorithm": "this algorithm"
+        "this-algorithm": "this algorithm",
+        "time": "Time",
+        "survival": "Survival",
+        "at-risk": "At Risk",
+        "censored": "Censored",
+        "observed": "Observed",
+        "ci-lower": "CI Lower",
+        "ci-upper": "CI Upper",
+        "log-rank-results": "Log-Rank Test Results",
+        "cohort-1": "Cohort 1",
+        "cohort-2": "Cohort 2"
       }
     }
   }

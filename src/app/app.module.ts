@@ -6,6 +6,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { BaseChartDirective } from 'ng2-charts';
 
 // icons
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -45,6 +46,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MaterialModule,
     MatTableModule,
     MatPaginatorModule,
+    BaseChartDirective,
     MatSortModule,
     TablerIconsModule.pick(TablerIcons),
     NgApexchartsModule,

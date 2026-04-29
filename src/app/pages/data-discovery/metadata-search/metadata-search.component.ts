@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogformLoginComponent } from './dialogform-login/dialogform-login.component';
 import { DialogformWorkspaceCreatedComponent } from './dialogform-workspace-created/dialogform-workspace-created.component';
 import { PermitStatus } from 'src/app/utils/constans';
+import { CancerType, CenterSarcoma, CenterHNC } from 'src/app/utils/constans';
 
 @Component({
   selector: 'app-metadata-search',
@@ -50,7 +51,7 @@ import { PermitStatus } from 'src/app/utils/constans';
 
 // implements OnInit
 export class MetadataSearchComponent implements OnInit {
-
+  CancerTypeConstant = CancerType;
 
   // Form groups
   private _formBuilder = inject(FormBuilder);
@@ -173,7 +174,21 @@ export class MetadataSearchComponent implements OnInit {
     this.observable_metadata_variables$.subscribe((data) => {
 
       // Filter data by the cancer type selected on the first form group (Cancer Type)
-      this.filteredDataByCancerType = data.filter((item: any) => item.dataset.includes(this.cancerType));
+      //this.filteredDataByCancerType = data.filter((item: any) => item.dataset.includes(this.cancerType));
+      const allowedCenters = this.getCentersByCancerType();
+      this.filteredDataByCancerType = data
+        .filter((item: any) => item.dataset.includes(this.cancerType))
+        .map((item: any) => {
+          return {
+            ...item,
+            centers: item.centers.filter((centerObj: any) => {
+              const centerName = Object.keys(centerObj)[0];
+              return allowedCenters.includes(centerName);
+            })
+          };
+        });
+
+
       this.dataFiltered = this.filteredDataByCancerType;
 
       // Get unique entities
@@ -315,8 +330,6 @@ export class MetadataSearchComponent implements OnInit {
 
     // Get metadata variables
     this.metadataSearchService.getVariablesMetadata()
-
-    console.log(this.cancerType);
   }
 
   onTabChange(event: any) {
@@ -642,7 +655,7 @@ export class MetadataSearchComponent implements OnInit {
         // Create the data application object
         let dataApplication = {
           "user_id": keyUserId,
-          "workspace_id": response.id +response.name,
+          "workspace_id": response.id + response.name,
           "workspace_name": response.name,
           "metadata": {
             "type_cancer": typeCancer,
@@ -715,7 +728,6 @@ export class MetadataSearchComponent implements OnInit {
         centerNames.add(centerName);
       });
     });
-
     // Then create the center objects with their variables
     centerNames.forEach(centerName => {
       const centerObject: any = {
@@ -745,6 +757,17 @@ export class MetadataSearchComponent implements OnInit {
     return detailedDataMapped;
   }
 
+  private getCentersByCancerType(): string[] {
+    if (this.cancerType === CancerType.SARCOMA) {
+      return [...CenterSarcoma];
+    }
+
+    if (this.cancerType === CancerType.HNC) {
+      return [...CenterHNC];
+    }
+
+    return [];
+  }
 
 }
 

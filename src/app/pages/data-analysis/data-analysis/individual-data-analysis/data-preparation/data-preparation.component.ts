@@ -699,65 +699,63 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     this.checkDataframesUntilReady(cohortIds);
   }
+checkDataframesUntilReady(cohortIds: number[]): void {
 
-  checkDataframesUntilReady(cohortIds: number[]): void {
-
-    if (!cohortIds.length) {
-      this.isLoading = false;
-      return;
-    }
-
-    this.isLoading = true;
-    this.isCrashed = false;
-
-    interval(this.pollingFrequency)
-      .pipe(
-        switchMap(() => {
-
-          const requests = cohortIds.map(id =>
-            this.dataAnalysisService.isDataframeReady(id).pipe(
-              catchError(() => of({ ready: 'error' })) // evita que forkJoin muera
-            )
-          );
-
-          return forkJoin(requests);
-        }),
-
-        takeWhile((results: string[]) => {
-
-          console.log("results:", results);
-
-          const allCompleted = results.every(r => r === 'completed');
-
-          const anyFailed = results.some(r =>
-            r === 'error' || r === 'timeout'
-          );
-
-          if (allCompleted) {
-            this.taskStatus = 'dataframes_completed';
-            this.isLoading = false;
-            this.isCrashed = false;
-
-            this.checkExistingSummaryOrCreate();
-            return false;
-          }
-
-          if (anyFailed) {
-            this.taskStatus = 'dataframes_failed';
-            this.isLoading = false;
-            this.isCrashed = true;
-
-            return false;
-          }
-
-          this.taskStatus = 'dataframes_pending';
-          return true;
-
-        }, true)
-      )
-      .subscribe();
+  if (!cohortIds.length) {
+    this.isLoading = false;
+    return;
   }
 
+  this.isLoading = true;
+  this.isCrashed = false;
+
+  interval(this.pollingFrequency)
+    .pipe(
+      switchMap(() => {
+
+        const requests = cohortIds.map(id =>
+          this.dataAnalysisService.isDataframeReady(id).pipe(
+            catchError(() => of({ status: 'error' }))
+          )
+        );
+
+        return forkJoin(requests);
+      }),
+
+      takeWhile((results: { status: string }[]) => {
+
+        console.log("results:", results);
+
+        const allCompleted = results.every(r => r.status === 'completed');
+
+        const anyFailed = results.some(r =>
+          r.status === 'error' || r.status === 'timeout'
+        );
+
+        if (allCompleted) {
+          this.taskStatus = 'dataframes_completed';
+          this.isLoading = false;
+          this.isCrashed = false;
+
+          this.checkExistingSummaryOrCreate();
+          return false;
+        }
+
+        if (anyFailed) {
+          this.taskStatus = 'dataframes_failed';
+          this.isLoading = false;
+          this.isCrashed = true;
+
+          return false;
+        }
+
+        this.taskStatus = 'dataframes_pending';
+        return true;
+
+      }, true)
+    )
+    .subscribe();
+}
 
   
 

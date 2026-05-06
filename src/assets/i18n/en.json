@@ -164,10 +164,14 @@
         "action": "Action",
         "status_created": "Created",
         "status_executed": "Executed",
-        "status-v6-error": "Partially Executed",
+        "status_partially_executed": "Partially Executed",
+        "status_initiated": "Initiated",
+        "status_error": "Error",
+        "status_v6_error": "Vantage6: Creation Dataframe error",
         "execute_query": "Execute Query",
         "continue": "Continue",
-        "back": "Back"
+        "back": "Back",
+        "pending_coes": "Pending center"
       },
       "data_preparation": {
         "data_quality_preparation": "Data Quality & Preparation",

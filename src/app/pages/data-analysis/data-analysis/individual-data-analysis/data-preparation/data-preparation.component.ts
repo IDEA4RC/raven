@@ -7,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateVariableDialogComponent } from '../create-variable-dialog/create-variable-dialog.component';
+import { interval, forkJoin, of } from 'rxjs';
+import { switchMap, takeWhile, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-data-preparation',
@@ -287,8 +289,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         });
       });
     }
-    
-    
+
+
 
     this.dataSourceCohorts.data = variableCohorts;
     this.dataSourceCohorts._updateChangeSubscription();
@@ -685,121 +687,79 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       return;
     }
 
+
+
     // Check status of all dataframe tasks
     this.isLoading = true;
     this.taskStatus = 'checking_dataframe';
-    this.checkAllDataFrameStatuses(dataframeTaskIds);
+    const cohortIds = this.allCohorts
+      ?.map(cohort => cohort?.id)
+      .filter((id): id is number => id !== null && id !== undefined);
+    console.log("cohortIds :", cohortIds);
+
+    this.checkDataframesUntilReady(cohortIds);
   }
 
-  private checkAllDataFrameStatuses(taskItems: Array<{ cohortName: string; taskId: number }>) {
-    const statusMap = new Map<number, { cohortName: string; status: string }>();
+  checkDataframesUntilReady(cohortIds: number[]): void {
 
-    // Check status of each dataframe task
-    taskItems.forEach(item => {
-      this.dataAnalysisService.getTaskStatus(item.taskId).subscribe({
-        next: (res: { status: string }) => {
-          statusMap.set(item.taskId, { cohortName: item.cohortName, status: res.status });
-          console.log(`Dataframe task ${item.taskId} (${item.cohortName}) status:`, res.status);
-
-          // Check if all tasks have been checked
-          if (statusMap.size === taskItems.length) {
-            this.evaluateDataFrameStatuses(statusMap, taskItems);
-          }
-        },
-        error: (err) => {
-          console.error(`Error checking dataframe status for task ${item.taskId}:`, err);
-          statusMap.set(item.taskId, { cohortName: item.cohortName, status: 'error' });
-
-          if (statusMap.size === taskItems.length) {
-            this.evaluateDataFrameStatuses(statusMap, taskItems);
-          }
-        }
-      });
-    });
-  }
-
-  private evaluateDataFrameStatuses(statusMap: Map<number, { cohortName: string; status: string }>, taskItems: Array<{ cohortName: string; taskId: number }>) {
-    const statuses = Array.from(statusMap.values()).map(item => item.status);
-    const allCompleted = statuses.every(status => status === 'completed');
-    const anyFailed = statuses.some(status => status === 'crashed' || status === 'error');
-    const anyPending = statuses.some(status => status === 'pending');
-
-    console.log('Dataframe statuses:', Array.from(statusMap.values()));
-
-    if (allCompleted) {
-      // All dataframes completed, proceed
-      this.taskStatus = 'dataframes_completed';
-      this.cohortStatusMap.clear();
-      this.checkExistingSummaryOrCreate();
-    } else if (anyFailed) {
-      // At least one dataframe failed - store status for each affected cohort
+    if (!cohortIds.length) {
       this.isLoading = false;
-      this.isCrashed = true;
-      this.taskStatus = 'dataframes_failed';
-
-      statusMap.forEach((statusData, taskId) => {
-        if (statusData.status === 'crashed' || statusData.status === 'error') {
-          this.cohortStatusMap.set(statusData.cohortName, {
-            status: statusData.status,
-            message: `Vantage6 dataframe status: ${statusData.status}. The dataframe processing has failed.`,
-            taskId: taskId
-          });
-        }
-      });
-
-      const failedCohorts = Array.from(this.cohortStatusMap.keys()).join(', ');
-      console.error(`One or more dataframes failed for cohorts: ${failedCohorts}`);
-    } else if (anyPending) {
-      // At least one dataframe is still processing - store pending status
-      this.taskStatus = 'dataframes_pending';
-      console.log('Dataframes still processing, polling status...');
-
-      statusMap.forEach((statusData, taskId) => {
-        if (statusData.status === 'pending') {
-          this.cohortStatusMap.set(statusData.cohortName, {
-            status: statusData.status,
-            message: `Vantage6 dataframe status: pending. Processing is underway.`,
-            taskId: taskId
-          });
-        }
-      });
-
-      this.startPollingDataFrameStatus(taskItems);
-    } else {
-      // Unknown status, start polling
-      this.taskStatus = 'dataframes_checking';
-      console.log('Dataframes status unknown, polling...');
-      this.startPollingDataFrameStatus(taskItems);
+      return;
     }
-  }
 
-  private startPollingDataFrameStatus(taskItems: Array<{ cohortName: string; taskId: number }>) {
-    clearInterval(this.pollingInterval);
+    this.isLoading = true;
+    this.isCrashed = false;
 
-    this.pollingInterval = setInterval(() => {
-      const statusMap = new Map<number, { cohortName: string; status: string }>();
+    interval(this.pollingFrequency)
+      .pipe(
+        switchMap(() => {
 
-      taskItems.forEach(item => {
-        this.dataAnalysisService.getTaskStatus(item.taskId).subscribe({
-          next: (res: { status: string }) => {
-            statusMap.set(item.taskId, { cohortName: item.cohortName, status: res.status });
+          const requests = cohortIds.map(id =>
+            this.dataAnalysisService.isDataframeReady(id).pipe(
+              catchError(() => of({ ready: 'error' })) // evita que forkJoin muera
+            )
+          );
 
-            if (statusMap.size === taskItems.length) {
-              this.evaluateDataFrameStatuses(statusMap, taskItems);
-            }
-          },
-          error: (err) => {
-            console.error(`Error polling dataframe status for task ${item.taskId}:`, err);
-            statusMap.set(item.taskId, { cohortName: item.cohortName, status: 'error' });
+          return forkJoin(requests);
+        }),
 
-            if (statusMap.size === taskItems.length) {
-              this.evaluateDataFrameStatuses(statusMap, taskItems);
-            }
+        takeWhile((results: string[]) => {
+
+          console.log("results:", results);
+
+          const allCompleted = results.every(r => r === 'completed');
+
+          const anyFailed = results.some(r =>
+            r === 'error' || r === 'timeout'
+          );
+
+          if (allCompleted) {
+            this.taskStatus = 'dataframes_completed';
+            this.isLoading = false;
+            this.isCrashed = false;
+
+            this.checkExistingSummaryOrCreate();
+            return false;
           }
-        });
-      });
-    }, this.pollingFrequency);
+
+          if (anyFailed) {
+            this.taskStatus = 'dataframes_failed';
+            this.isLoading = false;
+            this.isCrashed = true;
+
+            return false;
+          }
+
+          this.taskStatus = 'dataframes_pending';
+          return true;
+
+        }, true)
+      )
+      .subscribe();
   }
+
+
+  
 
   checkExistingSummaryOrCreate() {
     const cohortsIds = this.allCohorts
@@ -811,8 +771,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const body = { cohort_ids: cohortsIds };
 
+    const body = { cohort_ids: cohortsIds };
     this.dataAnalysisService.existsSummaryByCohort(body).subscribe({
       next: (result: any) => {
         const summaries = Array.isArray(result)
@@ -849,6 +809,48 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  checkAllDataframesReady(): void {
+    const cohortIds = this.allCohorts
+      .map(cohort => cohort?.id)
+      .filter((id): id is number => id !== null && id !== undefined);
+
+    if (!cohortIds.length) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.isLoading = true;
+
+    const requests = cohortIds.map(cohortId =>
+      this.dataAnalysisService.isDataframeReady(cohortId)
+    );
+
+    forkJoin(requests).subscribe({
+      next: (results: { ready: string }[]) => {
+
+        const allCompleted = results.every(res => res.ready === 'completed');
+
+        this.isLoading = false;
+
+        if (allCompleted) {
+          this.isCrashed = false;
+          this.taskStatus = 'dataframe_ready';
+        } else {
+          this.isCrashed = true;
+          this.taskStatus = 'dataframe_not_ready';
+        }
+      },
+
+      error: (err) => {
+        console.error('Error checking dataframes:', err);
+        this.isLoading = false;
+        this.isCrashed = true;
+        this.taskStatus = 'dataframe_check_failed';
+      }
+    });
+  }
+
   createSummaryRequest() {
     const cohortsIds = this.allCohorts.map(cohort => cohort.id);
     const dataApplication = {
@@ -877,7 +879,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   startPollingTaskStatus(taskId: number) {
     clearInterval(this.pollingInterval);
-
+console.log("startPollingTaskStatus:");
     this.currentTaskId = taskId;
     this.isLoading = true;
     this.taskStatus = 'pending';

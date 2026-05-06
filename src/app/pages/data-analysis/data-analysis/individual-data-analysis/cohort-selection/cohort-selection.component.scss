@@ -213,7 +213,7 @@
   .status-column {
     width: 100px;
   }
-  .status-created, .status-executed, .status-v6-error {
+  .status-created, .status-executed, .status-v6-error, .status-initiated, .status-error, .status-partially-executed {
     padding: 2px 0px;
     display: flex;
     // height: 22px;
@@ -230,8 +230,15 @@
   .status-executed {
     background: var(--Action-colors-green, #64C062);
   }
-  .status-v6-error {
-    background: var(--Action-colors-red, #F6C000);
+  .status-error {
+    background: var(--Action-colors-red, #f61000);
+  }
+
+  .status-initiated {
+    background: var(--Action-colors-yellow, #fad759);
+  }
+  .status-partially-executed {
+    background: var(--Action-colors-orange, #f69400da);
   }
   .action-column {
     border-radius: 5px;

@@ -151,6 +151,14 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
+  getStatusDataframe(data: any) {
+    console.log("GET getStatusDataframe");
+    console.log(data);
+
+    const url = `/raven-api/v1/data-preparation/create_summary`;
+    return this.postRequest(url, data)
+  }
+
   getTaskStatus(task_id: number) {
     const url = `/raven-api/v1/data-preparation/status_task/${task_id}`;
     return this.getRequest(url)
@@ -332,37 +340,56 @@ export class DataAnalysisService {
   }
 
   createKaplanMeier(data: any) {
-    console.log("createKaplanMeier ", data);
-
     const url = `/raven-api/v1/data-preparation/create_kaplan_meier`;
     return this.postRequest(url, data)
   }
 
   createGLM(data: any) {
-    console.log("createGLM ", data);
-
     const url = `/raven-api/v1/data-preparation/create_glm`;
     return this.postRequest(url, data)
   }
 
   getAlgorithmsList(data: any) {
-    console.log("getAlgorithmsList ", data);
-
     const url = `/raven-api/v1/algorithms/by_cohorts_list`;
     return this.postRequest(url, data)
   }
 
   updateAlgorithmsStatus(data: any) {
-    console.log("updateAlgorithmsStatus ", data);
-
     const url = `/raven-api/v1/algorithms/update_algorithm`;
     return this.patchRequest(url, data)
   }
 
   existsSummaryByCohort(data: any) {
-    console.log("existsSummaryByCohort ", data);
-
     const url = `/raven-api/v1/algorithms/is_summary`;
     return this.postRequest(url, data)
   }
+
+  areReadyDataframes(data: any) {
+    const url = `/raven-api/v1/algorithms/areReadyDataframes`;
+    return this.postRequest(url, data)
+  }
+
+  getTaskStatistics(task_id: number) {
+    const url = `/raven-api/v1//algorithms/algorithms_statistics/${task_id}`;
+    return this.getRequest(url)
+  }
+
+  isDataframeReady(cohort_id: Number) {
+    const url = `/raven-api/v1/cohorts/dataframe_status/${cohort_id}`;
+    return this.getRequest(url)
+  }
+
+  updateCohortsStatus(cohort_id: number, data: any) {
+    const url = `/raven-api/v1/cohorts/${cohort_id}/status`;
+    return this.patchRequest(url, data)
+  }
+
+  getCentersCohortsResults(cohort_id: number): Observable<{
+    responded: string[];
+    missing: string[];
+  }> {
+    const url = `/raven-api/v1/cohort-results/centers_cohort_results/${cohort_id}`;
+    return this.getRequest(url);
+  }
+
 }

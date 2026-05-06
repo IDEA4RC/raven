@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Cohort } from './cohort.model';
@@ -9,6 +9,15 @@ import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { map } from 'rxjs/operators';
+
+export interface CohortExtended extends Cohort {
+  responded?: string[];
+  missing?: string[];
+  statusDetail?: 'completed' | 'partial';
+}
+
+
 @Component({
   selector: 'app-cohort-selection',
   templateUrl: './cohort-selection.component.html',
@@ -29,7 +38,7 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   // Table components
   dataSource = new MatTableDataSource<Cohort>();
-  displayedColumns: string[] = ['select', 'id', 'cohort_name', 'creation_date', 'update_date', 'status', 'action'];
+  displayedColumns: string[] = ['select', 'id', 'cohort_name', 'creation_date', 'update_date', 'status', 'pending_coes', 'action'];
 
   selection = new SelectionModel<any>(true, []);
 
@@ -63,20 +72,43 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
     const analysisIndex = urlSegments.indexOf('data-analysis');
     if (analysisIndex !== -1 && urlSegments.length > analysisIndex + 1) {
       this.analysisId = urlSegments[analysisIndex + 1];
-      console.log("analysisIndex !== -1 && urlSegments.length > analysisIndex + 1");
-      
       this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
-
     }
-
-
 
     // Get the observable from the service
     this.observable_cohort$ = this.dataAnalysisService.cohort
     // Subscribe to the observable patients
     this.cohortSubscription = this.observable_cohort$.subscribe((data) => {
-      this.dataSource.data = data;
-      console.log("this.dataSource.data:", this.dataSource.data);
+      const cohorts: CohortExtended[] = data;
+      const requests = cohorts
+        .filter(c => c.status === 3)
+        .map(c =>
+          this.dataAnalysisService.getCentersCohortsResults(c.id).pipe(
+            map(res => ({
+              cohortId: c.id,
+              ...res
+            }))
+          )
+        );
+
+
+      if (requests.length === 0) {
+        this.dataSource.data = cohorts;
+        return;
+      }
+
+      forkJoin(requests).subscribe(results => {
+        results.forEach(result => {
+          const cohort = cohorts.find(c => c.id === result.cohortId);
+          if (!cohort) return;
+
+          cohort.responded = result.responded;
+          cohort.missing = result.missing;
+          cohort.statusDetail = result.missing?.length ? 'partial' : 'completed';
+        });
+
+        this.dataSource.data = data;
+      });
     });
 
     // Get the observable permit from the service
@@ -118,16 +150,15 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
   // Functions for buttons
   goToCohortManager() {
     // Logic to navigate to the cohort manager
-    console.log('Navigating to Cohort Manager');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
+
     const url = `https://gui.fcb.orchestrator.idea.lst.tfo.upm.es/web/advanced-query/${userId}/${this.analysisId}/${this.permitId}/${token}`;
     window.open(url, '_blank');
 
   }
   goToNLPCohort() {
     // Logic to navigate to the cohort selection
-    console.log('Navigating to Cohort Selection');
     let token = localStorage.getItem('access_token');
     let userId = localStorage.getItem('user_id');
     const url = `https://cohort-builder-idea4rc.duckdns.org/?user_id=${userId}&analysis_id=${this.analysisId}&permit_id=${this.permitId}&workspace_id=${this.workspaceId}&access_token=${token}`;
@@ -135,33 +166,37 @@ export class CohortSelectionComponent implements OnInit, OnDestroy {
 
   }
 
-  executeQuery(queryExecutionId: number) {
-    console.log(`Executing query for cohort ID: ${queryExecutionId}`);
+  executeQuery(cohort: Cohort) {
+    this.loading = true;            
 
-    this.loading = true;            // show spinner
-
-    console.log("queryExecutionId: ", queryExecutionId);
-    
-    if (queryExecutionId) {
-      const url = `https://api.fcb.orchestrator.idea.lst.tfo.upm.es/execute/${queryExecutionId}`;
-      window.open(url, '_blank');
-     /* setTimeout(() => {
-        this.loading = false;         // hide spinner
-        this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
-        this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
-
-      }, 3000);*/
-    }
+    this.dataAnalysisService.updateCohortsStatus(cohort.id, { status: 2 }).subscribe({
+      next: (response) => {
+        console.log('Cohort status updated to executing', response);
+      },
+      error: (error) => {
+        console.error('Error updating cohort status', error);
+      }
+    });
+     if (cohort.query_execution_id) {
+       const url = `https://api.fcb.orchestrator.idea.lst.tfo.upm.es/execute/${cohort.query_execution_id}`;
+       window.open(url, '_blank');
+      /* setTimeout(() => {
+         this.loading = false;         // hide spinner
+         this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
+         this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
+ 
+       }, 3000);*/
+     }
 
     this.loading = false;
-    
+
   }
   executeQueryV6(cohortId: number) {
     this.dataAnalysisService.executeQueryV6(cohortId).subscribe({
       next: (response) => {
         console.log('V6 Query executed successfully', response);
         this.dataAnalysisService.getCohorts(this.analysisId as unknown as number);
-        
+
         this.showNotification('green', 'Cohort executed successfully', 'bottom', 'center');
       },
       error: (error) => {

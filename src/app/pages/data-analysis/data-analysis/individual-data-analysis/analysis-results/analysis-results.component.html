@@ -9,19 +9,13 @@
 
       <!-- Execution Info -->
       <div class="execution-info">
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}: 5 minutes</span>
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.issues-detected' | translate }}: 0</span>
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.runs' | translate }}: 5</span>
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.warnings' | translate }}: 0</span>
-      </div>
-
-      <!-- Subtasks -->
-      <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.subtasks' | translate }}</h3>
-      <div class="subtasks">
-        <div class="subtask" *ngFor="let task of subtasks">
-          <div class="subtask-title">{{ task.name }}</div>
-          <div class="subtask-status">{{ task.status }}</div>
-        </div>
+        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}: {{ executionDuration }}</span>
+        <!--<span class="chip" *ngIf="taskStatistics?.initOrg?.id !== undefined">
+          {{ 'pages.data-analysis.analysis-results.initiating-organisation' | translate }}: {{ taskStatistics?.initOrg?.id }}
+        </span>
+        <span class="chip" *ngIf="taskStatistics?.initUser?.id !== undefined">
+          {{ 'pages.data-analysis.analysis-results.initiating-user' | translate }}: {{ taskStatistics?.initUser?.id }}
+        </span>-->
       </div>
 
       <!-- General Information -->
@@ -45,12 +39,14 @@
         </ng-container>
 
         <ng-container matColumnDef="org">
-          <th mat-header-cell *matHeaderCellDef>{{ 'pages.data-analysis.analysis-results.initiating-organisation' | translate }}</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'pages.data-analysis.analysis-results.initiating-organisation' |
+            translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.org }}</td>
         </ng-container>
 
         <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef>{{ 'pages.data-analysis.analysis-results.initiating-user' | translate }}</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'pages.data-analysis.analysis-results.initiating-user' | translate }}
+          </th>
           <td mat-cell *matCellDef="let element">{{ element.user }}</td>
         </ng-container>
 
@@ -64,7 +60,8 @@
       </table>
 
       <div class="actions">
-        <button mat-stroked-button color="primary" class="back-button" (click)="goBack()">{{ 'pages.data-analysis.analysis-results.back' | translate }}</button>
+        <button mat-stroked-button color="primary" class="back-button" (click)="goBack()">{{
+          'pages.data-analysis.analysis-results.back' | translate }}</button>
       </div>
     </div>
   </mat-tab>
@@ -79,10 +76,14 @@
         <mat-card class="inner-card">
           <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.algorithm-overview' | translate }}</h3>
           <div class="section-content">
-            <p><strong>{{ 'pages.data-analysis.analysis-results.name' | translate }}:</strong> {{ formatLabel(name_algorithm) }}</p>
-            <p><strong>{{ 'pages.data-analysis.analysis-results.cohorts' | translate }}:</strong> {{ cohorts_string }}</p>
-            <p *ngIf="row_variables_text"><strong>{{ 'pages.data-analysis.analysis-results.rows' | translate }}:</strong> {{ row_variables_text }}</p>
-            <p *ngIf="column_variable_text"><strong>{{ 'pages.data-analysis.analysis-results.columns' | translate }}:</strong> {{ column_variable_text }}</p>
+            <p><strong>{{ 'pages.data-analysis.analysis-results.name' | translate }}:</strong> {{
+              formatLabel(name_algorithm) }}</p>
+            <p><strong>{{ 'pages.data-analysis.analysis-results.cohorts' | translate }}:</strong> {{ cohorts_string }}
+            </p>
+            <p *ngIf="row_variables_text"><strong>{{ 'pages.data-analysis.analysis-results.rows' | translate
+                }}:</strong> {{ row_variables_text }}</p>
+            <p *ngIf="column_variable_text"><strong>{{ 'pages.data-analysis.analysis-results.columns' | translate
+                }}:</strong> {{ column_variable_text }}</p>
 
           </div>
         </mat-card>
@@ -97,7 +98,8 @@
               <div *ngFor="let table of crosstabTables" class="table-container">
                 <h2>{{ formatLabel(table.cohortName) }}</h2>
                 <p class="secondary-label" *ngIf="table.columnVariable">
-                  <strong>{{ 'pages.data-analysis.analysis-results.column-variable' | translate }}:</strong> {{ formatLabel(table.columnVariable) }}
+                  <strong>{{ 'pages.data-analysis.analysis-results.column-variable' | translate }}:</strong> {{
+                  formatLabel(table.columnVariable) }}
                 </p>
 
                 <table class="statistics-table">
@@ -117,8 +119,10 @@
                 </table>
 
                 <div class="chi2" *ngIf="table.chi2 || table.pValue">
-                  <p *ngIf="table.chi2"><strong>{{ 'pages.data-analysis.analysis-results.chi2' | translate }}:</strong> {{ table.chi2 }}</p>
-                  <p *ngIf="table.pValue"><strong>{{ 'pages.data-analysis.analysis-results.p-value' | translate }}:</strong> {{ table.pValue }}</p>
+                  <p *ngIf="table.chi2"><strong>{{ 'pages.data-analysis.analysis-results.chi2' | translate }}:</strong>
+                    {{ table.chi2 }}</p>
+                  <p *ngIf="table.pValue"><strong>{{ 'pages.data-analysis.analysis-results.p-value' | translate
+                      }}:</strong> {{ table.pValue }}</p>
                 </div>
               </div>
             </div>
@@ -148,20 +152,53 @@
             <div *ngSwitchCase="'kaplan-meier'">
               <div *ngFor="let table of kaplanMeierTables" class="table-container">
                 <h2>{{ formatLabel(table.cohortName) }}</h2>
-                
+
                 <!-- Kaplan-Meier Chart -->
-                <div class="chart-container" style="height: 400px; margin-bottom: 30px;">
-                  <canvas baseChart
-                    [data]="kaplanMeierChartData"
-                    [options]="kaplanMeierChartOptions"
-                    type="line">
+                <div class="chart-container" style="margin-bottom: 30px;">
+                  <canvas baseChart [data]="kaplanMeierChartData" [options]="kaplanMeierChartOptions" type="line">
                   </canvas>
+                </div>
+
+                <div *ngIf="(logRankTables?.length ?? 0) > 0" class="logrank-container">
+
+                  <h3>Log-rank test (p-values)</h3>
+
+                  <!-- Heatmap matrix -->
+                  <div class="heatmap">
+
+                    <!-- HEADER -->
+                    <div class="row">
+                      <div class="cell empty"></div>
+
+                      <div class="cell header" *ngFor="let c of logRankTables[0].cohortNames">
+                        {{ formatLabel(c) }}
+                      </div>
+                    </div>
+
+                    <!-- ROWS -->
+                    <div class="row" *ngFor="let r of logRankTables[0].cohortNames; let i = index">
+
+                      <div class="cell header">
+                        {{ formatLabel(r) }}
+                      </div>
+
+                      <div class="cell" *ngFor="let c of logRankTables[0].cohortNames; let j = index"
+                        [style.background]="getPValueColor(logRankTables[0].matrix[i][j])">
+
+                        {{ logRankTables[0].matrix[i][j] !== null
+                        ? (logRankTables[0].matrix[i][j] | number:'1.3-3')
+                        : '-' }}
+
+                      </div>
+
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Data table below chart -->
                 <div *ngFor="let curve of table.curves" class="kaplan-meier-curve">
                   <h3>{{ formatLabel(curve.cohortName) }}</h3>
-                  
+
                   <table class="statistics-table">
                     <thead>
                       <tr>
@@ -193,7 +230,7 @@
             <div *ngSwitchCase="'log-rank'">
               <div *ngFor="let table of logRankTables" class="table-container">
                 <h2>{{ 'pages.data-analysis.analysis-results.log-rank-results' | translate }}</h2>
-                
+
                 <table class="statistics-table">
                   <thead>
                     <tr>
@@ -213,8 +250,115 @@
               </div>
             </div>
 
+            <div *ngSwitchCase="'glm'">
+              <div *ngIf="glmTable" class="table-container">
+                <h2>Generalized Linear Model (GLM) Results</h2>
+
+                <!-- Global Model Notes -->
+                <div class="model-notes" style="margin-bottom: 30px;">
+                  <h3>Model Notes</h3>
+                  <p><strong>Global Iterations:</strong> {{ glmTable.globalDetails.iterations }}</p>
+                  <p><strong>All Models Converged:</strong> {{ glmTable.globalDetails.allConverged ? 'Yes' : 'No' }}</p>
+                </div>
+
+                <!-- Coefficient (Forest Plot) Chart -->
+                <div style="margin-bottom: 40px;">
+                  <h3>1. Coefficients by Cohort (Forest Plot)</h3>
+                  <div style="height: 400px; margin-bottom: 30px;">
+                    <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions" 
+                      type="bar"></canvas>
+                  </div>
+                  <p class="chart-description">
+                    <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor. 
+                    The horizontal lines show 95% confidence intervals. Effects crossing the vertical dashed line at 0 are uncertain.
+                  </p>
+                </div>
+
+                <!-- Deviance Reduction Chart -->
+                <div style="margin-bottom: 40px;">
+                  <h3>2. Deviance Reduction</h3>
+                  <div style="height: 400px; margin-bottom: 30px;">
+                    <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions" 
+                      type="bar"></canvas>
+                  </div>
+                  <p class="chart-description">
+                    <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with predictors). 
+                    A larger drop indicates that predictors help explain the outcome.
+                  </p>
+                </div>
+
+                <!-- Summary Table for each cohort -->
+                <div *ngFor="let cohort of glmTable.cohorts" style="margin-bottom: 40px;">
+                  <h3>Summary for {{ formatLabel(cohort.cohortName) }}</h3>
+
+                  <div style="margin-bottom: 20px;">
+                    <h4>Model Details</h4>
+                    <table class="statistics-table model-details-table">
+                      <tbody>
+                        <tr>
+                          <td><strong>Converged:</strong></td>
+                          <td>{{ cohort.details.converged ? 'Yes' : 'No' }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Dispersion:</strong></td>
+                          <td>{{ cohort.details.dispersion | number:'1.4-4' }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Dispersion Estimated:</strong></td>
+                          <td>{{ cohort.details.isDispersionEstimated ? 'Yes' : 'No' }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Number of Observations:</strong></td>
+                          <td>{{ cohort.details.numObservations }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Number of Variables:</strong></td>
+                          <td>{{ cohort.details.numVariables }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Null Deviance:</strong></td>
+                          <td>{{ cohort.details.nullDeviance | number:'1.2-2' }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Model Deviance:</strong></td>
+                          <td>{{ cohort.details.deviance | number:'1.2-2' }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Deviance Reduction:</strong></td>
+                          <td>{{ (cohort.details.nullDeviance - cohort.details.deviance) | number:'1.2-2' }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <h4>Coefficients</h4>
+                  <table class="statistics-table">
+                    <thead>
+                      <tr>
+                        <th>Predictor</th>
+                        <th>β</th>
+                        <th>SE</th>
+                        <th>z</th>
+                        <th>p-value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let coef of cohort.coefficients">
+                        <td>{{ formatLabel(coef.predictor) }}</td>
+                        <td>{{ coef.beta | number:'1.4-4' }}</td>
+                        <td>{{ coef.stdError | number:'1.4-4' }}</td>
+                        <td>{{ coef.zValue | number:'1.2-2' }}</td>
+                        <td>{{ coef.pValue === 0 ? '&lt;1e-300' : (coef.pValue | number:'1.2-2') }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
             <div *ngSwitchCase="'placeholder'" class="under-construction">
-              <h4>{{ formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.algorithm' | translate) }}</h4>
+              <h4>{{ formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.algorithm' | translate) }}
+              </h4>
               <p>{{ underConstructionMessage }}</p>
             </div>
 
@@ -231,7 +375,8 @@
       <!-- Card Footer -->
       <mat-card-actions class="footer">
         <!-- Back button -->
-        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' |
+          translate}}</button>
 
       </mat-card-actions>
     </mat-card>
@@ -243,14 +388,17 @@
       <mat-card-content class="card-content">
         <div class="under-construction">
           <h4>{{ 'pages.data-analysis.analysis-results.data-overview' | translate }}</h4>
-          <p>{{ 'pages.data-analysis.analysis-results.under-construction-for' | translate:{ algorithm: (formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.this-algorithm' | translate)) } }}</p>
+          <p>{{ 'pages.data-analysis.analysis-results.under-construction-for' | translate:{ algorithm:
+            (formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.this-algorithm' | translate)) } }}
+          </p>
         </div>
       </mat-card-content>
 
       <!-- Card Footer -->
       <mat-card-actions class="footer">
         <!-- Back button -->
-        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' | translate}}</button>
+        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' |
+          translate}}</button>
 
       </mat-card-actions>
     </mat-card>

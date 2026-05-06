@@ -87,7 +87,38 @@ interface LogRankDisplayRow {
 
 interface LogRankDisplayTable {
     cohortNames: string[];
+    matrix: (number | null)[][];
     rows: LogRankDisplayRow[];
+}
+
+interface GlmCoefficient {
+    predictor: string;
+    beta: number;
+    stdError: number;
+    zValue: number;
+    pValue: number;
+}
+
+interface GlmCohortModel {
+    cohortName: string;
+    coefficients: GlmCoefficient[];
+    details: {
+        converged: boolean;
+        dispersion: number;
+        isDispersionEstimated: boolean;
+        numObservations: number;
+        numVariables: number;
+        nullDeviance: number;
+        deviance: number;
+    };
+}
+
+interface GlmDisplayTable {
+    cohorts: GlmCohortModel[];
+    globalDetails: {
+        iterations: number;
+        allConverged: boolean;
+    };
 }
 
 interface ExecutionInfoRow {
@@ -97,6 +128,16 @@ interface ExecutionInfoRow {
     org: string;
     user: string;
     created: string;
+}
+
+interface TaskStatistics {
+    id?: number;
+    status?: string;
+    finishedAt?: string;
+    createdAt?: string;
+    initOrg?: { id?: number; link?: string };
+    initUser?: { id?: number; link?: string };
+    name?: string;
 }
 
 @Component({
@@ -114,13 +155,81 @@ export class AnalysisResultsComponent implements OnInit {
     row_variables_text = '';
     column_variable_text = '';
 
-    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'placeholder' = 'empty';
+    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'placeholder' = 'empty';
     underConstructionMessage = 'Under construction';
     rawTaskResult: any = null;
     crosstabTables: CrosstabDisplayTable[] = [];
     tTestTables: TTestDisplayTable[] = [];
     kaplanMeierTables: KaplanMeierDisplayTable[] = [];
     logRankTables: LogRankDisplayTable[] = [];
+    glmTable: GlmDisplayTable | null = null;
+
+    // GLM Charts
+    glmCoefficientChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+    glmCoefficientChartOptions: ChartConfiguration<'bar'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Effect size (β)'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Predictor'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 10
+                    }
+                }
+            }
+        }
+    };
+
+    glmDevianceChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+    glmDevianceChartOptions: ChartConfiguration<'bar'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                title: {
+                    display: true,
+                    text: 'Deviance'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 10
+                    }
+                }
+            }
+        }
+    };
+
+    knownKeysKaplan = [
+        'at_risk',
+        'censored',
+        'ci_lower',
+        'ci_upper',
+        'cohort',
+        'hazard',
+        'observed',
+        'removed',
+        'survival_cdf'
+    ];
 
     // Kaplan-Meier Chart
     kaplanMeierChartData: ChartData<'line'> = { labels: [], datasets: [] };
@@ -146,12 +255,28 @@ export class AnalysisResultsComponent implements OnInit {
         },
         plugins: {
             legend: {
+                onClick: (e, legendItem, legend) => {
+                    const chart = legend.chart;
+
+
+                    chart.update();
+                },
                 position: 'top',
                 labels: {
-                    font: {
-                        size: 10
+
+                    filter: function (legendItem, chartData) {
+                        const datasetIndex = legendItem.datasetIndex;
+
+                        if (datasetIndex === undefined) {
+                            return false;
+                        }
+
+                        const dataset = chartData.datasets[datasetIndex];
+
+                        return !!dataset?.label;
                     }
                 }
+
             },
             title: {
                 display: true,
@@ -177,11 +302,8 @@ export class AnalysisResultsComponent implements OnInit {
         { id: '-', name: '-', status: '-', org: '-', user: '-', created: '-' }
     ];
 
-    subtasks = [
-        { name: 'INT', status: 'Completed' },
-        { name: 'ISS-FJF', status: 'Completed' },
-        { name: 'APHP', status: 'Completed' }
-    ];
+    taskStatistics: TaskStatistics | null = null;
+    executionDuration = '-';
 
     @Output() previousStep = new EventEmitter<void>();
 
@@ -203,6 +325,7 @@ export class AnalysisResultsComponent implements OnInit {
 
             if (this.selectedAlgorithm.task_id) {
                 this.fetchTaskResult(this.selectedAlgorithm.task_id);
+                this.getTaskStatistics(this.selectedAlgorithm.task_id);
                 return;
             }
 
@@ -211,6 +334,7 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     initializeSelectedAlgorithm(selectedAlgorithm: SelectedAlgorithm): void {
+        console.log("Selected algorithm:", selectedAlgorithm);
         this.name_algorithm = selectedAlgorithm.method_name || '';
 
         const rowVariables = this.parseRowVariables(selectedAlgorithm);
@@ -238,7 +362,6 @@ export class AnalysisResultsComponent implements OnInit {
         this.dataAnalysisService.getTaskResult(taskId).subscribe({
             next: (result) => {
                 this.rawTaskResult = result?.result ?? result ?? {};
-                console.log("Raw task results", this.rawTaskResult);
 
                 const cohortNames = Object.keys(this.rawTaskResult || {});
                 if (cohortNames.length > 0) {
@@ -255,7 +378,6 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderSelectedAlgorithm(resultData: any): void {
-        console.log("renderSelectedAlgorithm called with algorithm:", this.name_algorithm, "and data:", resultData);
         switch (this.name_algorithm as AlgorithmMethod) {
             case ALGORITHMS.CROSSTABULATION:
                 this.renderCrosstabulation(resultData);
@@ -269,9 +391,7 @@ export class AnalysisResultsComponent implements OnInit {
             case ALGORITHMS.KAPLAN_MEIER:
                 this.renderKaplanMeier(resultData);
                 break;
-            case ALGORITHMS.LOG_RANK_TEST:
-                this.renderLogRankTest(resultData);
-                break;
+
             case ALGORITHMS.GLM:
                 this.renderGlm(resultData);
                 break;
@@ -291,6 +411,81 @@ export class AnalysisResultsComponent implements OnInit {
                 this.setPlaceholderView(this.name_algorithm, 'This algorithm renderer is not implemented yet.');
                 break;
         }
+    }
+
+    getTaskStatistics(taskId: number): void {
+        this.dataAnalysisService.getTaskStatistics(taskId).subscribe({
+            next: (stats) => {
+                this.taskStatistics = {
+                    id: stats?.id,
+                    status: stats?.status,
+                    finishedAt: stats?.finished_at,
+                    createdAt: stats?.created_at,
+                    initOrg: stats?.init_org,
+                    initUser: stats?.init_user,
+                    name: stats?.name
+                };
+                this.executionDuration = this.formatExecutionDuration(stats?.created_at, stats?.finished_at);
+                this.data = [
+                    {
+                        id: String(stats?.id ?? this.selectedAlgorithm?.id ?? '-'),
+                        name: this.formatLabel(stats?.name ?? (this.selectedAlgorithm?.method_name || '-')),
+                        status: stats?.status ?? (this.selectedAlgorithm?.status_task || '-'),
+                        org: this.formatOrg(stats?.init_org),
+                        user: this.formatUser(stats?.init_user),
+                        created: this.formatDate(stats?.created_at)
+                    }
+                ];
+            },
+            error: (err) => {
+                console.error('Error obteniendo las estadísticas de la tarea:', err);
+            }
+        });
+    }
+
+    private formatExecutionDuration(createdAt?: string, finishedAt?: string): string {
+        if (!createdAt || !finishedAt) {
+            return '-';
+        }
+
+        const start = Date.parse(createdAt);
+        const end = Date.parse(finishedAt);
+        if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
+            return '-';
+        }
+
+        let diff = Math.floor((end - start) / 1000);
+        const hours = Math.floor(diff / 3600);
+        diff -= hours * 3600;
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff - minutes * 60;
+
+        const parts: string[] = [];
+        if (hours) {
+            parts.push(`${hours}h`);
+        }
+        if (minutes) {
+            parts.push(`${minutes}m`);
+        }
+        if (seconds || parts.length === 0) {
+            parts.push(`${seconds}s`);
+        }
+
+        return parts.join(' ');
+    }
+
+    private formatOrg(initOrg: { id?: number; link?: string } | undefined): string {
+        if (!initOrg || initOrg.id === undefined || initOrg.id === null) {
+            return '-';
+        }
+        return `Org ${initOrg.id}`;
+    }
+
+    private formatUser(initUser: { id?: number; link?: string } | undefined): string {
+        if (!initUser || initUser.id === undefined || initUser.id === null) {
+            return '-';
+        }
+        return `User ${initUser.id}`;
     }
 
     renderCrosstabulation(resultData: any): void {
@@ -321,9 +516,8 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderKaplanMeier(resultData: any): void {
-        console.log("Rendering Kaplan-Meier with data:", resultData);
         this.kaplanMeierTables = this.buildKaplanMeierTables(resultData);
-        console.log("Kaplan-Meier tables built:", this.kaplanMeierTables);
+        this.logRankTables = this.buildLogRankTables(resultData);
 
         if (this.kaplanMeierTables.length === 0) {
             this.setPlaceholderView(ALGORITHMS.KAPLAN_MEIER, 'No Kaplan-Meier data was returned for this analysis.');
@@ -418,11 +612,9 @@ export class AnalysisResultsComponent implements OnInit {
 
         const datasets: any[] = [];
         let colorIndex = 0;
-        console.log("kaplanMeierTables ", this.kaplanMeierTables);
 
         this.kaplanMeierTables.forEach(table => {
             table.curves.forEach(curve => {
-
                 const color = colors[colorIndex % colors.length];
 
                 const survivalData = curve.points.map(p => ({
@@ -438,11 +630,12 @@ export class AnalysisResultsComponent implements OnInit {
                     stepped: 'after',
                     fill: false,
                     tension: 0,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    borderWidth: 2,
+                    order: 2
                 });
 
-                // ✅ CI (si existe)
-                const hasCI = curve.points.some(p => p.ciLower !== undefined);
+                const hasCI = curve.points.some(p => p.ciLower !== undefined && p.ciUpper !== undefined);
 
                 if (hasCI) {
                     const upper = curve.points.map(p => ({
@@ -457,23 +650,27 @@ export class AnalysisResultsComponent implements OnInit {
 
                     // Upper line (invisible)
                     datasets.push({
-                        label: `${curve.cohortName} CI Upper`,
                         data: upper,
                         borderColor: 'transparent',
+                        backgroundColor: 'transparent',
                         pointRadius: 0,
                         stepped: 'after',
-                        fill: false
+                        fill: false,
+                        borderWidth: 0,
+                        order: 1,
+                        label: undefined
                     });
 
                     // Lower line (fills to previous dataset)
                     datasets.push({
-                        label: `${curve.cohortName} CI`,
                         data: lower,
                         borderColor: 'transparent',
                         backgroundColor: color + '33',
                         stepped: 'after',
                         fill: '-1', // 🔥 clave: rellena entre upper y lower
-                        pointRadius: 0
+                        pointRadius: 0,
+                        order: 1,
+                        label: undefined
                     });
                 }
 
@@ -486,18 +683,8 @@ export class AnalysisResultsComponent implements OnInit {
         };
     }
 
-    renderLogRankTest(resultData: any): void {
-        console.log("Rendering Log-Rank with data:", resultData);
-        this.logRankTables = this.buildLogRankTables(resultData);
-        console.log("Log-Rank tables built:", this.logRankTables);
 
-        if (this.logRankTables.length === 0) {
-            this.setPlaceholderView(ALGORITHMS.LOG_RANK_TEST, 'No Log-Rank data was returned for this analysis.');
-            return;
-        }
 
-        this.currentView = 'log-rank';
-    }
 
     buildKaplanMeierTables(resultData: any): KaplanMeierDisplayTable[] {
         const kaplanMeierData = resultData?.kaplan_meier;
@@ -508,10 +695,17 @@ export class AnalysisResultsComponent implements OnInit {
 
         const curves: KaplanMeierCurve[] = [];
 
-        // 🔥 IMPORTANTE: iteras cohortes → generas curvas (NO tablas)
         Object.entries(kaplanMeierData).forEach(([cohortName, cohortData]: [string, any]) => {
+            const timeKey = Object.keys(cohortData).find(
+                key => !this.knownKeysKaplan.includes(key)
+            );
 
-            const indexKeys = Object.keys(cohortData.year_of_birth || {})
+            if (!timeKey) {
+                console.warn('No time variable found in cohortData', cohortData);
+                return;
+            }
+
+            const indexKeys = Object.keys(cohortData[timeKey] || {})
                 .sort((a, b) => Number(a) - Number(b));
 
             const points: KaplanMeierPoint[] = indexKeys.map(key => {
@@ -520,7 +714,7 @@ export class AnalysisResultsComponent implements OnInit {
                 const upperVal = cohortData.ci_upper?.[key];
 
                 return {
-                    time: Number(cohortData.year_of_birth?.[key] ?? 0),
+                    time: Number(cohortData[timeKey]?.[key] ?? 0),
                     survival: Number(cohortData.survival_cdf?.[key] ?? 1),
                     atRisk: Number(cohortData.at_risk?.[key] ?? 0),
                     censored: Number(cohortData.censored?.[key] ?? 0),
@@ -617,52 +811,52 @@ export class AnalysisResultsComponent implements OnInit {
     }*/
 
     buildLogRankTables(resultData: any): LogRankDisplayTable[] {
-        console.log("buildLogRankTables called with:", resultData);
-        const tables: LogRankDisplayTable[] = [];
         const logRankData = resultData?.log_rank;
-        console.log("log_rank key exists:", logRankData);
 
         if (!logRankData || typeof logRankData !== 'object') {
-            console.log("No log_rank data found or not an object");
-            return tables;
+            return [];
         }
 
-        const cohortNames = Object.keys(logRankData);
+        const cohortNames = Object.keys(logRankData).sort();
+
+        const matrix: (number | null)[][] = cohortNames.map(row =>
+            cohortNames.map(col => logRankData[row]?.[col] ?? null)
+        );
+
         const rows: LogRankDisplayRow[] = [];
 
-        // log_rank is a matrix where each cell contains the p-value between two cohorts
-        cohortNames.forEach(cohort1 => {
-            const cohort1Data = logRankData[cohort1];
-            if (!cohort1Data || typeof cohort1Data !== 'object') {
-                return;
-            }
-
-            cohortNames.forEach(cohort2 => {
-                if (cohort1 === cohort2) {
-                    return;
-                }
-
-                const pValue = cohort1Data[cohort2];
-                if (pValue !== undefined && pValue !== null) {
+        for (let i = 0; i < cohortNames.length; i++) {
+            for (let j = 0; j < cohortNames.length; j++) {
+                if (i !== j) {
                     rows.push({
-                        cohort1,
-                        cohort2,
-                        pValue: this.formatNumber(pValue)
+                        cohort1: cohortNames[i],
+                        cohort2: cohortNames[j],
+                        pValue: matrix[i][j] != null ? String(matrix[i][j]) : '-'
                     });
                 }
-            });
-        });
-
-        if (rows.length > 0) {
-            tables.push({
-                cohortNames,
-                rows
-            });
+            }
         }
 
-        console.log("Final log rank tables:", tables);
-        return tables;
+        return [{
+            cohortNames,
+            matrix,
+            rows
+        }];
     }
+
+    getPValueColor(value: number | null): string {
+        if (value === null) return 'transparent';
+
+        // invertimos: p pequeño = rojo fuerte
+        const intensity = 1 - value;
+
+        const r = 255;
+        const g = Math.floor(140 * (1 - intensity));
+        const b = 0;
+
+        return `rgba(${r}, ${g}, ${b}, ${0.15 + intensity * 0.85})`;
+    }
+
 
     formatNumber(value: unknown): string {
         if (value === null || value === undefined) {
@@ -685,8 +879,180 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderGlm(resultData: any): void {
-        void resultData;
-        this.setPlaceholderView(ALGORITHMS.GLM);
+        console.log("Rendering GLM with data:", resultData);
+        this.glmTable = this.buildGlmTable(resultData);
+        console.log("GLM table built:", this.glmTable);
+
+        if (!this.glmTable || this.glmTable.cohorts.length === 0) {
+            this.setPlaceholderView(ALGORITHMS.GLM, 'No GLM data was returned for this analysis.');
+            return;
+        }
+
+        // Build charts
+        this.buildGlmCharts();
+
+        this.currentView = 'glm';
+    }
+
+    buildGlmTable(resultData: any): GlmDisplayTable | null {
+        const cohorts = resultData?.cohorts;
+        const details = resultData?.details;
+
+        if (!cohorts || typeof cohorts !== 'object') {
+            console.log("No cohorts data found");
+            return null;
+        }
+
+        const glmCohorts: GlmCohortModel[] = [];
+
+        Object.entries(cohorts).forEach(([cohortName, cohortData]: [string, any]) => {
+            if (!cohortData || typeof cohortData !== 'object') {
+                return;
+            }
+
+            const coefficients = cohortData.coefficients || {};
+            const betaObj = coefficients.beta || {};
+            const seObj = coefficients.std_error || {};
+            const zObj = coefficients.z_value || {};
+            const pObj = coefficients.p_value || {};
+
+            const predictorNames = Object.keys(betaObj).filter(k => k !== 'Intercept');
+            const coefficientRows: GlmCoefficient[] = predictorNames.map(predictor => ({
+                predictor,
+                beta: Number(betaObj[predictor] ?? 0),
+                stdError: Number(seObj[predictor] ?? 0),
+                zValue: Number(zObj[predictor] ?? 0),
+                pValue: Number(pObj[predictor] ?? 0)
+            }));
+
+            const cohortDetails = cohortData.details || {};
+            glmCohorts.push({
+                cohortName,
+                coefficients: coefficientRows,
+                details: {
+                    converged: Boolean(cohortDetails.converged),
+                    dispersion: Number(cohortDetails.dispersion ?? 0),
+                    isDispersionEstimated: Boolean(cohortDetails.is_dispersion_estimated),
+                    numObservations: Number(cohortDetails.num_observations ?? 0),
+                    numVariables: Number(cohortDetails.num_variables ?? 0),
+                    nullDeviance: Number(cohortDetails.null_deviance ?? 0),
+                    deviance: Number(cohortDetails.deviance ?? 0)
+                }
+            });
+        });
+
+        return {
+            cohorts: glmCohorts,
+            globalDetails: {
+                iterations: Number(details?.iterations ?? 0),
+                allConverged: Boolean(details?.all_converged)
+            }
+        };
+    }
+
+    buildGlmCharts(): void {
+        if (!this.glmTable || this.glmTable.cohorts.length === 0) {
+            return;
+        }
+
+        // Build coefficient (forest plot) chart
+        this.buildGlmCoefficientChart();
+        // Build deviance reduction chart
+        this.buildGlmDevianceChart();
+    }
+
+    buildGlmCoefficientChart(): void {
+        if (!this.glmTable) return;
+
+        const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
+
+        // Get unique predictors from all cohorts
+        const predictorSet = new Set<string>();
+        this.glmTable.cohorts.forEach(cohort => {
+            cohort.coefficients.forEach(coef => {
+                predictorSet.add(coef.predictor);
+            });
+        });
+
+        const predictors = Array.from(predictorSet).sort();
+        const datasets: ChartData<'bar'>['datasets'] = [];
+
+        this.glmTable.cohorts.forEach((cohort, cohortIndex) => {
+            const color = colors[cohortIndex % colors.length];
+            const data: number[] = [];
+
+            predictors.forEach(predictor => {
+                const coef = cohort.coefficients.find(c => c.predictor === predictor);
+                if (coef) {
+                    data.push(coef.beta);
+                } else {
+                    data.push(0);
+                }
+            });
+
+            datasets.push({
+                label: this.formatLabel(cohort.cohortName),
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '80',
+                borderWidth: 2
+            });
+        });
+
+        this.glmCoefficientChartData = {
+            labels: predictors,
+            datasets: datasets
+        };
+
+        this.glmCoefficientChartOptions = {
+            ...this.glmCoefficientChartOptions,
+            plugins: {
+                ...this.glmCoefficientChartOptions?.plugins,
+                title: {
+                    display: true,
+                    text: 'Coefficients by Cohort (95% CI) - Forest Plot'
+                }
+            }
+        };
+    }
+
+    buildGlmDevianceChart(): void {
+        if (!this.glmTable) return;
+
+        const cohortLabels = this.glmTable.cohorts.map(c => this.formatLabel(c.cohortName));
+        const nullDeviances = this.glmTable.cohorts.map(c => c.details.nullDeviance);
+        const modelDeviances = this.glmTable.cohorts.map(c => c.details.deviance);
+
+        this.glmDevianceChartData = {
+            labels: cohortLabels,
+            datasets: [
+                {
+                    label: 'Null Deviance',
+                    data: nullDeviances,
+                    backgroundColor: '#bbbbbb',
+                    borderColor: '#999999',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Model Deviance',
+                    data: modelDeviances,
+                    backgroundColor: '#888888',
+                    borderColor: '#555555',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        this.glmDevianceChartOptions = {
+            ...this.glmDevianceChartOptions,
+            plugins: {
+                ...this.glmDevianceChartOptions?.plugins,
+                title: {
+                    display: true,
+                    text: 'Deviance Reduction'
+                }
+            }
+        };
     }
 
     renderTimeDelta(resultData: any): void {
@@ -715,6 +1081,7 @@ export class AnalysisResultsComponent implements OnInit {
         this.tTestTables = [];
         this.kaplanMeierTables = [];
         this.logRankTables = [];
+        this.glmTable = null;
         const algorithmLabel = this.formatLabel(methodName || 'This algorithm');
         this.underConstructionMessage = message || `${algorithmLabel} is under construction.`;
     }
@@ -802,10 +1169,8 @@ export class AnalysisResultsComponent implements OnInit {
 
     buildCrosstabTables(resultData: any): CrosstabDisplayTable[] {
         const rowHeaders = this.parseRowVariables(this.selectedAlgorithm);
-        console.log("rowHeaders:", rowHeaders);
 
         const resultEntries = Object.entries(resultData || {});
-        console.log("resultEntries:", resultEntries);
 
         const tables: CrosstabDisplayTable[] = [];
 
@@ -817,14 +1182,11 @@ export class AnalysisResultsComponent implements OnInit {
             if (contingencyTable.length === 0) {
                 return;
             }
-            console.log("contingencyTable:", contingencyTable);
 
             const resolvedRowHeaders = rowHeaders.length > 0 ? rowHeaders : this.detectRowHeaders(contingencyTable);
             const valueHeaders = this.getOrderedValueColumns(contingencyTable, resolvedRowHeaders);
             const columnVariable = cohortData?.col_var || this.selectedAlgorithm?.col_var || '';
-            console.log("resolvedRowHeaders:", resolvedRowHeaders);
-            console.log("valueHeaders:", valueHeaders);
-            console.log("columnVariable:", columnVariable);
+
             tables.push({
                 cohortName,
                 rowHeaders: resolvedRowHeaders,

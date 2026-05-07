@@ -143,7 +143,7 @@
 
                         <!-- Execute query in V6-->
                         <button mat-button class="execute-button" *ngIf="element.status === 3"
-                            (click)="executeQuery(element.id)" [disabled]="loading">
+                            (click)="executeQuery(element)" [disabled]="loading">
                             <span class="cohort-text">
                                 {{'pages.data-analysis.cohort-selection.execute_query' | translate}}
                                 <mat-icon class="cohort-icon">chevron_right</mat-icon>

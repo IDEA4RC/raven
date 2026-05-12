@@ -140,6 +140,18 @@ interface TaskStatistics {
     name?: string;
 }
 
+interface Table1Row {
+    characteristic: string;
+    isSub: boolean;
+    [cohortName: string]: string | boolean;
+}
+
+interface Table1DisplayTable {
+    rows: Table1Row[];
+    cohortNames: string[];
+    cohortCounts: { [cohort: string]: number };
+}
+
 @Component({
     selector: 'app-analysis-results',
     templateUrl: './analysis-results.component.html',
@@ -155,7 +167,7 @@ export class AnalysisResultsComponent implements OnInit {
     row_variables_text = '';
     column_variable_text = '';
 
-    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'placeholder' = 'empty';
+    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'table1' | 'placeholder' = 'empty';
     underConstructionMessage = 'Under construction';
     rawTaskResult: any = null;
     crosstabTables: CrosstabDisplayTable[] = [];
@@ -163,6 +175,7 @@ export class AnalysisResultsComponent implements OnInit {
     kaplanMeierTables: KaplanMeierDisplayTable[] = [];
     logRankTables: LogRankDisplayTable[] = [];
     glmTable: GlmDisplayTable | null = null;
+    table1Table: Table1DisplayTable | null = null;
 
     // GLM Charts
     glmCoefficientChartData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -324,6 +337,9 @@ export class AnalysisResultsComponent implements OnInit {
             this.initializeSelectedAlgorithm(this.selectedAlgorithm);
 
             if (this.selectedAlgorithm.task_id) {
+                console.log("selectedAlgorithm: ", this.selectedAlgorithm)
+                console.log("Fetching results for task ID:", this.selectedAlgorithm.task_id);
+
                 this.fetchTaskResult(this.selectedAlgorithm.task_id);
                 this.getTaskStatistics(this.selectedAlgorithm.task_id);
                 return;
@@ -378,6 +394,9 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     renderSelectedAlgorithm(resultData: any): void {
+        console.log("resultdata: ", resultData);
+        console.log("this.name_algorithm: ", this.name_algorithm);
+
         switch (this.name_algorithm as AlgorithmMethod) {
             case ALGORITHMS.CROSSTABULATION:
                 this.renderCrosstabulation(resultData);
@@ -1060,9 +1079,523 @@ export class AnalysisResultsComponent implements OnInit {
         this.setPlaceholderView(ALGORITHMS.TIME_DELTA);
     }
 
+    /* renderTable1(resultData: any): void {
+         console.log("Rendering Table 1 with data:", resultData);
+ 
+         // 🔹 Obtener el objeto raíz (eager_sutherland dinámico)
+         const firstKey = Object.keys(resultData)[0];
+         const result = resultData[firstKey];
+ 
+         if (!result || typeof result !== 'object') {
+             this.setPlaceholderView(ALGORITHMS.TABLE1, 'No Table 1 data was returned.');
+             return;
+         }
+ 
+         // 🔹 Cohorts reales
+         const cohortNames = Object.keys(result.num_rows_per_node || {});
+         const cohortCounts = result.num_rows_per_node || {};
+ 
+         // 🔹 Mapear partials → cohorts (UKE, INT, etc.)
+         const cohortData: any = {};
+         (result.partials || []).forEach((partial: any) => {
+             const key = Object.keys(partial.num_rows_per_node || {})[0];
+             if (key) {
+                 cohortData[key] = partial;
+             }
+         });
+ 
+         const rows: Table1Row[] = [];
+ 
+         // 🔹 Variables numéricas
+         const varsNum = Object.keys(cohortData[cohortNames[0]]?.numeric || {});
+ 
+         varsNum.forEach(varNum => {
+             // Header
+             const headerRow: Table1Row = { characteristic: this.formatLabel(varNum), isSub: false };
+             cohortNames.forEach(cohort => headerRow[cohort] = '');
+             rows.push(headerRow);
+ 
+             // Mean (std)
+             const meanStd = cohortNames.map(cohort => {
+                 const stats = cohortData[cohort]?.numeric?.[varNum];
+                 if (!stats || isNaN(stats.mean)) return 'NaN (NaN)';
+                 return `${(Math.round(stats.mean * 10) / 10)} (${(Math.round(stats.std * 10) / 10)})`;
+             });
+ 
+             rows.push({
+                 characteristic: 'Mean (std)',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map((c, i) => [c, meanStd[i]]))
+             });
+ 
+             // Min
+             rows.push({
+                 characteristic: 'Min',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = cohortData[c]?.numeric?.[varNum]?.min;
+                     return [c, isNaN(val) ? 'NaN' : Math.round(val).toString()];
+                 }))
+             });
+ 
+             // Max
+             rows.push({
+                 characteristic: 'Max',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = cohortData[c]?.numeric?.[varNum]?.max;
+                     return [c, isNaN(val) ? 'NaN' : Math.round(val).toString()];
+                 }))
+             });
+ 
+             // Missing
+             rows.push({
+                 characteristic: 'Missing',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = cohortData[c]?.numeric?.[varNum]?.missing;
+                     return [c, isNaN(val) ? 'NaN' : Math.round(val).toString()];
+                 }))
+             });
+         });
+ 
+         // 🔹 Variables categóricas (desde global, no partials)
+         const varsCat = Object.keys(result.counts_unique_values || {});
+ 
+         varsCat.forEach(varCat => {
+             const headerRow: Table1Row = { characteristic: this.formatLabel(varCat), isSub: false };
+             cohortNames.forEach(cohort => headerRow[cohort] = '');
+             rows.push(headerRow);
+ 
+             // 🔹 Todas las keys posibles
+             const allKeys = new Set<string>();
+             cohortNames.forEach(cohort => {
+                 const counts = cohortData[cohort]?.counts_unique_values?.[varCat] || {};
+                 Object.keys(counts).forEach(k => allKeys.add(k));
+             });
+ 
+             const keys = Array.from(allKeys).sort();
+             const missingValues = ['N/A', 'N/A2'];
+ 
+             // 🔹 Valores normales
+             keys.forEach(key => {
+                 if (!missingValues.includes(key)) {
+                     rows.push({
+                         characteristic: key.charAt(0).toUpperCase() + key.slice(1),
+                         isSub: true,
+                         ...Object.fromEntries(cohortNames.map(c => {
+                             const counts = cohortData[c]?.counts_unique_values?.[varCat] || {};
+                             const count = counts[key] || 0;
+                             const total = Object.values(counts).reduce((a: number, b: any) => a + b, 0);
+                             const pct = total > 0 ? (count / total * 100) : 0;
+                             return [c, `${count} (${pct.toFixed(1)}%)`];
+                         }))
+                     });
+                 }
+             });
+ 
+             // 🔹 Missing
+             rows.push({
+                 characteristic: 'Missing',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const counts = cohortData[c]?.counts_unique_values?.[varCat] || {};
+                     const total = Object.values(counts).reduce((a: number, b: any) => a + b, 0);
+                     const missingCount = Object.keys(counts)
+                         .filter(k => missingValues.includes(k))
+                         .reduce((sum, k) => sum + (counts[k] || 0), 0);
+                     const pct = total > 0 ? (missingCount / total * 100) : 0;
+                     return [c, `${missingCount} (${pct.toFixed(1)}%)`];
+                 }))
+             });
+         });
+ 
+         // 🔹 Asignación final
+         this.table1Table = {
+             rows,
+             cohortNames,
+             cohortCounts
+         };
+ 
+         this.currentView = 'table1';
+ 
+         console.log("Table1 built:", this.table1Table);
+     }*/
+
+    /* renderTable1(resultData: any): void {
+         console.log("Rendering Table 1 with data:", resultData);
+ 
+         const firstKey = Object.keys(resultData)[0];
+         const rawResult = resultData[firstKey];
+ 
+         if (!rawResult) {
+             this.setPlaceholderView(ALGORITHMS.TABLE1, 'No data');
+             return;
+         }
+ 
+         // 🔹 🔥 NORMALIZACIÓN CLAVE
+         const result = this.normalizeResult(rawResult);
+ 
+         const cohortNames = Object.keys(result);
+         const nCohorts = cohortNames.length;
+ 
+         const rows: Table1Row[] = [];
+ 
+         const varsNum = Object.keys(result[cohortNames[0]]?.numeric || {});
+         const varsCat = Object.keys(result[cohortNames[0]]?.counts_unique_values || {});
+ 
+         // =====================
+         // NUMERIC
+         // =====================
+         varsNum.forEach(varNum => {
+             rows.push({
+                 characteristic: this.formatLabel(varNum),
+                 isSub: false,
+                 ...Object.fromEntries(cohortNames.map(c => [c, '']))
+             });
+ 
+             // Mean (std)
+             rows.push({
+                 characteristic: 'Mean (std)',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const stats = result[c].numeric[varNum];
+                     if (!stats || isNaN(stats.mean)) return [c, 'NaN (NaN)'];
+                     return [c, `${stats.mean.toFixed(1)} (${stats.std.toFixed(1)})`];
+                 }))
+             });
+ 
+             // Min
+             rows.push({
+                 characteristic: 'Min',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = result[c].numeric[varNum]?.min;
+                     return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                 }))
+             });
+ 
+             // Max
+             rows.push({
+                 characteristic: 'Max',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = result[c].numeric[varNum]?.max;
+                     return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                 }))
+             });
+ 
+             // Missing
+             rows.push({
+                 characteristic: 'Missing',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map(c => {
+                     const val = result[c].numeric[varNum]?.missing;
+                     return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                 }))
+             });
+         });
+ 
+         // =====================
+         // CATEGORICAL
+         // =====================
+         const missingValues = ['N/A', 'N/A2'];
+ 
+         varsCat.forEach(varCat => {
+             rows.push({
+                 characteristic: this.formatLabel(varCat),
+                 isSub: false,
+                 ...Object.fromEntries(cohortNames.map(c => [c, '']))
+             });
+ 
+             const allKeys = new Set<string>();
+ 
+             cohortNames.forEach(c => {
+                 Object.keys(result[c].counts_unique_values[varCat] || {})
+                     .forEach(k => allKeys.add(k));
+             });
+ 
+             const keys = Array.from(allKeys).sort();
+ 
+             // totals
+             const totals = cohortNames.map(c =>
+                 Object.values(result[c].counts_unique_values[varCat] || {})
+                     .reduce((a: number, b: any) => a + b, 0)
+             );
+ 
+             // normales
+             keys.forEach(key => {
+                 if (!missingValues.includes(key)) {
+                     rows.push({
+                         characteristic: key.charAt(0).toUpperCase() + key.slice(1),
+                         isSub: true,
+                         ...Object.fromEntries(cohortNames.map((c, i) => {
+                             const count = result[c].counts_unique_values[varCat]?.[key] || 0;
+                             const pct = totals[i] > 0 ? (count / totals[i] * 100) : 0;
+                             return [c, `${count} (${pct.toFixed(1)}%)`];
+                         }))
+                     });
+                 }
+             });
+ 
+             // missing
+             rows.push({
+                 characteristic: 'Missing',
+                 isSub: true,
+                 ...Object.fromEntries(cohortNames.map((c, i) => {
+                     const counts = result[c].counts_unique_values[varCat] || {};
+                     const missingCount = Object.keys(counts)
+                         .filter(k => missingValues.includes(k))
+                         .reduce((sum, k) => sum + counts[k], 0);
+ 
+                     const pct = totals[i] > 0 ? (missingCount / totals[i] * 100) : 0;
+ 
+                     return [c, `${missingCount} (${pct.toFixed(1)}%)`];
+                 }))
+             });
+         });
+ 
+         // 🔹 headers
+         const cohortCounts = Object.fromEntries(
+             cohortNames.map(c => [c, result[c].num_rows])
+         );
+ 
+         this.table1Table = {
+             rows,
+             cohortNames,
+             cohortCounts
+         };
+ 
+         this.currentView = 'table1';
+ 
+         console.log("FINAL TABLE:", this.table1Table);
+     }*/
+
     renderTable1(resultData: any): void {
-        void resultData;
-        this.setPlaceholderView(ALGORITHMS.TABLE1);
+        const firstKey = Object.keys(resultData)[0];
+        console.log("firstKey:", firstKey);
+
+        const rawResult = resultData[firstKey];
+        console.log("rawResult: ", rawResult);
+
+        if (!rawResult) {
+            this.setPlaceholderView(ALGORITHMS.TABLE1, 'No data');
+            return;
+        }
+
+        const result = this.normalizeResult(rawResult);
+
+        const cohortNames = Object.keys(result);
+        const nCohorts = cohortNames.length;
+
+        const rows: Table1Row[] = [];
+
+        const varsNum = Object.keys(result[cohortNames[0]]?.numeric || {});
+        const varsCat = Object.keys(result[cohortNames[0]]?.counts_unique_values || {});
+
+        const missingValues = ['N/A', 'N/A2'];
+
+        // =========================
+        // NUMERIC
+        // =========================
+        varsNum.forEach(varNum => {
+
+            // HEADER (bold row)
+            rows.push({
+                characteristic: this.formatLabel(varNum),
+                isSub: false,
+                ...Object.fromEntries(cohortNames.map(c => [c, '']))
+            });
+
+            // Mean (std)
+            rows.push({
+                characteristic: 'Mean (std)',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const stats = result[c].numeric[varNum];
+
+                    const mean =
+                        stats?.mean ??
+                        this.computeMean(stats);
+
+                    if (mean === null || isNaN(mean)) {
+                        return [c, 'NaN (NaN)'];
+                    }
+
+                    const std = stats?.std;
+
+                    if (std === undefined || std === null) {
+                        return [c, `${mean.toFixed(1)}`];
+                    }
+
+                    return [c, `${mean.toFixed(1)} (${std.toFixed(1)})`];
+                }))
+            });
+
+            // Min
+            rows.push({
+                characteristic: 'Min',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].numeric[varNum]?.min;
+                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                }))
+            });
+
+            // Max
+            rows.push({
+                characteristic: 'Max',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].numeric[varNum]?.max;
+                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                }))
+            });
+
+            // Missing
+            rows.push({
+                characteristic: 'Missing',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].numeric[varNum]?.missing;
+                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                }))
+            });
+        });
+
+        // =========================
+        // CATEGORICAL
+        // =========================
+        varsCat.forEach(varCat => {
+
+            // HEADER
+            rows.push({
+                characteristic: this.formatLabel(varCat),
+                isSub: false,
+                ...Object.fromEntries(cohortNames.map(c => [c, '']))
+            });
+
+            // claves únicas (como Python)
+            const allKeys = new Set<string>();
+            cohortNames.forEach(c => {
+                Object.keys(result[c].counts_unique_values[varCat] || {})
+                    .forEach(k => allKeys.add(k));
+            });
+
+            const keys = Array.from(allKeys).sort();
+
+            // totals
+            const totals = cohortNames.map(c =>
+                Object.values(result[c].counts_unique_values[varCat] || {})
+                    .reduce((a: number, b: any) => a + b, 0)
+            );
+
+            // normales
+            keys.forEach(key => {
+                if (!missingValues.includes(key)) {
+                    rows.push({
+                        characteristic: key.charAt(0).toUpperCase() + key.slice(1),
+                        isSub: true,
+                        ...Object.fromEntries(cohortNames.map((c, i) => {
+                            const count = result[c].counts_unique_values[varCat]?.[key] || 0;
+                            const pct = totals[i] > 0 ? (count / totals[i] * 100) : 0;
+                            return [c, `${count} (${pct.toFixed(1)}%)`];
+                        }))
+                    });
+                }
+            });
+
+            // missing (igual que Python)
+            rows.push({
+                characteristic: 'Missing',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map((c, i) => {
+                    const counts = result[c].counts_unique_values[varCat] || {};
+
+                    const missingCount = Object.keys(counts)
+                        .filter(k => missingValues.includes(k))
+                        .reduce((sum, k) => sum + counts[k], 0);
+
+                    const pct = totals[i] > 0 ? (missingCount / totals[i] * 100) : 0;
+
+                    return [c, `${missingCount} (${pct.toFixed(1)}%)`];
+                }))
+            });
+        });
+
+        // headers con n dinámico
+        const cohortCounts = Object.fromEntries(
+            cohortNames.map(c => [c, result[c].num_rows])
+        );
+
+        this.table1Table = {
+            rows,
+            cohortNames,
+            cohortCounts
+        };
+
+        this.currentView = 'table1';
+    }
+
+    computeMean(stats: any): number | null {
+        if (!stats) return null;
+
+        const sum = stats.sum;
+        const count = stats.count;
+
+        if (typeof sum === 'number' && typeof count === 'number' && count > 0) {
+            return sum / count;
+        }
+
+        return null;
+    }
+
+    normalizeResult(rawResult: any): any {
+        const result: any = {};
+
+        const orgMap: Record<string, string> = {
+            '5': 'UKE',
+            '4': 'INT',
+            '7': 'FNPS',
+            '9': 'OUS',
+            '10': 'MSCI',
+            '6': 'CLB'
+        };
+
+
+        (rawResult.partials || []).forEach((partial: any) => {
+            const orgId = String(partial.organization_id);
+
+            if (!orgId) {
+                console.warn('No organization_id found in partial', partial);
+                return;
+            }
+
+            const cohort = orgMap[orgId] || `ORG_${orgId}`;
+
+            let numRows = 0;
+            const rawNumRows = partial.num_rows_per_node;
+
+            if (typeof rawNumRows === 'number') {
+                numRows = rawNumRows;
+            } else if (typeof rawNumRows === 'object' && rawNumRows !== null) {
+                const values = Object.values(rawNumRows);
+                numRows = values.length > 0 ? Number(values[0]) : 0;
+            } else {
+                console.warn('Unexpected num_rows_per_node format', rawNumRows);
+            }
+
+            result[cohort] = {
+                numeric: partial.numeric || {},
+                counts_unique_values: partial.counts_unique_values || {},
+                num_rows: numRows
+            };
+        });
+
+        console.log("Normalized result:", result);
+
+        return result;
+
     }
 
     renderBasicArithmetic(resultData: any): void {

@@ -9,7 +9,8 @@
 
       <!-- Execution Info -->
       <div class="execution-info">
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}: {{ executionDuration }}</span>
+        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}: {{ executionDuration
+          }}</span>
         <!--<span class="chip" *ngIf="taskStatistics?.initOrg?.id !== undefined">
           {{ 'pages.data-analysis.analysis-results.initiating-organisation' | translate }}: {{ taskStatistics?.initOrg?.id }}
         </span>
@@ -265,12 +266,13 @@
                 <div style="margin-bottom: 40px;">
                   <h3>1. Coefficients by Cohort (Forest Plot)</h3>
                   <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions" 
+                    <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions"
                       type="bar"></canvas>
                   </div>
                   <p class="chart-description">
-                    <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor. 
-                    The horizontal lines show 95% confidence intervals. Effects crossing the vertical dashed line at 0 are uncertain.
+                    <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor.
+                    The horizontal lines show 95% confidence intervals. Effects crossing the vertical dashed line at 0
+                    are uncertain.
                   </p>
                 </div>
 
@@ -278,11 +280,12 @@
                 <div style="margin-bottom: 40px;">
                   <h3>2. Deviance Reduction</h3>
                   <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions" 
+                    <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions"
                       type="bar"></canvas>
                   </div>
                   <p class="chart-description">
-                    <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with predictors). 
+                    <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with
+                    predictors).
                     A larger drop indicates that predictors help explain the outcome.
                   </p>
                 </div>
@@ -353,6 +356,31 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+
+            <div *ngSwitchCase="'table1'">
+              <div *ngIf="table1Table" class="table-container">
+                <h2>Table 1: Summary Statistics</h2>
+
+                <table class="statistics-table_1">
+                  <thead>
+                    <tr>
+                      <th>Characteristic</th>
+                      <th *ngFor="let cohort of table1Table.cohortNames">{{ formatLabel(cohort) }} (n={{
+                        table1Table.cohortCounts[cohort] }})</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of table1Table.rows" [class.header-row]="!row.isSub"
+                      [class.sub-row]="row.isSub">
+                      <td class="characteristic-cell">
+                        {{ row.characteristic }}
+                      </td>
+                      <td *ngFor="let cohort of table1Table.cohortNames">{{ row[cohort] }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 

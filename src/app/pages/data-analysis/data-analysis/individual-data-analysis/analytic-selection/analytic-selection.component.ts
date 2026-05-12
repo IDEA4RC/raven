@@ -566,7 +566,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     let body = {
       cohort_ids: cohortsIds
     }
-    this.dataAnalysisService.getAlgorithmsList(body).subscribe({
+    this.dataAnalysisService.getAlgorithmsListPostService(body).subscribe({
       next: (result) => {
         console.log("result getAlgorithmsList: ", result);
         this.algorithmsList = result
@@ -579,7 +579,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  checkAlgoritmsStatus() {
+  /*checkAlgoritmsStatus() {
     clearInterval(this.pollingInterval);
     // Limpiar cualquier polling previo
     if (this.pollingInterval) {
@@ -623,9 +623,9 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
              }
            }
          });*/
-      });
+      /*});
     }, this.pollingFrequency);
-  }
+  }*/
 
 
   mapDatatype(dtype: string): string {

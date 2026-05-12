@@ -300,7 +300,7 @@ export class DataAnalysisService {
   createTable1Request(data: any) {
     console.log("createTTable1Request ", data);
 
-    const url = `/raven-api/v1/data-preparation/create_table_1`;
+    const url = `/raven-api/v1/data-preparation/create_table_one`;
     return this.postRequest(url, data)
   }
 
@@ -349,7 +349,7 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
-  getAlgorithmsList(data: any) {
+  getAlgorithmsListPostService(data: any) {
     const url = `/raven-api/v1/algorithms/by_cohorts_list`;
     return this.postRequest(url, data)
   }

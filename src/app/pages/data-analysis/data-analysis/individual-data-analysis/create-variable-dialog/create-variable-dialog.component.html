@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{'pages.data-analysis.create_variables.new_variable'|translate}}</h2>
 
-<form [formGroup]="form">
-
+<form [formGroup]="form" (ngSubmit)="submit()">
+  
   <mat-dialog-content class="dialog-content">
 
     <table class="form-table">
@@ -70,31 +70,45 @@
         </td>
       </tr>
 
-      <tr *ngIf="isToBoolean()">
-        <td><label>True values (that evaluate to true)</label></td>
+      <tr *ngIf="isToBoolean() && availableUniqueValues.length > 0">
+        <td><label>Values that evaluate to true</label></td>
         <td>
-          <div class="true-values-container">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Add true value</mat-label>
-              <input matInput formControlName="trueValueInput" (keyup.enter)="addTrueValue()">
-            </mat-form-field>
-            <button mat-icon-button color="primary" (click)="addTrueValue()" type="button">
-              <mat-icon>add</mat-icon>
-            </button>
+          <div class="unique-values-selector">
+            <p class="helper-text">Select which values should be treated as TRUE (click to toggle):</p>
+            <div class="values-grid">
+              <mat-chip-set aria-label="Unique values selection">
+                <mat-chip 
+                  *ngFor="let item of availableUniqueValues"
+                  [highlighted]="isValueSelected(item.value)"
+                  (click)="toggleUniqueValue(item.value)"
+                  class="value-chip">
+                  {{ item.value }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+            <div class="selected-values-summary" *ngIf="trueValues.length > 0">
+              <p><strong>Selected values ({{ trueValues.length }}):</strong></p>
+              <div class="selected-chips">
+                <mat-chip-set aria-label="Selected true values">
+                  <mat-chip 
+                    *ngFor="let value of trueValues" 
+                    removable 
+                    (removed)="removeTrueValue(value)">
+                    {{value}}
+                    <button matChipRemove [attr.aria-label]="'remove ' + value">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
           </div>
-          <div class="chips-container">
-            <mat-chip-set aria-label="True values selection">
-              <mat-chip 
-                *ngFor="let value of trueValues" 
-                removable 
-                (removed)="removeTrueValue(value)">
-                {{value}}
-                <button matChipRemove [attr.aria-label]="'remove ' + value">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </mat-chip>
-            </mat-chip-set>
-          </div>
+        </td>
+      </tr>
+
+      <tr *ngIf="isToBoolean() && availableUniqueValues.length === 0">
+        <td colspan="2">
+          <p class="info-text">Select a categorical variable to see available values</p>
         </td>
       </tr>
 

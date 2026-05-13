@@ -20,3 +20,74 @@
 .mat-form-field {
   min-height: 56px; /* Valor base: 56px para inputs normales, 72px para multiline */
 }
+
+.unique-values-selector {
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.helper-text {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.values-grid {
+  margin-bottom: 16px;
+}
+
+.value-chip {
+  margin: 4px !important;
+  cursor: pointer !important;
+  user-select: none;
+  background-color: #e0e0e0 !important;
+  transition: all 0.2s ease;
+}
+
+.value-chip:hover {
+  background-color: #d0d0d0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.value-chip[highlighted] {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.selected-values-summary {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.selected-values-summary p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.info-text {
+  color: #999;
+  font-size: 13px;
+  font-style: italic;
+  margin: 8px 0;
+}
+
+.true-values-container {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.chips-container {
+  margin-top: 8px;
+}

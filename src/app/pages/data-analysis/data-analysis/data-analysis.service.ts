@@ -152,9 +152,6 @@ export class DataAnalysisService {
   }
 
   getStatusDataframe(data: any) {
-    console.log("GET getStatusDataframe");
-    console.log(data);
-
     const url = `/raven-api/v1/data-preparation/create_summary`;
     return this.postRequest(url, data)
   }
@@ -283,58 +280,42 @@ export class DataAnalysisService {
   }
 
   createCrosstabRequest(data: any) {
-    console.log("createCrosstabRequest ", data);
-
     const url = `/raven-api/v1/data-preparation/create_crosstab`;
     return this.postRequest(url, data)
   }
 
 
   createT_tableRequest(data: any) {
-    console.log("createT_tableRequest ", data);
-
     const url = `/raven-api/v1/data-preparation/create_t_test`;
     return this.postRequest(url, data)
   }
 
   createTable1Request(data: any) {
-    console.log("createTTable1Request ", data);
-
     const url = `/raven-api/v1/data-preparation/create_table_one`;
     return this.postRequest(url, data)
   }
 
   createBasicArithmeticRequest(data: any) {
-    console.log("createBasicArithmeticRequest ", data);
-
     const url = `/raven-api/v1/data-preparation/create_basic_arithmetic`;
     return this.postRequest(url, data)
   }
 
   createMergeVariables(data: any) {
-    console.log("createMergeVariables ", data);
-
     const url = `/raven-api/v1/data-preparation/create_merge_variables`;
     return this.postRequest(url, data)
   }
 
   createTimeDeltaVariables(data: any) {
-    console.log("createTimeDeltaVariables ", data);
-
     const url = `/raven-api/v1/data-preparation/create_timedelta`;
     return this.postRequest(url, data)
   }
 
   createOneHotEncoding(data: any) {
-    console.log("createOneHotEncoding ", data);
-
     const url = `/raven-api/v1/data-preparation/create_one_hot_encoding`;
     return this.postRequest(url, data)
   }
 
   createToBoolean(data: any) {
-    console.log("createToBoolean ", data);
-
     const url = `/raven-api/v1/data-preparation/create_to_boolean`;
     return this.postRequest(url, data)
   }
@@ -346,6 +327,11 @@ export class DataAnalysisService {
 
   createGLM(data: any) {
     const url = `/raven-api/v1/data-preparation/create_glm`;
+    return this.postRequest(url, data)
+  }
+
+  createCoxPH(data: any) {
+    const url = `/raven-api/v1/data-preparation/create_coxph`;
     return this.postRequest(url, data)
   }
 

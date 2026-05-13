@@ -25,6 +25,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   private readonly METHOD_TABLE1 = 'table1';
   private readonly METHOD_SUMMARY = 'summary';
   private readonly METHOD_GLM = 'glm';
+  private readonly METHOD_COXPH = 'coxph';
 
   // Variable to store the current workspace ID from the route
   workspaceId: number | undefined;
@@ -73,11 +74,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       label: "GLM",
       info: "The Generalized Linear Model (GLM) fits a linear model to data using a specified link function, allowing analysis of outcomes that are not normally distributed."
     },
-    // {
-    //   value: "coxph",
-    //   label: "CoxPH",
-    //   info: "The Cox Proportional Hazards model estimates the relationship between survival time and explanatory variables, accounting for censored data."
-    // },
+    {
+      value: "coxph",
+      label: "CoxPH",
+      info: "The Cox Proportional Hazards model estimates the relationship between survival time and explanatory variables using censored data."
+    },
     // {
     //   value: "log-rank-test",
     //   label: "Log-rank test",
@@ -100,6 +101,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   selectedPredictors: string[] = [];
   selectedOutcome: string | null = null;
   glmFamilies = ['gaussian', 'binomial', 'poisson', 'survival'];
+
+  // CoxPH selections
+  selectedCoxTimeColumn: string | null = null;
+  selectedCoxOutcomeColumn: string | null = null;
+  selectedCoxPredictors: string[] = [];
 
   //TODO get variables
   // Example: load data dynamically (could be from a service)
@@ -352,6 +358,10 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.selectedMethod === this.METHOD_COXPH) {
+      this.createCoxPHRequest();
+      return;
+    }
     console.error('Method not supported yet:', this.selectedMethod);
     this.loading = false;
   }
@@ -555,6 +565,26 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  createCoxPHRequest() {
+    if (!this.selectedCoxTimeColumn || !this.selectedCoxOutcomeColumn || this.selectedCoxPredictors.length === 0) {
+      console.error('Time column, outcome column, and at least one explanatory variable are required for CoxPH');
+      this.loading = false;
+      return;
+    }
+
+    const dataApplication = {
+      ...this.getBaseAlgorithmRequestBody(),
+      time_col: this.selectedCoxTimeColumn,
+      outcome_col: this.selectedCoxOutcomeColumn,
+      expl_vars: this.selectedCoxPredictors
+    };
+
+    this.dataAnalysisService.createCoxPH(dataApplication).subscribe({
+      next: () => this.handleAlgorithmCreationSuccess(),
+      error: (err) => this.handleAlgorithmCreationError(err)
+    });
+  }
+
   goBack() {
     this.previousStep.emit();
   }
@@ -689,7 +719,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  startPollingTaskStatus(taskId: number, task_status: string, index: number) {
+  /*startPollingTaskStatus(taskId: number, task_status: string, index: number) {
 
     this.dataAnalysisService.getTaskStatus(taskId).subscribe({
       next: (res: { status: string }) => {
@@ -771,7 +801,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     });
 
 
-  }
+  }*/
 
   fetchTaskResult(taskId: number) {
     this.dataAnalysisService.getTaskResult(taskId).subscribe({
@@ -784,14 +814,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
         let resultGlobal = result.result;
         console.log("Result global : ", resultGlobal);
-
-
-
-
-
-
-
-
       },
       error: (err) => {
         console.error("Error obteniendo el resultado de la tarea:", err);
@@ -814,7 +836,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
               return of({ status: 'error' });
             })
           )),
-          takeWhile(res => res.status !== 'completed' && res.status !== 'crashed', true),
+          takeWhile(res => res.status !== 'completed' && res.status !== 'crashed' && res.status !== 'killed by user', true),
           map(res => ({ res, index }))
         )
         .subscribe(async ({ res, index }) => {

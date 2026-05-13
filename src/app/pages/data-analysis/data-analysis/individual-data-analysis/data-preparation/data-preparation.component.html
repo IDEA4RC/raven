@@ -44,7 +44,8 @@
             <mat-form-field appearance="outline">
               <mat-label class="variables-search-label">{{'pages.data-analysis.data_preparation.select' |
                 translate}}</mat-label>
-              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)" [disabled]="isLoading">
+              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)"
+                [disabled]="isLoading">
                 <mat-option *ngFor="let option of optionsVariables" [value]="option">
                   {{ option.variable_name}}
                 </mat-option>
@@ -71,7 +72,7 @@
                   <div class="loading-overlay">
                     <div class="spinner"></div>
                   </div>
-                  <p>Task status:  {{taskStatus}}</p>
+                  <p>Task status: {{taskStatus}}</p>
                 </div>
               </mat-card-content>
 
@@ -79,23 +80,25 @@
           </mat-card>
         </div>
       </ng-container>
-      <ng-container *ngIf="!isLoading&&isCrashed">
+      <div *ngIf="!isLoading && isCrashed">
         <div class="right-column">
           <mat-card class="inner-card full-height">
             <div class="summary-statistics-header">
               <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.summary_statistics' |
                 translate}}</mat-card-title>
               <mat-card-content>
-                <!-- Error Messages for each Cohort -->
                 <div class="cohort-error-messages">
-                  <div *ngFor="let item of cohortStatusMap | keyvalue" class="error-message-card">
+                  <div *ngFor="let item of cohortStatusList" class="error-message-card">
+
                     <div class="error-header">
                       <mat-icon class="error-icon">error</mat-icon>
                       <h4>{{ item.key }}</h4>
                     </div>
-                    <p class="error-message">{{ item.value.message }}</p>
-                    <p class="error-status" [ngClass]="'status-' + item.value.status">
-                      Status: {{ item.value.status | uppercase }}
+
+                    <p class="error-message">{{ item.message }}</p>
+
+                    <p class="error-status" [ngClass]="'status-' + item.status">
+                      Status: {{ item.status | uppercase }}
                     </p>
                   </div>
                 </div>
@@ -103,7 +106,7 @@
             </div>
           </mat-card>
         </div>
-      </ng-container>
+      </div>
       <ng-container *ngIf="!isLoading&& !isCrashed">
         <div class="right-column">
           <mat-card class="inner-card full-height">
@@ -172,16 +175,13 @@
 
                 <div class="numeric-center-charts" *ngIf="isNumericVariableSelected() && numericCenterCharts.length">
                   <div class="cohort-chart-group" *ngFor="let cohortCharts of numericCenterCharts">
-                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}: {{ cohortCharts.cohort }}</h4>
+                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}: {{
+                      cohortCharts.cohort }}</h4>
                     <div class="chart-grid">
                       <div class="chart-card" *ngFor="let chartData of cohortCharts.charts">
                         <p class="chart-title">{{ chartData.title }}</p>
-                        <apx-chart
-                          [series]="chartData.series"
-                          [chart]="chartData.chart"
-                          [xaxis]="chartData.xaxis"
-                          [plotOptions]="chartData.plotOptions"
-                          [dataLabels]="chartData.dataLabels"
+                        <apx-chart [series]="chartData.series" [chart]="chartData.chart" [xaxis]="chartData.xaxis"
+                          [plotOptions]="chartData.plotOptions" [dataLabels]="chartData.dataLabels"
                           [colors]="chartData.colors">
                         </apx-chart>
                       </div>
@@ -204,7 +204,8 @@
     <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' |
       translate}}</button>
     <!-- Continue button -->
-    <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()" [disabled]="isLoading || isCrashed">
+    <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="goNext()"
+      [disabled]="isLoading || isCrashed">
       {{'pages.data-analysis.cohort-selection.continue' | translate}} </button>
   </mat-card-actions>
 </mat-card>

@@ -276,6 +276,15 @@ background-color: #f1f1f1;
   animation: spin 1s linear infinite;
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* COHORT ERROR MESSAGES */
 .cohort-error-messages {
   display: flex;

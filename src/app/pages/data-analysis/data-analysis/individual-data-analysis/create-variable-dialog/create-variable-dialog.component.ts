@@ -1,11 +1,17 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject, Component, OnInit } from '@angular/core';
+import { HostListener } from '@angular/core';
 
 interface VariableOption {
   variable_name: string;
   variable_id: string;
   datatype: string;
+}
+
+interface UniqueValue {
+  value: string;
+  count: number;
 }
 
 interface OperationOption {
@@ -46,6 +52,8 @@ export class CreateVariableDialogComponent implements OnInit {
   categoricalVariables: VariableOption[] = [];
   dateVariables: VariableOption[] = [];
   trueValues: string[] = [];
+  availableUniqueValues: UniqueValue[] = [];
+  summaryStatistics: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -66,6 +74,7 @@ export class CreateVariableDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.variables = Array.isArray(this.data?.variables) ? this.data.variables : [];
+    this.summaryStatistics = Array.isArray(this.data?.summaryStatistics) ? this.data.summaryStatistics : [];
 
     this.numericVariables = this.variables.filter(variable => {
       const datatype = (variable?.datatype || '').toLowerCase();
@@ -86,6 +95,13 @@ export class CreateVariableDialogComponent implements OnInit {
     // Suscribirse a cambios en la categoría
     this.form.get('category')?.valueChanges.subscribe(() => {
       this.onCategoryChange();
+    });
+
+    // Suscribirse a cambios en column1 para actualizar valores únicos cuando es to_boolean
+    this.form.get('column1')?.valueChanges.subscribe(() => {
+      if (this.isToBoolean()) {
+        this.updateUniqueValuesForToBoolean();
+      }
     });
   }
 
@@ -213,7 +229,7 @@ export class CreateVariableDialogComponent implements OnInit {
     return this.form.get('category')?.value === 'timedelta';
   }
 
-  
+
   isOneHotEncoding(): boolean {
     return this.form.get('category')?.value === 'one_hot_encoding';
   }
@@ -244,6 +260,50 @@ export class CreateVariableDialogComponent implements OnInit {
     if (index >= 0) {
       this.trueValues.splice(index, 1);
     }
+  }
+
+  /**
+   * Actualiza la lista de valores únicos disponibles para la variable seleccionada en to_boolean
+   */
+  updateUniqueValuesForToBoolean(): void {
+    this.availableUniqueValues = [];
+    const selectedVariableId = this.form.get('column1')?.value;
+ 
+    if (!selectedVariableId || !this.summaryStatistics.length) {
+      return;
+    }
+
+    // Obtener los counts_unique_values del primer cohort (asumimos que todos tienen datos similares)
+    const firstStat = this.summaryStatistics[0];
+    const countsUniqueValues = firstStat?.rps_cohort?.counts_unique_values?.[selectedVariableId] || {};
+
+    // Convertir a array de UniqueValue y ordenar por count descendente
+    this.availableUniqueValues = Object.entries(countsUniqueValues)
+      .map(([value, count]) => ({
+        value,
+        count: Number(count) || 0
+      }))
+      .filter(item => item.value !== 'N/A') // Excluir missing values
+      .sort((a, b) => b.count - a.count);
+  }
+
+  /**
+   * Selecciona/deselecciona un valor único como true value
+   */
+  toggleUniqueValue(value: string): void {
+    const index = this.trueValues.indexOf(value);
+    if (index >= 0) {
+      this.trueValues.splice(index, 1);
+    } else {
+      this.trueValues.push(value);
+    }
+  }
+
+  /**
+   * Verifica si un valor está seleccionado como true value
+   */
+  isValueSelected(value: string): boolean {
+    return this.trueValues.includes(value);
   }
 
   cancel(): void {
@@ -348,5 +408,22 @@ export class CreateVariableDialogComponent implements OnInit {
     }
 
     this.dialogRef.close(result);
+  }
+
+  @HostListener('keydown.enter', ['$event'])
+  handleEnter(event: KeyboardEvent) {
+    event.preventDefault();
+
+    if (this.form.valid) {
+      this.submit();   // comportamiento OK
+    } else {
+      this.form.markAllAsTouched(); // mostrar errores
+    }
+  }
+
+  @HostListener('keydown.escape', ['$event'])
+  handleEscape(event: KeyboardEvent) {
+    event.preventDefault();
+    this.dialogRef.close(); // cerrar manualmente
   }
 }

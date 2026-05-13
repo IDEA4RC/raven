@@ -272,7 +272,35 @@
 
                 <div class="right-column" *ngSwitchCase="'coxph'">
                     <p class="algorithm-text">CoxPH Parameters</p>
-                    <p class="algorithm-subtext"></p>
+                    <p class="algorithm-subtext">Select the time-to-event column, the event indicator, and one or more explanatory variables.</p>
+                    <div class="variable-selector">
+                        <mat-form-field appearance="outline" class="algorithm-select">
+                            <mat-label class="algorithm-search-label">Time Column *</mat-label>
+                            <mat-select [(value)]="selectedCoxTimeColumn">
+                                <mat-option *ngFor="let variable of getTimeAndDateVariables()" [value]="variable.value">
+                                    {{ variable.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="algorithm-select">
+                            <mat-label class="algorithm-search-label">Outcome Column *</mat-label>
+                            <mat-select [(value)]="selectedCoxOutcomeColumn">
+                                <mat-option *ngFor="let variable of getBooleanVariables()" [value]="variable.value">
+                                    {{ variable.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="algorithm-select">
+                            <mat-label class="algorithm-search-label">Explanatory Variables *</mat-label>
+                            <mat-select [(value)]="selectedCoxPredictors" multiple>
+                                <mat-option *ngFor="let variable of getPredictorVariables()" [value]="variable.value">
+                                    {{ variable.label }} ({{ variable.type }})
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
 
                 <div class="right-column" *ngSwitchCase="'log-rank-test'">

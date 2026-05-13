@@ -10,6 +10,7 @@ const ALGORITHMS = {
     KAPLAN_MEIER: 'kaplan-meier',
     LOG_RANK_TEST: 'log-rank-test',
     GLM: 'glm',
+    COXPH: 'coxph',
     TIME_DELTA: 'time-delta',
     TABLE1: 'table1',
     BASIC_ARITHMETIC: 'basic_arithmetic',
@@ -167,7 +168,7 @@ export class AnalysisResultsComponent implements OnInit {
     row_variables_text = '';
     column_variable_text = '';
 
-    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'table1' | 'placeholder' = 'empty';
+    currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'coxph' | 'table1' | 'placeholder' = 'empty';
     underConstructionMessage = 'Under construction';
     rawTaskResult: any = null;
     crosstabTables: CrosstabDisplayTable[] = [];
@@ -337,9 +338,6 @@ export class AnalysisResultsComponent implements OnInit {
             this.initializeSelectedAlgorithm(this.selectedAlgorithm);
 
             if (this.selectedAlgorithm.task_id) {
-                console.log("selectedAlgorithm: ", this.selectedAlgorithm)
-                console.log("Fetching results for task ID:", this.selectedAlgorithm.task_id);
-
                 this.fetchTaskResult(this.selectedAlgorithm.task_id);
                 this.getTaskStatistics(this.selectedAlgorithm.task_id);
                 return;
@@ -413,6 +411,9 @@ export class AnalysisResultsComponent implements OnInit {
 
             case ALGORITHMS.GLM:
                 this.renderGlm(resultData);
+                break;
+            case ALGORITHMS.COXPH:
+                this.setPlaceholderView(ALGORITHMS.COXPH, 'CoxPH result rendering is not implemented yet.');
                 break;
             case ALGORITHMS.TIME_DELTA:
                 this.renderTimeDelta(resultData);

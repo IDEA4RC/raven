@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateVariableDialogComponent } from '../create-variable-dialog/create-variable-dialog.component';
 import { interval, forkJoin, of } from 'rxjs';
-import { switchMap, takeWhile, catchError } from 'rxjs/operators';
+import { switchMap, takeWhile, catchError, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-data-preparation',
@@ -31,6 +31,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   optionsVariables: { variable_name: string; variable_id: string; datatype: string }[] = [];
 
   taskStatus = '';
+  taskLogs: string = '';
+
   isLoading = true;
   isCrashed = false;
   resultGlobal: any = [];
@@ -40,7 +42,18 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   summaryFlowInitialized = false;
 
   // Track status details for each cohort
-  cohortStatusMap: Map<string, { status: string; message: string; taskId?: number }> = new Map();
+  cohortStatusList: {
+    key: string;
+    status: string;
+    message: string;
+    taskId?: number;
+  }[] = [];
+
+
+  currentTaskId: number | null = null;
+
+  private destroy$ = new Subject<void>();
+
 
   selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
@@ -61,8 +74,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   centersTables: any = {};
   numericCenterCharts: Array<{ cohort: string; charts: Array<{ title: string; series: any[]; chart: any; xaxis: any; plotOptions: any; dataLabels: any; colors: string[] }> }> = [];
-
-  currentTaskId: number;
   selectedValue: any = null;
 
   dataSourceCohorts = new MatTableDataSource<any>();
@@ -186,7 +197,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   private resetState(): void {
-    clearInterval(this.pollingInterval);
+    this.cohortStatusList = [];
     this.summaryFlowInitialized = false;
     this.isLoading = true;
     this.isCrashed = false;
@@ -203,7 +214,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
     this.optionsVariables = [];
-    this.cohortStatusMap.clear();
   }
 
   goNext() {
@@ -555,7 +565,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         dataframe_id: dataframeId,
         variables: this.optionsVariables,
         centers: this.allCenters,
-        cohorts: this.allCohorts
+        cohorts: this.allCohorts,
+        summaryStatistics: this.summaryStatisticsCohorts
       }
     });
 
@@ -640,124 +651,96 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   checkStatusDataFrame() {
     console.log("all cohorts: ", this.allCohorts);
 
-    // Clear previous cohort status
-    this.cohortStatusMap.clear();
+    this.cohortStatusList = [];
 
-    // Validate that all cohorts have task_id_vantage
     const cohortsWithoutTaskId = this.allCohorts.filter(
-      cohort => !cohort?.task_id_vantage || cohort.task_id_vantage === 0 || cohort.task_id_vantage === null
+      cohort => !cohort?.task_id_vantage
     );
 
     if (cohortsWithoutTaskId.length > 0) {
-      // Some cohorts are missing task_id_vantage - store error info for each affected cohort
       this.isLoading = false;
       this.isCrashed = true;
       this.taskStatus = 'dataframes_missing_taskid';
 
       cohortsWithoutTaskId.forEach(cohort => {
-        const cohortName = cohort?.cohort_name || 'Unknown cohort';
-        this.cohortStatusMap.set(cohortName, {
+        this.cohortStatusList.push({
+          key: cohort?.cohort_name || 'Unknown cohort',
           status: 'error',
-          message: 'Data loading error: Failed to create correctly. The dataframe initialization appears to have failed.',
+          message: 'Dataframe initialization failed',
           taskId: undefined
         });
       });
 
-      const missingCohortNames = cohortsWithoutTaskId
-        .map(cohort => cohort?.cohort_name || 'Unknown cohort')
-        .join(', ');
-
-      console.error(`Dataframes are not ready for cohorts: ${missingCohortNames}`);
-      console.error('Missing or invalid task_id_vantage for:', cohortsWithoutTaskId);
       return;
     }
 
-    // All cohorts have task_id_vantage, now check their status
-    const dataframeTaskIds = this.allCohorts
-      .map(cohort => ({ cohortName: cohort?.cohort_name || 'Unknown cohort', taskId: cohort.task_id_vantage }))
-      .filter((item: any) => item.taskId !== null && item.taskId !== undefined && item.taskId !== 0);
-
-    console.log("dataframeTaskIds (all present): ", dataframeTaskIds);
-
-    if (!dataframeTaskIds.length) {
-      // This shouldn't happen after validation, but handle it
-      this.isLoading = false;
-      this.isCrashed = true;
-      this.taskStatus = 'dataframes_no_tasks';
-      return;
-    }
-
-
-
-    // Check status of all dataframe tasks
-    this.isLoading = true;
-    this.taskStatus = 'checking_dataframe';
     const cohortIds = this.allCohorts
-      ?.map(cohort => cohort?.id)
-      .filter((id): id is number => id !== null && id !== undefined);
-    console.log("cohortIds :", cohortIds);
+      .map(cohort => cohort?.id)
+      .filter((id): id is number => !!id);
 
     this.checkDataframesUntilReady(cohortIds);
   }
-checkDataframesUntilReady(cohortIds: number[]): void {
 
-  if (!cohortIds.length) {
-    this.isLoading = false;
-    return;
+
+  checkDataframesUntilReady(cohortIds: number[]): void {
+
+    if (!cohortIds.length) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.isLoading = true;
+    this.isCrashed = false;
+
+    interval(this.pollingFrequency)
+      .pipe(
+        switchMap(() => {
+
+          const requests = cohortIds.map(id =>
+            this.dataAnalysisService.isDataframeReady(id).pipe(
+              catchError(() => of({ status: 'error' }))
+            )
+          );
+
+          return forkJoin(requests);
+        }),
+
+        takeWhile((results: { status: string }[]) => {
+
+          console.log("results:", results);
+
+          const allCompleted = results.every(r => r.status === 'completed');
+
+          const anyFailed = results.some(r =>
+            r.status === 'error' || r.status === 'timeout'
+          );
+
+          if (allCompleted) {
+            this.taskStatus = 'dataframes_completed';
+            this.isLoading = false;
+            this.isCrashed = false;
+
+            this.checkExistingSummaryOrCreate();
+            return false;
+          }
+
+          if (anyFailed) {
+            this.taskStatus = 'dataframes_failed';
+            this.isLoading = false;
+            this.isCrashed = true;
+
+            return false;
+          }
+
+          this.taskStatus = 'dataframes_pending';
+          return true;
+
+        }, true)
+      )
+      .subscribe();
   }
 
-  this.isLoading = true;
-  this.isCrashed = false;
 
-  interval(this.pollingFrequency)
-    .pipe(
-      switchMap(() => {
-
-        const requests = cohortIds.map(id =>
-          this.dataAnalysisService.isDataframeReady(id).pipe(
-            catchError(() => of({ status: 'error' }))
-          )
-        );
-
-        return forkJoin(requests);
-      }),
-
-      takeWhile((results: { status: string }[]) => {
-
-        console.log("results:", results);
-
-        const allCompleted = results.every(r => r.status === 'completed');
-
-        const anyFailed = results.some(r =>
-          r.status === 'error' || r.status === 'timeout'
-        );
-
-        if (allCompleted) {
-          this.taskStatus = 'dataframes_completed';
-          this.isLoading = false;
-          this.isCrashed = false;
-
-          this.checkExistingSummaryOrCreate();
-          return false;
-        }
-
-        if (anyFailed) {
-          this.taskStatus = 'dataframes_failed';
-          this.isLoading = false;
-          this.isCrashed = true;
-
-          return false;
-        }
-
-        this.taskStatus = 'dataframes_pending';
-        return true;
-
-      }, true)
-    )
-    .subscribe();
-}
-
-  
 
   checkExistingSummaryOrCreate() {
     const cohortsIds = this.allCohorts
@@ -876,83 +859,156 @@ checkDataframesUntilReady(cohortIds: number[]): void {
   }
 
   startPollingTaskStatus(taskId: number) {
-    clearInterval(this.pollingInterval);
-console.log("startPollingTaskStatus:");
     this.currentTaskId = taskId;
     this.isLoading = true;
+    this.isCrashed = false;
     this.taskStatus = 'pending';
 
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-    }
+    interval(this.pollingFrequency)
+      .pipe(
+        takeUntil(this.destroy$),
 
-    this.pollingInterval = setInterval(() => {
-      this.dataAnalysisService.getTaskStatus(taskId).subscribe({
-        next: (res: { status: string }) => {
-          if (this.taskStatus !== res.status) {
-            const bodyUpdateAlgorithm = {
-              task_id: taskId,
-              status_task: res.status
-            };
+        switchMap(() =>
+          this.dataAnalysisService.getTaskStatus(taskId)
+        ),
 
-            this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
-              next: () => { },
-              error: err => console.error('Error updateTaskResult', err)
-            });
-          }
-
+        takeWhile((res: { status: string; logs?: string }) => {
           this.taskStatus = res.status;
-          console.log("Estado del task:", this.taskStatus);
 
-          if (this.taskStatus === 'completed') {
-            clearInterval(this.pollingInterval);
-            this.fetchTaskResult(taskId);
-            this.isLoading = false;
-            this.isCrashed = false;
+          console.log(`Task ${taskId}:`, res.status);
 
-            this.dataAnalysisService.getSubTask(taskId).subscribe({
-              next: (subtaskNumber: any) => {
-                const subtaskId = Number(subtaskNumber);
-
-                const bodyUpdateAlgorithm = {
-                  task_id: taskId,
-                  subtask_id: subtaskId,
-                  status_subtask: 'completed'
-                };
-
-                this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
-                  next: updateTaskResult => {
-                    console.log("updateTaskResult subtask: ", updateTaskResult);
-
-                  },
-                  error: err => console.error('Error updateTaskResult', err)
-                });
-
-                this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
-                  next: subtaskResult => {
-                    console.log("Result get subTaskREsults", subtaskResult);
-                    console.log("Object.keys(subtaskResult.result)[0]", Object.keys(subtaskResult)[0]);
-
-                    this.resultLocal = subtaskResult;
-                    this.processResultLocal();
-                  },
-                  error: err => console.error('Error fetching subtask result', err)
-                });
-              },
-              error: err => console.error('Error fetching subtask number', err)
-            });
-          } else if (this.taskStatus === 'crashed') {
-            clearInterval(this.pollingInterval);
-            this.isLoading = false;
-            this.isCrashed = true;
-            console.error("La tarea falló");
+          if (res.status === 'completed') {
+            this.handleCompletedTask(taskId);
+            return false;
           }
-        },
-        error: (err) => {
-          console.error('Error consultando el status:', err);
+
+          if (res.status === 'crashed') {
+            this.handleCrashedTask(taskId, res.logs || '');
+            return false;
+          }
+
+          return true;
+        }, true)
+      )
+      .subscribe({
+        error: err => {
+          console.error('Polling error:', err);
+          this.isLoading = false;
+          this.isCrashed = true;
         }
       });
-    }, this.pollingFrequency);
+  }
+
+  private handleCompletedTask(taskId: number) {
+    this.isLoading = false;
+    this.isCrashed = false;
+
+    this.fetchTaskResult(taskId);
+
+    this.dataAnalysisService.getSubTask(taskId).subscribe({
+      next: (subtaskNumber: any) => {
+        const subtaskId = Number(subtaskNumber);
+
+        this.syncSubtask(taskId, subtaskId);
+        this.loadSubtaskResults(subtaskId);
+      },
+      error: err => console.error('Error fetching subtask', err)
+    });
+  }
+
+  private buildCohortStatusFromLogs(taskId: number, logs: string) {
+    this.cohortStatusList = [];
+
+    if (!logs) {
+      this.cohortStatusList.push({
+        key: 'general',
+        status: 'crashed',
+        message: 'No logs disponibles',
+        taskId
+      });
+      return;
+    }
+
+    const lines = logs.split('\n');
+
+    let errorCount = 0;
+
+    for (const line of lines) {
+      const clean = line.trim();
+      if (!clean) continue;
+
+      if (this.isErrorLine(clean)) {
+        errorCount++;
+
+        this.cohortStatusList.push({
+          key: `error-${errorCount}`,
+          status: 'crashed',
+          message: clean,
+          taskId
+        });
+      }
+    }
+
+    // fallback útil
+    if (this.cohortStatusList.length === 0) {
+      this.cohortStatusList.push({
+        key: 'general',
+        status: 'crashed',
+        message: logs.slice(0, 400),
+        taskId
+      });
+    }
+  }
+
+
+  private isErrorLine(line: string): boolean {
+    const lower = line.toLowerCase();
+
+    return (
+      lower.includes('error') ||
+      lower.includes('exception') ||
+      lower.includes('failed') ||
+      lower.includes('crash')
+    );
+  }
+
+  private handleCrashedTask(taskId: number, logs: string) {
+    this.isLoading = false;
+    this.isCrashed = true;
+
+    const cleanLogs = this.cleanAnsiLogs(logs);
+
+    this.buildCohortStatusFromLogs(taskId, cleanLogs);
+
+    console.error('Task crashed');
+    console.error(cleanLogs);
+  }
+
+  private cleanAnsiLogs(logs: string): string {
+    return logs.replace(/\x1B\[[0-9;]*m/g, '');
+  }
+
+  private syncSubtask(taskId: number, subtaskId: number) {
+    const body = {
+      task_id: taskId,
+      subtask_id: subtaskId,
+      status_subtask: 'completed'
+    };
+
+    this.dataAnalysisService.updateAlgorithmsStatus(body).subscribe({
+      next: res => console.log('Subtask updated', res),
+      error: err => console.error('Error updating subtask', err)
+    });
+  }
+
+  private loadSubtaskResults(subtaskId: number) {
+    this.dataAnalysisService.getSubTaskResults(subtaskId).subscribe({
+      next: res => {
+        this.resultLocal = res;
+        this.processResultLocal();
+      },
+      error: err => console.error('Error subtask results', err)
+    });
   }
 
   processResultLocal() {
@@ -1162,8 +1218,7 @@ console.log("startPollingTaskStatus:");
   }
 
   private resetSummaryFlow(): void {
-    clearInterval(this.pollingInterval);
-
+    this.cohortStatusList = [];
     this.summaryFlowInitialized = false;
     this.isLoading = true;
     this.isCrashed = false;
@@ -1182,7 +1237,6 @@ console.log("startPollingTaskStatus:");
 
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
-
-    this.cohortStatusMap.clear();
+    this.cohortStatusList = [];
   }
 }

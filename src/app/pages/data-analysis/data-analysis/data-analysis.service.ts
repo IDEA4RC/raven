@@ -305,6 +305,11 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
+  createMergeCategories(data: any) {
+    const url = `/raven-api/v1/data-preparation/create_merge_categories`;
+    return this.postRequest(url, data)
+  }
+
   createTimeDeltaVariables(data: any) {
     const url = `/raven-api/v1/data-preparation/create_timedelta`;
     return this.postRequest(url, data)

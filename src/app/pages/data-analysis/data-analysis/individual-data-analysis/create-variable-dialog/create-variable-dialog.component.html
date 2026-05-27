@@ -112,8 +112,57 @@
         </td>
       </tr>
 
+      <!-- Merge Categories -->
+      <tr *ngIf="isMergeCategories()">
+        <td><label>Select categorical variable</label></td>
+        <td>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="column1">
+              <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
+                {{variable.variable_name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+
+      <tr *ngIf="isMergeCategories()">
+        <td colspan="2">
+          <div class="merge-categories-config">
+            <p class="helper-text">Define one or more target categories and select existing values to merge into each new category.</p>
+            <div *ngFor="let group of mergeCategoryGroups; let i = index" class="merge-group-row">
+              <div class="merge-group-header">
+                <mat-form-field appearance="outline" class="group-name-field">
+                  <mat-label>New category name</mat-label>
+                    <input matInput [value]="group.groupName" (input)="updateMergeCategoryName(i, $any($event.target).value)">
+                </mat-form-field>
+                <button mat-icon-button color="warn" type="button" (click)="removeMergeCategoryGroup(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Merge values into this category</mat-label>
+                <mat-select [value]="group.categories" (selectionChange)="updateMergeCategoryOptions(i, $event.value)" multiple>
+                  <mat-option *ngFor="let item of availableUniqueValues" [value]="item.value">
+                    {{ item.value }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <button mat-button color="primary" type="button" (click)="addMergeCategoryGroup()">
+              <mat-icon>add</mat-icon> Add grouping
+            </button>
+
+            <p class="info-text" *ngIf="availableUniqueValues.length === 0">
+              Select a categorical variable first to load available values for grouping.
+            </p>
+          </div>
+        </td>
+      </tr>
+
       <!-- Computed y Merge -->
-      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean()">
+      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean() && !isMergeCategories()">
         <tr>
           <td>
             <label>

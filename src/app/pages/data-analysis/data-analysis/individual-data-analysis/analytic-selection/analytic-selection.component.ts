@@ -566,18 +566,57 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   createCoxPHRequest() {
+    // Basic presence validation
     if (!this.selectedCoxTimeColumn || !this.selectedCoxOutcomeColumn || this.selectedCoxPredictors.length === 0) {
       console.error('Time column, outcome column, and at least one explanatory variable are required for CoxPH');
       this.loading = false;
       return;
     }
 
-    const dataApplication = {
+    // Type validation: ensure time is numeric or date
+    const timeVar = this.variables.find(v => v.value === this.selectedCoxTimeColumn);
+    const outcomeVar = this.variables.find(v => v.value === this.selectedCoxOutcomeColumn);
+
+    const timeType = (timeVar?.type || '').toLowerCase();
+    if (!(timeType === 'date' || timeType === 'number' || timeType === 'float')) {
+      console.error('Selected time column must be a numeric or date variable');
+      this.loading = false;
+      return;
+    }
+
+    // Outcome must be boolean
+    const outcomeType = (outcomeVar?.type || '').toLowerCase();
+    if (outcomeType !== 'boolean') {
+      console.error('Selected outcome column must be a boolean variable');
+      this.loading = false;
+      return;
+    }
+
+    // Predictors: allow numeric/float/int/categorical/string types
+    const allowedPredictorTypes = ['number', 'float', 'int', 'int64', 'float64', 'categorical', 'string'];
+    for (const pred of this.selectedCoxPredictors) {
+      const predVar = this.variables.find(v => v.value === pred);
+      const ptype = (predVar?.type || '').toLowerCase();
+      const ok = allowedPredictorTypes.some(t => ptype.includes(t));
+      if (!ok) {
+        console.error(`Predictor variable ${pred} has unsupported type: ${predVar?.type}`);
+        this.loading = false;
+        return;
+      }
+    }
+
+    // Build payload, include optional organizations_to_include if set on component
+    const dataApplication: any = {
       ...this.getBaseAlgorithmRequestBody(),
       time_col: this.selectedCoxTimeColumn,
       outcome_col: this.selectedCoxOutcomeColumn,
       expl_vars: this.selectedCoxPredictors
     };
+
+    // If the component has an organizations_to_include field (optional UI), include it
+    if ((this as any).organizations_to_include && Array.isArray((this as any).organizations_to_include)) {
+      dataApplication.organizations_to_include = (this as any).organizations_to_include;
+    }
 
     this.dataAnalysisService.createCoxPH(dataApplication).subscribe({
       next: () => this.handleAlgorithmCreationSuccess(),

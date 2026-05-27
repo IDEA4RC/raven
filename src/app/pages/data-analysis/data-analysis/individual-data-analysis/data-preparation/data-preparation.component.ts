@@ -552,6 +552,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   createVariable() {
     const dataframeId = Number(this.allCohorts?.[0]?.dataframe_vantage_id || 0);
+    const analysis_id = this.allCohorts[0].analysis_id;
 
     if (!dataframeId) {
       console.error('No dataframe_id available for variable creation');
@@ -563,6 +564,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         dataframe_id: dataframeId,
+        analysis_id: analysis_id,
         variables: this.optionsVariables,
         centers: this.allCenters,
         cohorts: this.allCohorts,
@@ -579,6 +581,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         switch (method) {
           case 'merge_variables':
             requestObservable = this.dataAnalysisService.createMergeVariables(data);
+            break;
+          case 'merge_categories':
+            requestObservable = this.dataAnalysisService.createMergeCategories(data);
             break;
           case 'timedelta':
             requestObservable = this.dataAnalysisService.createTimeDeltaVariables(data);

@@ -21,7 +21,7 @@ interface OperationOption {
 
 interface CategoryOption {
   label: string;
-  value: 'computed_variables' | 'merge_variables' | 'timedelta' | 'one_hot_encoding' | 'to_boolean';
+  value: 'computed_variables' | 'merge_variables' | 'merge_categories' | 'timedelta' | 'one_hot_encoding' | 'to_boolean';
 }
 
 @Component({
@@ -35,6 +35,7 @@ export class CreateVariableDialogComponent implements OnInit {
   categoryOptions: CategoryOption[] = [
     { label: 'Computed Variables (Arithmetic)', value: 'computed_variables' },
     { label: 'Merge Variables', value: 'merge_variables' },
+    { label: 'Merge Categories', value: 'merge_categories' },
     { label: 'TimeDelta', value: 'timedelta' },
     { label: 'One Hot Encoding', value: 'one_hot_encoding' },
     { label: 'To Boolean', value: 'to_boolean' }
@@ -52,6 +53,7 @@ export class CreateVariableDialogComponent implements OnInit {
   categoricalVariables: VariableOption[] = [];
   dateVariables: VariableOption[] = [];
   trueValues: string[] = [];
+  mergeCategoryGroups: Array<{ groupName: string; categories: string[] }> = [];
   availableUniqueValues: UniqueValue[] = [];
   summaryStatistics: any[] = [];
 
@@ -97,10 +99,10 @@ export class CreateVariableDialogComponent implements OnInit {
       this.onCategoryChange();
     });
 
-    // Suscribirse a cambios en column1 para actualizar valores únicos cuando es to_boolean
+    // Suscribirse a cambios en column1 para actualizar valores únicos cuando es to_boolean o merge_categories
     this.form.get('column1')?.valueChanges.subscribe(() => {
-      if (this.isToBoolean()) {
-        this.updateUniqueValuesForToBoolean();
+      if (this.isToBoolean() || this.isMergeCategories()) {
+        this.updateUniqueValuesForMergeCategories();
       }
     });
   }
@@ -122,8 +124,9 @@ export class CreateVariableDialogComponent implements OnInit {
       trueValueInput: ''
     });
 
-    // Resetear lista de trueValues
+    // Resetear lista de trueValues y grupos de merge_categories
     this.trueValues = [];
+    this.mergeCategoryGroups = [];
 
     // Actualizar validadores según la categoría
     const column1Control = this.form.get('column1');
@@ -138,6 +141,13 @@ export class CreateVariableDialogComponent implements OnInit {
 
     // To Boolean: solo column y outputColumn, true_values en array
     if (category === 'to_boolean') {
+      column2Control?.clearValidators();
+      operationControl?.clearValidators();
+      prefixControl?.clearValidators();
+      outputColumnControl?.setValidators([Validators.required]);
+    }
+    // Merge Categories: solo column y outputColumn, mapping requerido
+    else if (category === 'merge_categories') {
       column2Control?.clearValidators();
       operationControl?.clearValidators();
       prefixControl?.clearValidators();
@@ -182,6 +192,7 @@ export class CreateVariableDialogComponent implements OnInit {
     const category = this.form.get('category')?.value;
     switch (category) {
       case 'merge_variables':
+      case 'merge_categories':
       case 'one_hot_encoding':
       case 'to_boolean':
         return this.categoricalVariables;
@@ -235,10 +246,75 @@ export class CreateVariableDialogComponent implements OnInit {
   }
 
   /**
+   * Verifica si la categoría actual es merge_categories
+   */
+  isMergeCategories(): boolean {
+    return this.form.get('category')?.value === 'merge_categories';
+  }
+
+  /**
    * Verifica si la categoría actual es to_boolean
    */
   isToBoolean(): boolean {
     return this.form.get('category')?.value === 'to_boolean';
+  }
+
+  /**
+   * Agrega un grupo de categorías para merge_categories
+   */
+  addMergeCategoryGroup(): void {
+    this.mergeCategoryGroups.push({
+      groupName: '',
+      categories: []
+    });
+  }
+
+  /**
+   * Elimina un grupo de categorías merge_categories
+   */
+  removeMergeCategoryGroup(index: number): void {
+    this.mergeCategoryGroups.splice(index, 1);
+  }
+
+  /**
+   * Actualiza el nombre de grupo para merge_categories
+   */
+  updateMergeCategoryName(index: number, name: string): void {
+    if (this.mergeCategoryGroups[index]) {
+      this.mergeCategoryGroups[index].groupName = name;
+    }
+  }
+
+  /**
+   * Actualiza las categorías mapeadas para un grupo merge_categories
+   */
+  updateMergeCategoryOptions(index: number, categories: string[]): void {
+    if (this.mergeCategoryGroups[index]) {
+      this.mergeCategoryGroups[index].categories = categories;
+    }
+  }
+
+  /**
+   * Actualiza la lista de valores únicos disponibles para la variable seleccionada
+   */
+  updateUniqueValuesForMergeCategories(): void {
+    this.availableUniqueValues = [];
+    const selectedVariableId = this.form.get('column1')?.value;
+ 
+    if (!selectedVariableId || !this.summaryStatistics.length) {
+      return;
+    }
+
+    const firstStat = this.summaryStatistics[0];
+    const countsUniqueValues = firstStat?.rps_cohort?.counts_unique_values?.[selectedVariableId] || {};
+
+    this.availableUniqueValues = Object.entries(countsUniqueValues)
+      .map(([value, count]) => ({
+        value,
+        count: Number(count) || 0
+      }))
+      .filter(item => item.value !== 'N/A')
+      .sort((a, b) => b.count - a.count);
   }
 
   /**
@@ -318,13 +394,16 @@ export class CreateVariableDialogComponent implements OnInit {
     const category = this.form.get('category')?.value;
     const dataframeId = Number(this.data?.dataframe_id || 0);
     const outputColumn = this.form.get('outputColumn')?.value;
+    const analysisId = Number(this.data?.analysis_id || 0);
+
 
     if (!dataframeId) {
       return;
     }
 
     const baseData = {
-      dataframe_id: dataframeId
+      dataframe_id: dataframeId,
+      analysis_id: analysisId,
     };
 
     let result: any;
@@ -357,6 +436,29 @@ export class CreateVariableDialogComponent implements OnInit {
             ...baseData,
             column: timedeltaColumn,
             output_column: outputColumn
+          }
+        };
+        break;
+
+      case 'merge_categories':
+        // Merge Categories necesita column, output_column y mapping
+        const mergeCategoriesColumn = this.form.get('column1')?.value;
+        const mapping = this.mergeCategoryGroups.reduce((acc: any, group) => {
+          if (group.groupName && group.categories.length > 0) {
+            acc[group.groupName] = group.categories;
+          }
+          return acc;
+        }, {});
+
+        if (!mergeCategoriesColumn || !outputColumn || Object.keys(mapping).length === 0) return;
+
+        result = {
+          method: category,
+          data: {
+            ...baseData,
+            column: mergeCategoriesColumn,
+            output_column: outputColumn,
+            mapping
           }
         };
         break;

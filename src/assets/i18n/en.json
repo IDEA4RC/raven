@@ -122,6 +122,8 @@
     "data-analysis": {
       "data_analysis": "Data Analysis",
       "new_analysis": "New Analysis",
+      "search_variable": "Search Variable",
+      "no_results": "No results found",
       "create_variables": {
         "new_variable": "New Variable",
         "create_variables": "Create Variables",

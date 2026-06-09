@@ -23,6 +23,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export function HttpLoaderFactory(http: HttpClient): any {
@@ -47,6 +49,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MatTableModule,
     MatPaginatorModule,
     BaseChartDirective,
+    NgxMatSelectSearchModule,
+
     MatSortModule,
     TablerIconsModule.pick(TablerIcons),
     NgApexchartsModule,
@@ -66,4 +70,4 @@ import { AuthInterceptor } from './services/auth.interceptor';
     provideCharts(withDefaultRegisterables())
   ]
 })
-export class AppModule {}
+export class AppModule { }

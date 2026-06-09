@@ -39,9 +39,16 @@
         <!-- Variables -->
         <mat-card class="inner-card">
           <mat-card-title class="filter-title">{{'pages.data-analysis.data_preparation.variables' |
-            translate}}</mat-card-title>
+            translate}}
+
+          </mat-card-title>
+          <span class="datatype"> Order (A-Z or Z-A): <button mat-icon-button (click)="toggleSort()">
+              <mat-icon>
+                {{ sortDirection === 'asc' ? 'arrow_downward' : 'arrow_upward' }}
+              </mat-icon>
+            </button></span>
           <mat-card-content class="variables-content">
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
               <mat-label class="variables-search-label">{{'pages.data-analysis.data_preparation.select' |
                 translate}}</mat-label>
               <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)"
@@ -49,6 +56,37 @@
                 <mat-option *ngFor="let option of optionsVariables" [value]="option">
                   {{ option.variable_name}}
                 </mat-option>
+              </mat-select>
+            </mat-form-field> -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
+
+              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)"
+                [disabled]="isLoading">
+
+                <!-- Buscador -->
+                <mat-option>
+                  <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate"></ngx-mat-select-search>
+                </mat-option>
+
+
+
+                <!-- Opciones filtradas -->
+                <!-- <mat-option *ngFor="let option of filteredVariables" [value]="option">
+                  <span>{{ option.display_name }}</span>
+                  <span class="datatype"> ({{ option.datatype }})</span>
+                </mat-option> -->
+
+                <mat-optgroup *ngFor="let group of groupedVariables" [label]="getCategoryLabel(group.category)">
+                  <mat-option *ngFor="let option of group.options" [value]="option">
+
+                    {{ option.display_name }}
+                  </mat-option>
+                </mat-optgroup>
+
               </mat-select>
             </mat-form-field>
             <button mat-stroked-button color="primary" class="create-variable-button" (click)="createVariable()">
@@ -166,7 +204,8 @@
                 </span>
                 <div *ngFor="let cohort of objectKeys(centersTables)">
                   <div>
-                    <h4>{{'pages.data-analysis.data_preparation.centers_statistics_for_cohort' | translate}}: {{ cohort }}</h4>
+                    <h4>{{'pages.data-analysis.data_preparation.centers_statistics_for_cohort' | translate}}: {{ cohort
+                      }}</h4>
                   </div>
                   <!-- Table -->
                   <app-statistics-table [type]="'centers'" [data]=centersTables[cohort]

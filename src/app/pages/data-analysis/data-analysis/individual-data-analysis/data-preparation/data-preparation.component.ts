@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateVariableDialogComponent } from '../create-variable-dialog/create-variable-dialog.component';
 import { interval, forkJoin, of } from 'rxjs';
 import { switchMap, takeWhile, catchError, takeUntil } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-data-preparation',
@@ -29,6 +30,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   centerFilters: Array<{ key: string; label: string; selected: boolean }> = [];
   cohortFilters: Array<{ key: string; label: string; selected: boolean }> = [];
   optionsVariables: { variable_name: string; variable_id: string; datatype: string }[] = [];
+  variableFilterCtrl = new FormControl('', { nonNullable: true });
+  filteredVariables: any[] = [];
+
 
   taskStatus = '';
   taskLogs: string = '';
@@ -49,6 +53,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     taskId?: number;
   }[] = [];
 
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   currentTaskId: number | null = null;
 
@@ -63,6 +68,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   variableList: any[] = [];
   summaryStatisticsCohorts: any[] = [];
   summaryStatisticsCenters: any = {};
+  groupedVariables: any[] = [];
 
   summaryTableNum: any[] = [
     { Statistics: 'N', field: 'count' },
@@ -145,8 +151,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
       this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
         next: (variables: any) => {
-          console.log("Variables from server ", variables);
-          console.log("Variables from server list", variables.variablesList);
+          // console.log("Variables from server ", variables);
+          // console.log("Variables from server list", variables.variablesList);
           const seen = new Set<string>();
           this.optionsVariables = variables.variablesList
             .filter((v: any) => {
@@ -158,8 +164,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             .map((v: any) => ({
               variable_name: v.name,
               variable_id: v.name,
-              datatype: this.mapDatatype(v.dtype)
+              datatype: this.mapDatatype(v.dtype),
+              display_name: this.formatVariableName(v.name)
             }));
+
+          this.groupVariables(this.optionsVariables);
+          this.filteredVariables = [...this.optionsVariables];
+          this.filterVariables(this.variableFilterCtrl.value);
         },
         error: err => console.error('Error fetching dataframe variables', err)
       });
@@ -176,6 +187,10 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataPreparationSubscriptionCenter = this.observable_data_preparation_center$.subscribe((data: any) => {
       this.summaryStatisticsCenters = data;
       this.updateCentersTable();
+    });
+
+    this.variableFilterCtrl.valueChanges.subscribe(search => {
+      this.filterVariables(search);
     });
   }
 
@@ -299,11 +314,56 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         });
       });
     }
+    else if (this.selectedValue.datatype === 'Date') {
+      variableCohorts = this.summaryTableNum.map(row => ({ ...row }));
+      this.displayedColumnsCohorts.push('Statistics');
+
+      this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
+        const variableData = statistic.rps_cohort?.date?.[variableId] || {};
+        const cohortLabel = `Cohort ${index + 1}`;
+        this.displayedColumnsCohorts.push(cohortLabel);
+
+        variableCohorts = variableCohorts.map((row: any) => {
+          const rawValue = variableData[row.field];
+          return {
+            ...row,
+            [cohortLabel]: this.formatValue(rawValue, this.selectedValue.datatype, row.field)
+          };
+        });
+      });
+    }
 
 
 
     this.dataSourceCohorts.data = variableCohorts;
     this.dataSourceCohorts._updateChangeSubscription();
+  }
+
+  private formatValue(value: any, datatype: string, field?: string): any {
+    if (value == null) return '-';
+
+    // 👇 CASO DATE
+    if (datatype === 'Date') {
+
+      // estos NO son fechas
+      if (field === 'count' || field === 'missing') {
+        return value;
+      }
+
+      const date = new Date(value);
+
+      return isNaN(date.getTime())
+        ? value
+        : date.toLocaleDateString(); // o formato custom
+    }
+
+    // 👇 NUMERIC
+    if (datatype === 'Number') {
+      const num = Number(value);
+      return Number.isFinite(num) ? Number(num.toFixed(3)) : 0;
+    }
+
+    return value;
   }
 
   mapDatatype(dtype: string): string {
@@ -324,9 +384,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     if (dtype.includes('bool')) {
       return 'Boolean';
     }
-
-
-
     return 'unknown';
   }
 
@@ -617,6 +674,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
                     datatype: this.mapDatatype(v.dtype)
                   }));
 
+                this.filteredVariables = [...this.optionsVariables];
                 this.resetSummaryFlow();
 
                 this.tryInitializeSummaryFlow();
@@ -654,7 +712,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   checkStatusDataFrame() {
-    console.log("all cohorts: ", this.allCohorts);
+    // console.log("all cohorts: ", this.allCohorts);
 
     this.cohortStatusList = [];
 
@@ -711,9 +769,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         }),
 
         takeWhile((results: { status: string }[]) => {
-
-          console.log("results:", results);
-
           const allCompleted = results.every(r => r.status === 'completed');
 
           const anyFailed = results.some(r =>
@@ -879,9 +934,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
         takeWhile((res: { status: string; logs?: string }) => {
           this.taskStatus = res.status;
-
-          console.log(`Task ${taskId}:`, res.status);
-
           if (res.status === 'completed') {
             this.handleCompletedTask(taskId);
             return false;
@@ -1017,9 +1069,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   processResultLocal() {
-    console.log("ProcessResultLocal", this.resultLocal);
-    console.log("ProcessResultLocal - selectedValue", this.selectedValue);
-    console.log("ProcessResultLocal - resultGlobal", this.resultGlobal);
+    // console.log("ProcessResultLocal", this.resultLocal);
+    // console.log("ProcessResultLocal - selectedValue", this.selectedValue);
+    // console.log("ProcessResultLocal - resultGlobal", this.resultGlobal);
 
 
     if (!this.resultGlobal || !this.resultLocal) return;
@@ -1176,7 +1228,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         const summary: any[] = [];
 
         this.resultGlobal = result.result;
-        console.log("Result global : ", this.resultGlobal);
+        // console.log("Result global : ", this.resultGlobal);
 
 
         Object.keys(result.result).forEach(cohortName => {
@@ -1184,6 +1236,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           const numericMapped: any = {};
           const countsMapped: any = {};
           const categoricalCount: any = {};
+          const dateCount: any = {};
 
           this.optionsVariables.forEach(v => {
             const key = v.variable_id;
@@ -1199,6 +1252,10 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             if (nodeData.categorical && nodeData.categorical[key] !== undefined) {
               categoricalCount[key] = nodeData.categorical[key];
             }
+
+            if (nodeData.date && nodeData.date[key] !== undefined) {
+              dateCount[key] = nodeData.date[key];
+            }
           });
 
           summary.push({
@@ -1206,13 +1263,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             rps_cohort: {
               numeric: numericMapped,
               counts_unique_values: countsMapped,
-              categorical_count: categoricalCount
+              categorical_count: categoricalCount,
+              date: dateCount
             }
           });
         });
 
         this.summaryStatisticsCohorts = summary;
-        console.log("result of summaryS: ", this.summaryStatisticsCohorts);
         this.updateCohortsTable();
         this.updateCentersTable();
       },
@@ -1243,5 +1300,93 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
     this.cohortStatusList = [];
+  }
+
+  filterVariables(search: string) {
+    if (!search) {
+      this.filteredVariables = this.optionsVariables;
+      return;
+    }
+
+    const filterValue = search.toLowerCase();
+
+    this.filteredVariables = this.optionsVariables.filter(option =>
+      option.variable_name.toLowerCase().includes(filterValue)
+    );
+
+    this.groupVariables(this.filteredVariables);
+  }
+
+  private formatVariableName(name: string): string {
+    if (!name) return '';
+
+    // 1. reemplazar _
+    let formatted = name.replace(/_/g, ' ');
+
+    // 2. minúsculas + capitalizar palabras
+    formatted = formatted.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+    return formatted;
+  }
+
+  private groupVariables(variables: any[]) {
+    const groups: { [key: string]: any[] } = {};
+
+    variables.forEach(v => {
+      const category = v.datatype;
+
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+
+      groups[category].push(v);
+    });
+
+    // ordenar dentro de cada grupo
+    Object.keys(groups).forEach(cat => {
+      groups[cat] = this.sortVariables(groups[cat]);
+    });
+
+    // ordenar categorías (opcional)
+    const order = ['Categorical', 'Boolean', 'Number', 'Date', 'String', 'Other'];
+
+    this.groupedVariables = Object.keys(groups)
+      .sort((a, b) => order.indexOf(a) - order.indexOf(b))
+      .map(cat => ({
+        category: cat,
+        options: groups[cat]
+      }));
+  }
+
+  // sortVariables(list: any[]): any[] {
+  //   return list.sort((a, b) =>
+  //     a.display_name.localeCompare(b.display_name, undefined, { sensitivity: 'base' })
+  //   );
+  // }
+
+  private sortVariables(list: any[]) {
+    return list.sort((a, b) => {
+      const result = a.display_name.localeCompare(b.display_name, undefined, { sensitivity: 'base' });
+      return this.sortDirection === 'asc' ? result : -result;
+    });
+  }
+
+  getCategoryLabel(type: string): string {
+    const map: any = {
+      Number: 'Numeric',
+      String: 'Text',
+      Categorical: 'Categorical',
+      Date: 'Date',
+      Boolean: 'Boolean',
+      Other: 'Other'
+    };
+
+    return map[type] || type;
+  }
+
+
+  toggleSort() {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.groupVariables(this.optionsVariables);
   }
 }

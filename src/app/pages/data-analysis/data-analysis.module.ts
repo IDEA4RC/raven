@@ -25,7 +25,7 @@ import { DialogformDeleteAnalysisComponent } from './data-analysis/dialogform-de
 import { StatisticsTableComponent } from './data-analysis/individual-data-analysis/data-preparation/statistics-table/statistics-table.component';
 import { CreateVariableDialogComponent } from './data-analysis/individual-data-analysis/create-variable-dialog/create-variable-dialog.component';
 import { BaseChartDirective } from 'ng2-charts';
-
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 @NgModule({
   declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
     DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
@@ -43,7 +43,8 @@ import { BaseChartDirective } from 'ng2-charts';
     MatNativeDateModule,
     NgApexchartsModule,
     MatDialogModule,
-    MatChipsModule    
+    MatChipsModule,
+    NgxMatSelectSearchModule
 ]
 })
 export class DataAnalysisModule { }

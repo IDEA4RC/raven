@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{'pages.data-analysis.create_variables.new_variable'|translate}}</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
-  
+
   <mat-dialog-content class="dialog-content">
 
     <table class="form-table">
@@ -24,6 +24,39 @@
         <td>
           <mat-form-field appearance="outline" class="full-width">
             <mat-select formControlName="column1">
+              <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
+                {{variable.variable_name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+
+      <tr *ngIf="isTimeDelta()">
+        <td><label>End date</label></td>
+        <td>
+          <mat-radio-group formControlName="endDateMode">
+            <mat-radio-button value="none">No end date (end variable used: today)</mat-radio-button>
+            <mat-radio-button value="fixed">Fixed date</mat-radio-button>
+            <mat-radio-button value="variable">Date variable</mat-radio-button>
+          </mat-radio-group>
+        </td>
+      </tr>
+
+      <tr *ngIf="isTimeDelta() && form.get('endDateMode')?.value === 'fixed'">
+        <td><label>Fixed end date</label></td>
+        <td>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput type="date" formControlName="to_date">
+          </mat-form-field>
+        </td>
+      </tr>
+
+      <tr *ngIf="isTimeDelta() && form.get('endDateMode')?.value === 'variable'">
+        <td><label>Select end date variable</label></td>
+        <td>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="to_date_column">
               <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
                 {{variable.variable_name}}
               </mat-option>
@@ -77,11 +110,8 @@
             <p class="helper-text">Select which values should be treated as TRUE (click to toggle):</p>
             <div class="values-grid">
               <mat-chip-set aria-label="Unique values selection">
-                <mat-chip 
-                  *ngFor="let item of availableUniqueValues"
-                  [highlighted]="isValueSelected(item.value)"
-                  (click)="toggleUniqueValue(item.value)"
-                  class="value-chip">
+                <mat-chip *ngFor="let item of availableUniqueValues" [highlighted]="isValueSelected(item.value)"
+                  (click)="toggleUniqueValue(item.value)" class="value-chip">
                   {{ item.value }}
                 </mat-chip>
               </mat-chip-set>
@@ -90,10 +120,7 @@
               <p><strong>Selected values ({{ trueValues.length }}):</strong></p>
               <div class="selected-chips">
                 <mat-chip-set aria-label="Selected true values">
-                  <mat-chip 
-                    *ngFor="let value of trueValues" 
-                    removable 
-                    (removed)="removeTrueValue(value)">
+                  <mat-chip *ngFor="let value of trueValues" removable (removed)="removeTrueValue(value)">
                     {{value}}
                     <button matChipRemove [attr.aria-label]="'remove ' + value">
                       <mat-icon>close</mat-icon>
@@ -129,12 +156,14 @@
       <tr *ngIf="isMergeCategories()">
         <td colspan="2">
           <div class="merge-categories-config">
-            <p class="helper-text">Define one or more target categories and select existing values to merge into each new category.</p>
+            <p class="helper-text">Define one or more target categories and select existing values to merge into each
+              new category.</p>
             <div *ngFor="let group of mergeCategoryGroups; let i = index" class="merge-group-row">
               <div class="merge-group-header">
                 <mat-form-field appearance="outline" class="group-name-field">
                   <mat-label>New category name</mat-label>
-                    <input matInput [value]="group.groupName" (input)="updateMergeCategoryName(i, $any($event.target).value)">
+                  <input matInput [value]="group.groupName"
+                    (input)="updateMergeCategoryName(i, $any($event.target).value)">
                 </mat-form-field>
                 <button mat-icon-button color="warn" type="button" (click)="removeMergeCategoryGroup(i)">
                   <mat-icon>delete</mat-icon>
@@ -142,7 +171,8 @@
               </div>
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Merge values into this category</mat-label>
-                <mat-select [value]="group.categories" (selectionChange)="updateMergeCategoryOptions(i, $event.value)" multiple>
+                <mat-select [value]="group.categories" (selectionChange)="updateMergeCategoryOptions(i, $event.value)"
+                  multiple>
                   <mat-option *ngFor="let item of availableUniqueValues" [value]="item.value">
                     {{ item.value }}
                   </mat-option>

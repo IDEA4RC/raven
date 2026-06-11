@@ -70,7 +70,10 @@ export class CreateVariableDialogComponent implements OnInit {
       outputColumn: ['', Validators.required],
       prefixValue: ['', Validators.required],
       trueValueInput: [''],
-      description: ['']
+      description: [''],
+      endDateMode: ['none'],          // 'none' | 'fixed' | 'variable'
+      to_date: [null],
+      to_date_column: [null],
     });
   }
 
@@ -300,7 +303,7 @@ export class CreateVariableDialogComponent implements OnInit {
   updateUniqueValuesForMergeCategories(): void {
     this.availableUniqueValues = [];
     const selectedVariableId = this.form.get('column1')?.value;
- 
+
     if (!selectedVariableId || !this.summaryStatistics.length) {
       return;
     }
@@ -344,7 +347,7 @@ export class CreateVariableDialogComponent implements OnInit {
   updateUniqueValuesForToBoolean(): void {
     this.availableUniqueValues = [];
     const selectedVariableId = this.form.get('column1')?.value;
- 
+
     if (!selectedVariableId || !this.summaryStatistics.length) {
       return;
     }
@@ -428,16 +431,34 @@ export class CreateVariableDialogComponent implements OnInit {
       case 'timedelta':
         // TimeDelta solo necesita column
         const timedeltaColumn = this.form.get('column1')?.value;
+        const endDateMode = this.form.get('endDateMode')?.value;
+
         if (!timedeltaColumn || !outputColumn) return;
+
+        let data: any = {
+          ...baseData,
+          column: timedeltaColumn,
+          output_column: outputColumn
+        };
+
+
+        if (endDateMode === 'fixed') {
+          const toDate = this.form.get('to_date')?.value;
+          if (!toDate) return;
+          data.to_date = toDate;
+
+        } else if (endDateMode === 'variable') {
+          const toVariable = this.form.get('to_date_column')?.value;
+          if (!toVariable) return;
+          data.to_date_column = toVariable;
+
+        }
 
         result = {
           method: category,
-          data: {
-            ...baseData,
-            column: timedeltaColumn,
-            output_column: outputColumn
-          }
+          data
         };
+
         break;
 
       case 'merge_categories':

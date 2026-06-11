@@ -276,9 +276,14 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         this.displayedColumnsCohorts.push(cohortLabel);
 
         Object.keys(variableData).forEach((val: string, i: number) => {
+
+          const displayValue = this.selectedValue.variable_name === 'topography'
+            ? this.mapTopographyValue(val)
+            : val;
+
           if (variableCohorts.length <= i) {
             variableCohorts.push({
-              [variableName]: val,
+              [variableName]: displayValue,
               [cohortLabel]: variableData[val]
             });
           } else {
@@ -1389,4 +1394,74 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.groupVariables(this.optionsVariables);
   }
+
+  private mapTopographyValue(value: string): string {
+    return this.topographyMap[value] || value;
+  }
+
+
+  private topographyMap: Record<string, string> = {
+    'C10.0': 'Vallecula',
+    'C10.1': 'Anterior surface of epiglottis',
+    'C10.2': 'Lateral wall of oropharynx / Lateral wall of mesopharynx',
+    'C10.3': 'Posterior wall of oropharynx / Posterior wall of mesopharynx',
+    'C10.4': 'Branchial cleft (site of neoplasm)',
+    'C10.8': 'Overlapping lesion of oropharynx / Junctional region of oropharynx',
+    'C10.9': 'Oropharynx, NOS / Mesopharynx, NOS',
+
+    'C11.0': 'Superior wall of nasopharynx / Roof of nasopharynx',
+    'C11.1': 'Posterior wall of nasopharynx / Adenoid',
+    'C11.2': 'Lateral wall of nasopharynx / Fossa of Rosenmuller',
+    'C11.3': 'Anterior wall of nasopharynx / Nasopharyngeal surface of soft palate',
+    'C11.8': 'Overlapping lesion of nasopharynx',
+    'C11.9': 'Nasopharynx, NOS / Nasopharyngeal wall',
+
+    'C12.9': 'Pyriform sinus / Piriform sinus',
+
+    'C13.0': 'Postcricoid region / Cricopharynx',
+    'C13.1': 'Hypopharyngeal aspect of aryepiglottic fold / Aryepiglottic fold, NOS',
+    'C13.2': 'Posterior wall of hypopharynx',
+    'C13.8': 'Overlapping lesion of hypopharynx',
+    'C13.9': 'Hypopharynx, NOS / Hypopharyngeal wall',
+
+    'C14.0': 'Pharynx, NOS / Pharyngeal wall, NOS',
+
+    'C30.0': 'Nasal cavity',
+
+    'C31.0': 'Maxillary sinus',
+    'C31.1': 'Ethmoid sinus',
+    'C31.2': 'Frontal sinus',
+    'C31.3': 'Sphenoid sinus',
+    'C31.8': 'Overlapping lesion of accessory sinuses',
+    'C31.9': 'Accessory sinus, NOS',
+
+    'C32.0': 'Glottis / Intrinsic larynx',
+    'C32.1': 'Supraglottis / Epiglottis, NOS',
+    'C32.2': 'Subglottis',
+    'C32.3': 'Laryngeal cartilage / Arytenoid cartilage',
+    'C32.8': 'Overlapping lesion of larynx',
+    'C32.9': 'Larynx, NOS',
+
+    'C33.9': 'Trachea',
+
+    'C34.0': 'Bronchus',
+
+    'C37.9': 'Thymus',
+
+    'C38.4': 'Pleura',
+
+    'C48.0': 'Retroperitoneum',
+
+    'C48.1': 'Mesentery / Peritoneum',
+
+    'C49.0': 'Head / Neck',
+    'C49.1': 'Hand / Wrist',
+    'C49.2': 'Foot / Ankle',
+    'C49.3': 'Periscapular / Trapezius muscle',
+    'C49.4': 'Abdominal wall muscle / Umbilicus',
+    'C49.5': 'Groin / Buttock',
+    'C49.6': 'Back / Flank',
+
+    'C77.0': 'Lymph nodes of head, face and neck'
+  };
 }

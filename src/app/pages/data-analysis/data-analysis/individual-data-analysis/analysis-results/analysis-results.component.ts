@@ -1387,14 +1387,31 @@ export class AnalysisResultsComponent implements OnInit {
         const result = this.normalizeResult(rawResult);
 
         const cohortNames = Object.keys(result);
-        const nCohorts = cohortNames.length;
-
         const rows: Table1Row[] = [];
 
-        const varsNum = Object.keys(result[cohortNames[0]]?.numeric || {});
-        const varsCat = Object.keys(result[cohortNames[0]]?.counts_unique_values || {});
-
+        const varsNum = Array.from(
+            new Set(
+                cohortNames.flatMap(c =>
+                    Object.keys(result[c]?.numeric || {})
+                )
+            )
+        );
+        const varsCat = Array.from(
+            new Set(
+                cohortNames.flatMap(c =>
+                    Object.keys(result[c]?.counts_unique_values || {})
+                )
+            )
+        );
         const missingValues = ['N/A', 'N/A2'];
+
+        const varsDate = Array.from(
+            new Set(
+                cohortNames.flatMap(c =>
+                    Object.keys(result[c]?.date || {})
+                )
+            )
+        );
 
         // =========================
         // NUMERIC
@@ -1506,7 +1523,6 @@ export class AnalysisResultsComponent implements OnInit {
                 }
             });
 
-            // missing (igual que Python)
             rows.push({
                 characteristic: 'Missing',
                 isSub: true,
@@ -1520,6 +1536,59 @@ export class AnalysisResultsComponent implements OnInit {
                     const pct = totals[i] > 0 ? (missingCount / totals[i] * 100) : 0;
 
                     return [c, `${missingCount} (${pct.toFixed(1)}%)`];
+                }))
+            });
+        });
+
+        varsDate.forEach(varDate => {
+
+            // HEADER
+            rows.push({
+                characteristic: this.formatLabel(varDate),
+                isSub: false,
+                ...Object.fromEntries(cohortNames.map(c => [c, '']))
+            });
+            // Mean (date)
+            rows.push({
+                characteristic: 'Mean',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const stats = result[c].date[varDate];
+                    const val = stats?.mean;
+
+                    if (!val) return [c, 'NaN'];
+
+                    return [c, this.formatDate(val)];
+                }))
+            });
+
+            // Min
+            rows.push({
+                characteristic: 'Min',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].date[varDate]?.min;
+                    return [c, val ? this.formatDate(val) : 'NaN'];
+                }))
+            });
+
+            // Max
+            rows.push({
+                characteristic: 'Max',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].date[varDate]?.max;
+                    return [c, val ? this.formatDate(val) : 'NaN'];
+                }))
+            });
+
+            // Missing
+            rows.push({
+                characteristic: 'Missing',
+                isSub: true,
+                ...Object.fromEntries(cohortNames.map(c => {
+                    const val = result[c].date[varDate]?.missing;
+                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
                 }))
             });
         });
@@ -1560,7 +1629,10 @@ export class AnalysisResultsComponent implements OnInit {
             '7': 'FNPS',
             '9': 'OUS',
             '10': 'MSCI',
-            '6': 'CLB'
+            '6': 'CLB',
+            '11': 'APHP',
+            '8': 'VGR',
+
         };
 
 
@@ -1589,6 +1661,7 @@ export class AnalysisResultsComponent implements OnInit {
             result[cohort] = {
                 numeric: partial.numeric || {},
                 counts_unique_values: partial.counts_unique_values || {},
+                date: partial.date || {},
                 num_rows: numRows
             };
         });
@@ -1861,11 +1934,12 @@ export class AnalysisResultsComponent implements OnInit {
         }
 
         const date = new Date(value);
+
         if (Number.isNaN(date.getTime())) {
-            return value;
+            return 'NaN';
         }
 
-        return date.toLocaleDateString('es-ES');
+        return date.toISOString().slice(0, 10);
     }
 
     toDisplayValue(value: unknown): string {

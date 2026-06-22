@@ -241,6 +241,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
   goBackAlgorithms() {
     this.selectAlhorithm = false;
+    this.resetAlgorithmForm();
   }
   openAlgorithm(algorithm_id: number) {
     console.log("algorithm id: ", algorithm_id);
@@ -325,6 +326,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   saveAlgorithm() {
     // Logic to save the selected algorithm and variables
+    if (this.loading) return;
     this.loading = true;
 
     if (!this.selectedMethod) {
@@ -464,7 +466,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   getCategoricalVariables() {
     console.log("this.variables: ", this.variables);
-    
+
     return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'categorical');
   }
 
@@ -478,7 +480,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   getBooleanVariables() {
     console.log("this.variables: ", this.variables);
-    
+
     return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'boolean');
   }
 
@@ -692,9 +694,9 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
              }
            }
          });*/
-      /*});
-    }, this.pollingFrequency);
-  }*/
+  /*});
+}, this.pollingFrequency);
+}*/
 
 
   mapDatatype(dtype: string): string {
@@ -717,7 +719,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       return 'Float';
     }
 
-     if (dtype.includes('bool')) {
+    if (dtype.includes('bool')) {
       return 'Boolean';
     }
 
@@ -945,5 +947,27 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   canShowAction(algorithm: any): boolean {
     return (algorithm?.status_task || '').toLowerCase() === 'completed';
+  }
+
+  private resetAlgorithmForm(): void {
+    this.selectedMethod = null;
+    this.selectedMethodInfo = null;
+
+    this.selectedColumnVariable = null;
+    this.selectedRowVariables = [];
+
+    this.selectedTimeColumn = null;
+    this.selectedCensorColumn = null;
+    this.selectedStrataColumn = null;
+
+    this.selectedFamily = null;
+    this.selectedPredictors = [];
+    this.selectedOutcome = null;
+
+    this.selectedCoxTimeColumn = null;
+    this.selectedCoxOutcomeColumn = null;
+    this.selectedCoxPredictors = [];
+
+    this.loading = false;
   }
 }

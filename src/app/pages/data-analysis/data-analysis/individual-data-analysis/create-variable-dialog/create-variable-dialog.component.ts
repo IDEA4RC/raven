@@ -1,4 +1,4 @@
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject, Component, OnInit } from '@angular/core';
 import { HostListener } from '@angular/core';
@@ -7,6 +7,7 @@ interface VariableOption {
   variable_name: string;
   variable_id: string;
   datatype: string;
+  display_name: string
 }
 
 interface UniqueValue {
@@ -57,6 +58,8 @@ export class CreateVariableDialogComponent implements OnInit {
   availableUniqueValues: UniqueValue[] = [];
   summaryStatistics: any[] = [];
 
+  variableFilterCtrl = new FormControl('', { nonNullable: true });
+  filteredVariables: any[] = [];
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<CreateVariableDialogComponent>,
@@ -74,6 +77,12 @@ export class CreateVariableDialogComponent implements OnInit {
       endDateMode: ['none'],          // 'none' | 'fixed' | 'variable'
       to_date: [null],
       to_date_column: [null],
+    });
+
+    this.filteredVariables = [...this.variables];
+
+    this.variableFilterCtrl.valueChanges.subscribe(search => {
+      this.filterVariables(search);
     });
   }
 
@@ -192,6 +201,34 @@ export class CreateVariableDialogComponent implements OnInit {
    * Retorna las variables disponibles para el primer campo según la categoría
    */
   getAvailableVariables(): VariableOption[] {
+    const baseVariables = this.filteredVariables.length || this.variableFilterCtrl.value
+      ? this.filteredVariables
+      : this.variables;
+
+    if (this.isComputedVariables()) {
+      return baseVariables.filter(variable =>
+        variable.datatype === 'Number' || variable.datatype === 'Float'
+      );
+    }
+
+    if (
+      this.isMergeVariables() ||
+      this.isMergeCategories() ||
+      this.isOneHotEncoding() ||
+      this.isToBoolean()
+    ) {
+      return baseVariables.filter(variable =>
+        variable.datatype === 'Categorical' || variable.datatype === 'Boolean'
+      );
+    }
+
+    if (this.isTimeDelta()) {
+      return baseVariables.filter(variable =>
+        variable.datatype === 'Date'
+      );
+    }
+    return baseVariables;
+
     const category = this.form.get('category')?.value;
     switch (category) {
       case 'merge_variables':
@@ -548,5 +585,24 @@ export class CreateVariableDialogComponent implements OnInit {
   handleEscape(event: KeyboardEvent) {
     event.preventDefault();
     this.dialogRef.close(); // cerrar manualmente
+  }
+
+  filterVariables(search: string): void {
+    const filterValue = (search || '').toLowerCase().trim();
+
+    if (!filterValue) {
+      this.filteredVariables = [...this.variables];
+      return;
+    }
+
+    this.filteredVariables = this.variables.filter(variable => {
+      const variableName = String(variable.variable_name || '').toLowerCase();
+      const displayName = String(variable.display_name || '').toLowerCase();
+
+      return (
+        variableName.includes(filterValue) ||
+        displayName.includes(filterValue)
+      );
+    });
   }
 }

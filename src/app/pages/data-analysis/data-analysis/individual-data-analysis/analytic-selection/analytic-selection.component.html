@@ -325,11 +325,11 @@
     <!-- Card Footer -->
     <mat-card-actions class="footer">
         <!-- Back button -->
-        <button mat-button class="back-button"
+        <button mat-button  type="button" class="back-button"
             (click)="goBackAlgorithms()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
         <!-- Save and Execute button -->
-        <button mat-raised-button color="primary" class="continue-button" type="submit" (click)="saveAlgorithm()"
-            [disabled]="!selectedMethod">
+        <button mat-raised-button color="primary" class="continue-button" type="button" (click)="saveAlgorithm()"
+            [disabled]="!selectedMethod|| loading">
             {{'pages.data-analysis.analytic-selection.save-execute' | translate}} </button>
 
     </mat-card-actions>

@@ -29,7 +29,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   authorizedCenterLabels: string[] = [];
   centerFilters: Array<{ key: string; label: string; selected: boolean }> = [];
   cohortFilters: Array<{ key: string; label: string; selected: boolean }> = [];
-  optionsVariables: { variable_name: string; variable_id: string; datatype: string }[] = [];
+  optionsVariables: { variable_name: string; variable_id: string; datatype: string, display_name: string }[] = [];
   variableFilterCtrl = new FormControl('', { nonNullable: true });
   filteredVariables: any[] = [];
 
@@ -289,13 +289,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         const cohortLabel = `Cohort ${index + 1}`;
         const variableCounts = statistic.rps_cohort?.categorical_count?.[variableId] || {};
         this.displayedColumnsCohorts.push(cohortLabel);
-        console.log("variableData: ",variableData);
-        
+        console.log("variableData: ", variableData);
+
         let missing = Number(variableCounts['missing'] || 0);
         const sortedValues = Object.keys(variableData)
           .filter(val => val !== 'N/A')
           .sort((a, b) => {
-              return a.localeCompare(b, undefined, {
+            return a.localeCompare(b, undefined, {
               sensitivity: 'base'
             });
           });
@@ -641,7 +641,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       console.error('No dataframe_id available for variable creation');
       return;
     }
-
     const dialogRef = this.dialog.open(CreateVariableDialogComponent, {
       width: '600px',
       disableClose: true,
@@ -1380,16 +1379,21 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   filterVariables(search: string) {
-    if (!search) {
-      this.filteredVariables = this.optionsVariables;
+    const filterValue = (search || '').toLowerCase().trim();
+
+    if (!filterValue) {
+      this.filteredVariables = [...this.optionsVariables];
       return;
     }
 
-    const filterValue = search.toLowerCase();
-
-    this.filteredVariables = this.optionsVariables.filter(option =>
-      option.variable_name.toLowerCase().includes(filterValue)
-    );
+    this.filteredVariables = this.optionsVariables.filter(variable => {
+      const variableName = String(variable.variable_name || '').toLowerCase();
+      const displayName = String(variable.display_name || '').toLowerCase();
+      return (
+        variableName.includes(filterValue) ||
+        displayName.includes(filterValue)
+      );
+    });
 
     this.groupVariables(this.filteredVariables);
   }

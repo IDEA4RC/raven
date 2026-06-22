@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, interval, forkJoin, of } from 'rxjs';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
@@ -7,9 +7,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateVariableDialogComponent } from '../create-variable-dialog/create-variable-dialog.component';
-import { interval, forkJoin, of } from 'rxjs';
 import { switchMap, takeWhile, catchError, takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
+import { TopographyService } from 'src/app/services/topography.service';
 
 @Component({
   selector: 'app-data-preparation',
@@ -94,14 +94,17 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   private permitSubscription: any;
   private dataPreparationSubscriptionCohort: any;
   private dataPreparationSubscriptionCenter: any;
+  topographyMap: Record<string, string> = {};
 
   constructor(
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
     private selectionService: SelectionService,
     private http: HttpClient,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+    private topographyService: TopographyService
+  ) {
+  }
 
   ngOnInit(): void {
     const urlSegments = this.router.url.split('/');
@@ -176,21 +179,33 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       });
     });
 
+
     this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort;
     this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center;
 
+    // console.log("observable_data_preparation_center : ", this.observable_data_preparation_center$);
+    // console.log("observable_data_preparation_cohort : ", this.observable_data_preparation_cohort$);
+
     this.dataPreparationSubscriptionCohort = this.observable_data_preparation_cohort$.subscribe((data: any) => {
+      // console.log("observable_data_preparation_cohort data:", data);
+
       this.summaryStatisticsCohorts = data;
       this.updateCohortsTable();
     });
 
     this.dataPreparationSubscriptionCenter = this.observable_data_preparation_center$.subscribe((data: any) => {
+      // console.log("dataPreparationSubscriptionCenter data:", data);
+
       this.summaryStatisticsCenters = data;
       this.updateCentersTable();
     });
 
     this.variableFilterCtrl.valueChanges.subscribe(search => {
       this.filterVariables(search);
+    });
+
+    this.topographyService.getTopographyMap().subscribe(map => {
+      this.topographyMap = map;
     });
   }
 
@@ -274,33 +289,49 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         const cohortLabel = `Cohort ${index + 1}`;
         const variableCounts = statistic.rps_cohort?.categorical_count?.[variableId] || {};
         this.displayedColumnsCohorts.push(cohortLabel);
-
-        Object.keys(variableData).forEach((val: string, i: number) => {
-
-          const displayValue = this.selectedValue.variable_name === 'topography'
-            ? this.mapTopographyValue(val)
-            : val;
-
-          if (variableCohorts.length <= i) {
-            variableCohorts.push({
-              [variableName]: displayValue,
-              [cohortLabel]: variableData[val]
+        console.log("variableData: ",variableData);
+        
+        let missing = Number(variableCounts['missing'] || 0);
+        const sortedValues = Object.keys(variableData)
+          .filter(val => val !== 'N/A')
+          .sort((a, b) => {
+              return a.localeCompare(b, undefined, {
+              sensitivity: 'base'
             });
-          } else {
-            variableCohorts[i][cohortLabel] = variableData[val];
+          });
+
+        sortedValues.forEach((val: string, i: number) => {
+          if (val != "N/A") {
+            const displayValue = this.selectedValue.variable_name === 'topography'
+              ? this.mapTopographyValue(val)
+              : val;
+
+
+            if (variableCohorts.length <= i) {
+              variableCohorts.push({
+                [variableName]: displayValue,
+                [cohortLabel]: variableData[val]
+              });
+            } else {
+              variableCohorts[i][cohortLabel] = variableData[val];
+            }
+          }
+          else {
+            missing += variableData[val]
           }
         });
 
+
         const total = Number(variableCounts['count'] || 0);
-        const missing = Number(variableCounts['missing'] || 0);
+
         const missingPerc = total > 0 ? (missing / total) * 100 : 0;
 
         totalRow[cohortLabel] = total;
         missingRow[cohortLabel] = `${missing} (${missingPerc.toFixed(1)}%)`;
       });
-
-      variableCohorts.push(totalRow);
       variableCohorts.push(missingRow);
+      variableCohorts.push(totalRow);
+
     } else if (this.isNumericVariableType(this.selectedValue.datatype)) {
       variableCohorts = this.summaryTableNum.map(row => ({ ...row }));
       this.displayedColumnsCohorts.push('Statistics');
@@ -393,133 +424,123 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   updateCentersTable() {
-    if (!this.selectedValue || !this.summaryStatisticsCenters || !Object.keys(this.summaryStatisticsCenters).length) {
-      this.centersTables = {};
-      this.displayedColumnsCenters = [];
-      this.numericCenterCharts = [];
-      return;
-    }
+    if (!this.selectedValue) return;
 
-    const variableId = this.selectedValue.variable_id;
+    let variableCenters: any[] = [];
     const variableName = this.selectedValue.variable_name;
-    const selectedCenterKeys = new Set(this.centerFilters.filter(center => center.selected).map(center => center.key));
-    const selectedCohortKeys = new Set(this.cohortFilters.filter(cohort => cohort.selected).map(cohort => cohort.key));
-    const cohorts = Object.keys(this.summaryStatisticsCenters).filter(cohort => {
-      return !selectedCohortKeys.size || selectedCohortKeys.has(cohort);
-    });
-    const centersTable: any = {};
+    const variableId = this.selectedValue.variable_id;
 
     this.displayedColumnsCenters = [];
+    this.centersTables = {};
 
-    if (this.selectedValue.datatype === 'Categorical') {
-      this.displayedColumnsCenters = [variableName];
+    Object.keys(this.summaryStatisticsCenters || {}).forEach(cohortName => {
+      const cohortCenters = this.summaryStatisticsCenters[cohortName] || {};
+      const centerNames = Object.keys(cohortCenters || {});
 
-      cohorts.forEach((cohort, index) => {
-        const cohortCenters = this.summaryStatisticsCenters[cohort] || {};
-        const centers = this.getEffectiveCentersForCohort(cohortCenters, selectedCenterKeys);
+      if (!centerNames.length) return;
 
-        if (!centers.length) {
-          return;
-        }
+      variableCenters = [];
 
-        if (index === 0) {
-          this.displayedColumnsCenters.push(...centers, 'Total');
-        }
-
-        const allCategories = new Set<string>();
-        centers.forEach(center => {
-          const variableCounts = cohortCenters[center]?.counts_unique_values?.[variableId] || {};
-          Object.keys(variableCounts)
-            .filter(category => category !== 'N/A')
-            .forEach(category => allCategories.add(category));
-        });
-
-        const sortedCategories = Array.from(allCategories).sort();
-        const rows: any[] = sortedCategories.map(category => ({
-          [variableName]: category
-        }));
-
-        centers.forEach(center => {
-          const variableCounts = cohortCenters[center]?.counts_unique_values?.[variableId] || {};
-          rows.forEach(row => {
-            const category = row[variableName];
-            row[center] = variableCounts[category] ?? 0;
-          });
-        });
-
-        rows.forEach(row => {
-          row['Total'] = centers.reduce((sum, center) => sum + Number(row[center] || 0), 0);
-        });
-
+      if (this.selectedValue.datatype === 'Categorical' || this.selectedValue.datatype === 'Boolean') {
         const totalRow: any = { [variableName]: 'Total' };
         const missingRow: any = { [variableName]: 'Missing' };
 
-        centers.forEach(center => {
-          const variableCounts = cohortCenters[center]?.counts_unique_values?.[variableId] || {};
-          const missing = Number(variableCounts['N/A'] || 0);
-          const total = Object.entries(variableCounts)
-            .filter(([category]) => category !== 'N/A')
-            .reduce((sum, [, count]) => sum + Number(count || 0), 0);
+        this.displayedColumnsCenters = [];
+        this.displayedColumnsCenters.push(variableName);
 
-          const denominator = total + missing;
-          const missingPercent = denominator > 0 ? (missing / denominator) * 100 : 0;
+        centerNames.forEach(centerName => {
+          const variableData = cohortCenters[centerName]?.counts_unique_values?.[variableId] || {};
+          const variableCounts = cohortCenters[centerName]?.categorical?.[variableId] || {};
 
-          totalRow[center] = total;
-          missingRow[center] = `${missing} (${missingPercent.toFixed(1)}%)`;
+          this.displayedColumnsCenters.push(centerName);
+
+          let missing = Number(variableCounts['missing'] || 0);
+
+          Object.keys(variableData).forEach((val: string, i: number) => {
+            if (val !== 'N/A') {
+              const displayValue = this.selectedValue.variable_name === 'topography'
+                ? this.mapTopographyValue(val)
+                : val;
+
+              if (variableCenters.length <= i) {
+                variableCenters.push({
+                  [variableName]: displayValue,
+                  [centerName]: variableData[val]
+                });
+              } else {
+                variableCenters[i][centerName] = variableData[val];
+              }
+            } else {
+              missing += Number(variableData[val] || 0);
+            }
+          });
+
+          const total = Number(variableCounts['count'] || 0);
+          const missingPerc = total > 0 ? (missing / total) * 100 : 0;
+
+          totalRow[centerName] = total;
+          missingRow[centerName] = `${missing} (${missingPerc.toFixed(1)}%)`;
         });
 
-        totalRow['Total'] = centers.reduce((sum, center) => sum + Number(totalRow[center] || 0), 0);
-        const missingTotal = centers.reduce((sum, center) => {
-          const variableCounts = cohortCenters[center]?.counts_unique_values?.[variableId] || {};
-          return sum + Number(variableCounts['N/A'] || 0);
-        }, 0);
-        const denominatorTotal = Number(totalRow['Total']) + missingTotal;
-        const missingTotalPercent = denominatorTotal > 0 ? (missingTotal / denominatorTotal) * 100 : 0;
-        missingRow['Total'] = `${missingTotal} (${missingTotalPercent.toFixed(1)}%)`;
+        variableCenters.push(missingRow);
+        variableCenters.push(totalRow);
+      }
 
-        rows.push(totalRow, missingRow);
-        centersTable[cohort] = rows;
-      });
+      else if (this.isNumericVariableType(this.selectedValue.datatype)) {
+        variableCenters = this.summaryTableNum.map(row => ({ ...row }));
 
-      this.numericCenterCharts = [];
-    } else if (this.isNumericVariableType(this.selectedValue.datatype)) {
-      this.displayedColumnsCenters = ['Statistics'];
+        this.displayedColumnsCenters = [];
+        this.displayedColumnsCenters.push('Statistics');
 
-      cohorts.forEach((cohort, index) => {
-        const cohortCenters = this.summaryStatisticsCenters[cohort] || {};
-        const centers = this.getEffectiveCentersForCohort(cohortCenters, selectedCenterKeys);
+        centerNames.forEach(centerName => {
+          const variableData = cohortCenters[centerName]?.numeric?.[variableId] || {};
 
-        if (!centers.length) {
-          return;
-        }
+          this.displayedColumnsCenters.push(centerName);
 
-        if (index === 0) {
-          this.displayedColumnsCenters.push(...centers);
-        }
+          variableCenters = variableCenters.map((row: any) => {
+            const rawValue = Number(variableData[row.field] ?? 0);
 
-        const rows: any[] = [
-          { Statistics: 'N', field: 'count' },
-          { Statistics: 'Q1', field: 'q_25' },
-          { Statistics: 'Median', field: 'median' },
-          { Statistics: 'Q3', field: 'q_75' },
-          { Statistics: 'Missing', field: 'missing' }
-        ];
-
-        rows.forEach(row => {
-          centers.forEach(center => {
-            const variableData = cohortCenters[center]?.numeric?.[variableId] || {};
-            const value = Number(variableData[row.field] ?? 0);
-            row[center] = Number.isFinite(value) ? Number(value.toFixed(3)) : 0;
+            return {
+              ...row,
+              [centerName]: Number.isFinite(rawValue)
+                ? Number(rawValue.toFixed(3))
+                : 0
+            };
           });
         });
+      }
 
-        centersTable[cohort] = rows;
-      });
+      else if (this.selectedValue.datatype === 'Date') {
+        variableCenters = this.summaryTableNum.map(row => ({ ...row }));
 
-      this.buildNumericCenterCharts();
-    }
+        this.displayedColumnsCenters = [];
+        this.displayedColumnsCenters.push('Statistics');
 
-    this.centersTables = centersTable;
+        centerNames.forEach(centerName => {
+          const variableData = cohortCenters[centerName]?.date?.[variableId] || {};
+
+          this.displayedColumnsCenters.push(centerName);
+
+          variableCenters = variableCenters.map((row: any) => {
+            const rawValue = variableData[row.field];
+
+            return {
+              ...row,
+              [centerName]: this.formatValue(
+                rawValue,
+                this.selectedValue.datatype,
+                row.field
+              )
+            };
+          });
+        });
+      }
+
+      this.centersTables[cohortName] = variableCenters;
+    });
+
+    // console.log("centersTables:", this.centersTables);
+    // console.log("displayedColumnsCenters:", this.displayedColumnsCenters);
   }
 
   buildNumericCenterCharts() {
@@ -1102,7 +1123,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     });
 
     this.syncCenterFilters(this.authorizedCenterLabels);
-    this.summaryStatisticsCenters = centersSummary;
+    // this.summaryStatisticsCenters = centersSummary;
     this.updateCentersTable();
   }
 
@@ -1231,9 +1252,21 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataAnalysisService.getTaskResult(taskId).subscribe({
       next: (result) => {
         const summary: any[] = [];
+        const centersSummary: any = {};
+
+        const orgMap: Record<string, string> = {
+          '5': 'UKE',
+          '4': 'INT',
+          '7': 'FPNS',
+          '9': 'OUS',
+          '10': 'MSCI',
+          '6': 'CLB',
+          '11': 'APHP',
+          '8': 'VGR',
+        };
 
         this.resultGlobal = result.result;
-        // console.log("Result global : ", this.resultGlobal);
+        console.log("Result global : ", this.resultGlobal);
 
 
         Object.keys(result.result).forEach(cohortName => {
@@ -1272,9 +1305,48 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
               date: dateCount
             }
           });
+
+
+          centersSummary[cohortName] = {};
+
+          const partials = nodeData.partials || [];
+
+          partials.forEach((partial: any) => {
+            const orgId = String(partial.organization_id);
+            let numRows = 0;
+            const rawNumRows = partial.num_rows_per_node;
+
+            if (!orgId) {
+              console.warn('No organization_id found in partial', partial);
+              return;
+            }
+
+            const centerKey = orgMap[orgId] || `ORG_${orgId}`;
+
+            if (typeof rawNumRows === 'number') {
+              numRows = rawNumRows;
+            } else if (typeof rawNumRows === 'object' && rawNumRows !== null) {
+              const values = Object.values(rawNumRows);
+              numRows = values.length > 0 ? Number(values[0]) : 0;
+            } else {
+              console.warn('Unexpected num_rows_per_node format', rawNumRows);
+            }
+
+            centersSummary[cohortName][centerKey] = {
+              organization_id: orgId,
+              numeric: partial.numeric || {},
+              counts_unique_values: partial.counts_unique_values || {},
+              categorical: partial.categorical || {},
+              date: partial.date || {},
+              num_rows: numRows
+            };
+          });
         });
 
         this.summaryStatisticsCohorts = summary;
+        this.summaryStatisticsCenters = centersSummary;
+
+        // console.log("summaryStatisticsCenters: ", this.summaryStatisticsCenters);
         this.updateCohortsTable();
         this.updateCentersTable();
       },
@@ -1395,73 +1467,15 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.groupVariables(this.optionsVariables);
   }
 
+  // private mapTopographyValue(value: string): string {
+  //   return this.topographyMap[value] || value;
+  // }
+
   private mapTopographyValue(value: string): string {
-    return this.topographyMap[value] || value;
+    let result = value
+    if (value && value != "N/A")
+      result = this.topographyMap[value] + " (" + value + ")"
+
+    return result
   }
-
-
-  private topographyMap: Record<string, string> = {
-    'C10.0': 'Vallecula',
-    'C10.1': 'Anterior surface of epiglottis',
-    'C10.2': 'Lateral wall of oropharynx / Lateral wall of mesopharynx',
-    'C10.3': 'Posterior wall of oropharynx / Posterior wall of mesopharynx',
-    'C10.4': 'Branchial cleft (site of neoplasm)',
-    'C10.8': 'Overlapping lesion of oropharynx / Junctional region of oropharynx',
-    'C10.9': 'Oropharynx, NOS / Mesopharynx, NOS',
-
-    'C11.0': 'Superior wall of nasopharynx / Roof of nasopharynx',
-    'C11.1': 'Posterior wall of nasopharynx / Adenoid',
-    'C11.2': 'Lateral wall of nasopharynx / Fossa of Rosenmuller',
-    'C11.3': 'Anterior wall of nasopharynx / Nasopharyngeal surface of soft palate',
-    'C11.8': 'Overlapping lesion of nasopharynx',
-    'C11.9': 'Nasopharynx, NOS / Nasopharyngeal wall',
-
-    'C12.9': 'Pyriform sinus / Piriform sinus',
-
-    'C13.0': 'Postcricoid region / Cricopharynx',
-    'C13.1': 'Hypopharyngeal aspect of aryepiglottic fold / Aryepiglottic fold, NOS',
-    'C13.2': 'Posterior wall of hypopharynx',
-    'C13.8': 'Overlapping lesion of hypopharynx',
-    'C13.9': 'Hypopharynx, NOS / Hypopharyngeal wall',
-
-    'C14.0': 'Pharynx, NOS / Pharyngeal wall, NOS',
-
-    'C30.0': 'Nasal cavity',
-
-    'C31.0': 'Maxillary sinus',
-    'C31.1': 'Ethmoid sinus',
-    'C31.2': 'Frontal sinus',
-    'C31.3': 'Sphenoid sinus',
-    'C31.8': 'Overlapping lesion of accessory sinuses',
-    'C31.9': 'Accessory sinus, NOS',
-
-    'C32.0': 'Glottis / Intrinsic larynx',
-    'C32.1': 'Supraglottis / Epiglottis, NOS',
-    'C32.2': 'Subglottis',
-    'C32.3': 'Laryngeal cartilage / Arytenoid cartilage',
-    'C32.8': 'Overlapping lesion of larynx',
-    'C32.9': 'Larynx, NOS',
-
-    'C33.9': 'Trachea',
-
-    'C34.0': 'Bronchus',
-
-    'C37.9': 'Thymus',
-
-    'C38.4': 'Pleura',
-
-    'C48.0': 'Retroperitoneum',
-
-    'C48.1': 'Mesentery / Peritoneum',
-
-    'C49.0': 'Head / Neck',
-    'C49.1': 'Hand / Wrist',
-    'C49.2': 'Foot / Ankle',
-    'C49.3': 'Periscapular / Trapezius muscle',
-    'C49.4': 'Abdominal wall muscle / Umbilicus',
-    'C49.5': 'Groin / Buttock',
-    'C49.6': 'Back / Flank',
-
-    'C77.0': 'Lymph nodes of head, face and neck'
-  };
 }

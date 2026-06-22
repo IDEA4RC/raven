@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { SelectionService } from '../selection.service';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { TopographyService } from 'src/app/services/topography.service';
 
 const ALGORITHMS = {
     CROSSTABULATION: 'crosstabulation',
@@ -319,11 +320,15 @@ export class AnalysisResultsComponent implements OnInit {
     taskStatistics: TaskStatistics | null = null;
     executionDuration = '-';
 
+    topographyMap: Record<string, string> = {};
+
     @Output() previousStep = new EventEmitter<void>();
 
     constructor(
         private dataAnalysisService: DataAnalysisService,
-        public selectionService: SelectionService
+        public selectionService: SelectionService,
+        private topographyService: TopographyService
+
     ) { }
 
     ngOnInit(): void {
@@ -344,6 +349,10 @@ export class AnalysisResultsComponent implements OnInit {
             }
 
             this.setPlaceholderView(this.selectedAlgorithm.method_name, 'This algorithm does not have a task result yet.');
+        });
+
+        this.topographyService.getTopographyMap().subscribe(map => {
+            this.topographyMap = map;
         });
     }
 
@@ -1511,8 +1520,19 @@ export class AnalysisResultsComponent implements OnInit {
             // normales
             keys.forEach(key => {
                 if (!missingValues.includes(key)) {
+
+                    let displayValue = key;
+                    //console.log("varCat: ", varCat);
+
+                    if (varCat === 'topography') {
+                        displayValue = this.topographyMap[key] || key;
+                        //console.log("displayValue: ", displayValue);
+
+                    } else {
+                        displayValue = key.charAt(0).toUpperCase() + key.slice(1)
+                    }
                     rows.push({
-                        characteristic: key.charAt(0).toUpperCase() + key.slice(1),
+                        characteristic: displayValue,
                         isSub: true,
                         ...Object.fromEntries(cohortNames.map((c, i) => {
                             const count = result[c].counts_unique_values[varCat]?.[key] || 0;
@@ -1626,7 +1646,7 @@ export class AnalysisResultsComponent implements OnInit {
         const orgMap: Record<string, string> = {
             '5': 'UKE',
             '4': 'INT',
-            '7': 'FNPS',
+            '7': 'FPNS',
             '9': 'OUS',
             '10': 'MSCI',
             '6': 'CLB',
@@ -1959,4 +1979,17 @@ export class AnalysisResultsComponent implements OnInit {
      * the previous version rendered a fixed contingency table shape directly from dataTables.
      * This component now dispatches by method_name and builds the crosstab structure dynamically.
      */
+
+
+    private formatVariableName(name: string): string {
+        if (!name) return '';
+
+        // 1. reemplazar _
+        let formatted = name.replace(/_/g, ' ');
+
+        // 2. minúsculas + capitalizar palabras
+        formatted = formatted.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+        return formatted;
+    }
 }

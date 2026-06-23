@@ -78,6 +78,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     { Statistics: 'Missing', field: 'missing' }
   ];
 
+  summaryTableDate: any[] = [
+    { Statistics: 'N', field: 'count' },
+    { Statistics: 'Min', field: 'min' },
+    { Statistics: 'Max', field: 'max' },
+    { Statistics: 'Missing', field: 'missing' }
+  ];
+
   centersTables: any = {};
   numericCenterCharts: Array<{ cohort: string; charts: Array<{ title: string; series: any[]; chart: any; xaxis: any; plotOptions: any; dataLabels: any; colors: string[] }> }> = [];
   selectedValue: any = null;
@@ -351,7 +358,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       });
     }
     else if (this.selectedValue.datatype === 'Date') {
-      variableCohorts = this.summaryTableNum.map(row => ({ ...row }));
+      variableCohorts = this.summaryTableDate.map(row => ({ ...row }));
       this.displayedColumnsCohorts.push('Statistics');
 
       this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
@@ -386,6 +393,14 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         return value;
       }
 
+      if (
+        typeof value === 'number' &&
+        Number.isInteger(value) &&
+        value >= 1800 &&
+        value <= 3000
+      ) {
+        return value;
+      }
       const date = new Date(value);
 
       return isNaN(date.getTime())
@@ -511,7 +526,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       }
 
       else if (this.selectedValue.datatype === 'Date') {
-        variableCenters = this.summaryTableNum.map(row => ({ ...row }));
+        variableCenters = this.summaryTableDate.map(row => ({ ...row }));
 
         this.displayedColumnsCenters = [];
         this.displayedColumnsCenters.push('Statistics');

@@ -1568,17 +1568,17 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: false,
                 ...Object.fromEntries(cohortNames.map(c => [c, '']))
             });
-            // Mean (date)
+            // Total (date)
             rows.push({
-                characteristic: 'Mean',
+                characteristic: 'Total',
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const stats = result[c].date[varDate];
-                    const val = stats?.mean;
+                    const val = stats?.count;
 
                     if (!val) return [c, 'NaN'];
 
-                    return [c, this.formatDate(val)];
+                    return [c, val];
                 }))
             });
 
@@ -1953,6 +1953,14 @@ export class AnalysisResultsComponent implements OnInit {
             return '-';
         }
 
+        if (
+            typeof value === 'number' &&
+            Number.isInteger(value) &&
+            value >= 1800 &&
+            value <= 3000
+        ) {
+            return value;
+        }
         const date = new Date(value);
 
         if (Number.isNaN(date.getTime())) {

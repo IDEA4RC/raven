@@ -50,7 +50,7 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
   encapsulation: ViewEncapsulation.None,
 })
 export class FullComponent implements OnInit {
-   navItems = navItems;
+  navItems = navItems;
   @ViewChild('leftsidenav') public sidenav: MatSidenav;
 
   resView = false;
@@ -81,7 +81,7 @@ export class FullComponent implements OnInit {
   // Subscriptions container
   private subscriptions: Subscription = new Subscription();
 
-  
+
   constructor(
     private settings: CoreService,
     private mediaMatcher: MediaMatcher,
@@ -91,7 +91,7 @@ export class FullComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    
+
     this.htmlElement = document.querySelector('html')!;
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])
@@ -161,28 +161,28 @@ export class FullComponent implements OnInit {
     } else {
       this.updateNavItems(false);
     }
-  
+
   }
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this.subscriptions.unsubscribe();
-    
+
     // Also unsubscribe from your existing subscription
     this.layoutChangesSubscription.unsubscribe();
   }
 
   // Método para actualizar el menú
   private updateNavItems(isLoggedIn: boolean, workspace?: any) {
-    console.log(`Updating nav items. Logged in: ${isLoggedIn}, Workspace:`, workspace);
-    
+    //console.log(`Updating nav items. Logged in: ${isLoggedIn}, Workspace:`, workspace);
+
     if (!isLoggedIn) {
       this.navItems = [
         { navCap: '' },
         { displayName: 'Log In', iconName: 'login', route: '/authentication/login' }
       ];
       return;
-    } 
+    }
     // 🔹 Base menu para usuarios autenticados
     const newNavItems: any[] = [
       { navCap: '' },
@@ -207,9 +207,9 @@ export class FullComponent implements OnInit {
         ]
       });
     }
-    
 
-    console.log("New Nav Items:", newNavItems);
+
+    //console.log("New Nav Items:", newNavItems);
     this.navItems = newNavItems;
   }
 

@@ -25,7 +25,7 @@ export class SidebarComponent implements OnInit {
   navopt = this.navService.showClass;
 
   constructor(public navService: NavService) {
-    console.log("navService:", this.navService);
+    //console.log("navService:", this.navService);
     
   }
 

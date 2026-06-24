@@ -32,6 +32,7 @@ interface SelectedAlgorithm {
     version_date?: string;
     status_task?: string;
     cohort_ids?: number[];
+    cohorts?: any[];
 }
 
 interface CrosstabDisplayRow {
@@ -168,6 +169,7 @@ export class AnalysisResultsComponent implements OnInit {
     list_variables_text = '';
     row_variables_text = '';
     column_variable_text = '';
+    selectedCohorts: any[] = [];
 
     currentView: 'empty' | 'crosstab' | 'ttest' | 'kaplan-meier' | 'log-rank' | 'glm' | 'coxph' | 'table1' | 'placeholder' = 'empty';
     underConstructionMessage = 'Under construction';
@@ -340,6 +342,7 @@ export class AnalysisResultsComponent implements OnInit {
             }
 
             this.selectedAlgorithm = items[0] as SelectedAlgorithm;
+            this.selectedCohorts = this.selectedAlgorithm.cohorts || [];
             this.initializeSelectedAlgorithm(this.selectedAlgorithm);
 
             if (this.selectedAlgorithm.task_id) {
@@ -385,10 +388,10 @@ export class AnalysisResultsComponent implements OnInit {
         this.dataAnalysisService.getTaskResult(taskId).subscribe({
             next: (result) => {
                 this.rawTaskResult = result?.result ?? result ?? {};
-
                 const cohortNames = Object.keys(this.rawTaskResult || {});
                 if (cohortNames.length > 0) {
-                    this.cohorts_string = cohortNames.map(cohort => this.formatLabel(cohort)).join('; ');
+                    this.cohorts_string = cohortNames.map(cohort => this.getOriginalCohortName(cohort, this.formatLabel(cohort)))
+                        .join('; ');;
                 }
 
                 this.renderSelectedAlgorithm(this.rawTaskResult);
@@ -1446,7 +1449,7 @@ export class AnalysisResultsComponent implements OnInit {
                         this.computeMean(stats);
 
                     if (mean === null || isNaN(mean)) {
-                        return [c, 'NaN (NaN)'];
+                        return [c, '-'];
                     }
 
                     const std = stats?.std;
@@ -1465,7 +1468,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].numeric[varNum]?.min;
-                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                    return [c, isNaN(val) ? '-' : `${Math.round(val)}`];
                 }))
             });
 
@@ -1475,7 +1478,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].numeric[varNum]?.max;
-                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                    return [c, isNaN(val) ? '-' : `${Math.round(val)}`];
                 }))
             });
 
@@ -1485,7 +1488,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].numeric[varNum]?.missing;
-                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                    return [c, isNaN(val) ? '-' : `${Math.round(val)}`];
                 }))
             });
         });
@@ -1576,7 +1579,7 @@ export class AnalysisResultsComponent implements OnInit {
                     const stats = result[c].date[varDate];
                     const val = stats?.count;
 
-                    if (!val) return [c, 'NaN'];
+                    if (!val) return [c, '-'];
 
                     return [c, val];
                 }))
@@ -1588,7 +1591,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].date[varDate]?.min;
-                    return [c, val ? this.formatDate(val) : 'NaN'];
+                    return [c, val ? this.formatDate(val) : '-'];
                 }))
             });
 
@@ -1598,7 +1601,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].date[varDate]?.max;
-                    return [c, val ? this.formatDate(val) : 'NaN'];
+                    return [c, val ? this.formatDate(val) : '-'];
                 }))
             });
 
@@ -1608,7 +1611,7 @@ export class AnalysisResultsComponent implements OnInit {
                 isSub: true,
                 ...Object.fromEntries(cohortNames.map(c => {
                     const val = result[c].date[varDate]?.missing;
-                    return [c, isNaN(val) ? 'NaN' : `${Math.round(val)}`];
+                    return [c, isNaN(val) ? '-' : `${Math.round(val)}`];
                 }))
             });
         });
@@ -1814,12 +1817,18 @@ export class AnalysisResultsComponent implements OnInit {
             const valueHeaders = this.getOrderedValueColumns(contingencyTable, resolvedRowHeaders);
             const columnVariable = cohortData?.col_var || this.selectedAlgorithm?.col_var || '';
 
+            const totals = this.calculateCrosstabTotals(
+                contingencyTable,
+                resolvedRowHeaders,
+                valueHeaders
+            );
+
             tables.push({
                 cohortName,
                 rowHeaders: resolvedRowHeaders,
                 valueHeaders,
                 columnVariable,
-                rows: contingencyTable.map((row: Record<string, unknown>) => this.buildCrosstabRow(row, resolvedRowHeaders, valueHeaders)),
+                rows: contingencyTable.map((row: Record<string, unknown>) => this.buildCrosstabRow(row, resolvedRowHeaders, valueHeaders, totals)),
                 chi2: cohortData?.chi2?.chi2,
                 pValue: cohortData?.chi2?.['P-value']
             });
@@ -1828,18 +1837,101 @@ export class AnalysisResultsComponent implements OnInit {
         return tables;
     }
 
-    buildCrosstabRow(row: Record<string, unknown>, rowHeaders: string[], valueHeaders: string[]): CrosstabDisplayRow {
+    private calculateCrosstabTotals(
+        contingencyTable: Record<string, unknown>[],
+        rowHeaders: string[],
+        valueHeaders: string[]
+    ): {
+        rowTotals: Map<Record<string, unknown>, number>;
+        columnTotals: Record<string, number>;
+    } {
+        const rowTotals = new Map<Record<string, unknown>, number>();
+        const columnTotals: Record<string, number> = {};
+
+        valueHeaders
+            .filter(header => header !== 'Total')
+            .forEach(header => {
+                columnTotals[header] = 0;
+            });
+
+        contingencyTable.forEach(row => {
+            const isTotalRow = rowHeaders.some(header =>
+                this.toDisplayValue(row[header]).toLowerCase() === 'total'
+            );
+
+            if (isTotalRow) {
+                return;
+            }
+
+            let rowTotal = 0;
+
+            valueHeaders.forEach(header => {
+                if (header === 'Total') {
+                    return;
+                }
+
+                const value = Number(row[header] || 0);
+
+                if (Number.isFinite(value)) {
+                    rowTotal += value;
+                    columnTotals[header] += value;
+                }
+            });
+
+            rowTotals.set(row, rowTotal);
+        });
+
+        console.log('Crosstab columnTotals:', columnTotals);
+        console.log('Crosstab rowTotals:', rowTotals);
+
+        return {
+            rowTotals,
+            columnTotals
+        };
+    }
+
+    buildCrosstabRow(
+        row: Record<string, unknown>,
+        rowHeaders: string[],
+        valueHeaders: string[],
+        totals: {
+            rowTotals: Map<Record<string, unknown>, number>;
+            columnTotals: Record<string, number>;
+        }
+    ): CrosstabDisplayRow {
         const rowValues = rowHeaders.reduce((acc, header) => {
             acc[header] = this.toDisplayValue(row[header]);
             return acc;
         }, {} as Record<string, string>);
 
+        const isTotalRow = rowHeaders.some(header =>
+            this.toDisplayValue(row[header]).toLowerCase() === 'total'
+        );
+
+        const rowTotal = totals.rowTotals.get(row) || 0;
+
         const valueValues = valueHeaders.reduce((acc, header) => {
-            acc[header] = this.toDisplayValue(row[header]);
+            const rawValue = Number(row[header] || 0);
+
+            if (header === 'Total' || isTotalRow) {
+                acc[header] = this.toDisplayValue(row[header]);
+                return acc;
+            }
+
+            const columnTotal = Number(totals.columnTotals[header] || 0);
+
+            const rowPercent = rowTotal > 0
+                ? (rawValue / rowTotal) * 100
+                : 0;
+
+            const columnPercent = columnTotal > 0
+                ? (rawValue / columnTotal) * 100
+                : 0;
+
+            acc[header] = `${rawValue} (${rowPercent.toFixed(1)}%  ${columnPercent.toFixed(1)}% )`;
+
             return acc;
         }, {} as Record<string, string>);
-
-        const isTotalRow = rowHeaders.some(header => this.toDisplayValue(row[header]).toLowerCase() === 'total');
 
         return {
             rowValues,
@@ -1964,7 +2056,7 @@ export class AnalysisResultsComponent implements OnInit {
         const date = new Date(value);
 
         if (Number.isNaN(date.getTime())) {
-            return 'NaN';
+            return '-';
         }
 
         return date.toISOString().slice(0, 10);
@@ -1999,5 +2091,13 @@ export class AnalysisResultsComponent implements OnInit {
         formatted = formatted.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
 
         return formatted;
+    }
+
+    getOriginalCohortName(vantage6Name: string, fallback: string): string {
+        const matchedCohort = this.selectedCohorts.find((cohort: any) =>
+            String(cohort?.vantage6_cohort_name || '') === String(vantage6Name || '')
+        );
+
+        return matchedCohort?.cohort_name || fallback;
     }
 }

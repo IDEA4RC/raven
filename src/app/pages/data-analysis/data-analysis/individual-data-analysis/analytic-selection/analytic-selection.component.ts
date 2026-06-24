@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatChipsModule } from '@angular/material/chips';
+import { FormControl } from '@angular/forms';
 import { interval, forkJoin, of } from 'rxjs';
 import { switchMap, takeWhile, catchError, map } from 'rxjs/operators';
 
@@ -43,6 +44,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   //Selection forms
   selectedMethod: string | null = null;
   selectedMethodInfo: string | null = null;
+  variableFilterCtrl = new FormControl('', { nonNullable: true });
+  filteredVariables: any[] = [];
   methods = [
     {
       value: "crosstabulation",
@@ -109,25 +112,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   //TODO get variables
   // Example: load data dynamically (could be from a service)
-  variables = [
-    { "value": "LOCAL_RECURRENCE", "label": "Local Recurrence", "type": "categorical" }
-    /*{ "value": "MULTIFOCALITY", "label": "Multifocality", "type": "categorical" },
-    { "value": "STATUS", "label": "Status", "type": "categorical" },
-    { "value": "PRE_OPERATIVE_RADIO", "label": "Pre Operative Radio", "type": "categorical" },
-    { "value": "HISTOLOGY", "label": "Histology", "type": "categorical" },
-    { "value": "POST_OPERATIVE_RADIO", "label": "Post Operative Radio", "type": "categorical" },
-    { "value": "PRE_OPERATIVE_CHEMO", "label": "Pre Operative Chemo", "type": "categorical" },
-    { "value": "POST_OPERATIVE_CHEMO", "label": "Post Operative Chemo", "type": "categorical" },
-    { "value": "COMPLETENESS_OF_RESECTION", "label": "Completeness Of Resection", "type": "categorical" },
-    { "value": "DISTANT_METASTASIS", "label": "Distant Metastasis", "type": "categorical" },
-    { "value": "FNCLCC_GRADE", "label": "Fnclcc Grade", "type": "categorical" },
-    { "value": "TUMOR_RUPTURE", "label": "Tumor Rupture", "type": "categorical" },
-    { "value": "SEX", "label": "Sex", "type": "categorical" }*/
-  ];
   loading = false;
   isLoading: boolean = true; // Para mostrar/hide el loader
   taskStatus: string = '';
 
+  variables: { label: string; value: string; type: string, display_name: string }[] = [];
 
   selectedColumnVariable: string | null = null;
   selectedRowVariables: string[] = [];
@@ -174,9 +163,12 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
             .map((v: any) => ({
               label: v.name,
               value: v.name,
-              type: this.mapDatatype(v.dtype)
+              type: this.mapDatatype(v.dtype),
+              display_name: this.formatVariableName(v.name)
             }));
           console.log("variables: ", this.variables);
+          this.filteredVariables = [...this.variables];
+          this.filterVariables(this.variableFilterCtrl.value);
 
         },
 
@@ -206,6 +198,10 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     // Subscribe to the observable patients
     this.algorithmSubscription = this.observable_algorithm$.subscribe((data) => {
       this.dataSource.data = this.getVisibleAlgorithms(data || []);
+    });
+
+    this.variableFilterCtrl.valueChanges.subscribe(search => {
+      this.filterVariables(search);
     });
   }
 
@@ -251,12 +247,19 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
     if (selectedAlgorithm) {
       // Pasar el algoritmo a través del servicio
-      this.selectionService.setSelected([selectedAlgorithm]);
+      this.selectionService.setSelected([
+        {
+          ...selectedAlgorithm,
+          cohorts: this.allCohorts
+        }
+      ]);
       console.log("Selected algorithm:", selectedAlgorithm);
+      console.log("cohorts: ", this.allCohorts)
     }
 
     this.nextStep.emit();
   }
+
   deleteAlgorithm(algorithm_id: number) {
   }
 
@@ -321,7 +324,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   getVariableLabel(variableValue: string): string {
     const variable = this.variables.find(v => v.value === variableValue);
-    return variable ? variable.label : variableValue;
+    return variable ? variable.display_name : variableValue;
+
   }
 
   saveAlgorithm() {
@@ -422,7 +426,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     if (allowedTypes.length === 0) {
       return [];
     }
-    return this.variables.filter(variable => {
+    return this.getFilteredBaseVariables().filter(variable => {
       const type = (variable.type || '').toLowerCase();
       return allowedTypes.some(allowed => type.includes(allowed.toLowerCase()));
     });
@@ -436,7 +440,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     if (allowedTypes.length === 0) {
       return this.variables;
     }
-    return this.variables.filter(variable => {
+    return this.getFilteredBaseVariables().filter(variable => {
       const type = (variable.type || '').toLowerCase();
       return allowedTypes.some(allowed => type.includes(allowed.toLowerCase()));
     });
@@ -465,32 +469,36 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   getCategoricalVariables() {
-    console.log("this.variables: ", this.variables);
-
-    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'categorical');
+    return this.getFilteredBaseVariables()
+      .filter(variable => (variable.type || '').toLowerCase() === 'categorical');
   }
 
   getNumericVariables() {
-    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'number' || (variable.type || '').toLowerCase() === 'float');
+    return this.getFilteredBaseVariables()
+      .filter(variable => {
+        const type = (variable.type || '').toLowerCase();
+        return type === 'number' || type === 'float';
+      });
   }
 
   getDateVariables() {
-    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'date');
+    return this.getFilteredBaseVariables()
+      .filter(variable => (variable.type || '').toLowerCase() === 'date');
   }
 
   getBooleanVariables() {
-    console.log("this.variables: ", this.variables);
-
-    return this.variables.filter(variable => (variable.type || '').toLowerCase() === 'boolean');
+    return this.getFilteredBaseVariables()
+      .filter(variable => (variable.type || '').toLowerCase() === 'boolean');
   }
+
 
   getTimeAndDateVariables() {
-    return this.variables.filter(variable => {
-      const type = (variable.type || '').toLowerCase();
-      return type === 'date' || type === 'number' || type === 'float';
-    });
+    return this.getFilteredBaseVariables()
+      .filter(variable => {
+        const type = (variable.type || '').toLowerCase();
+        return type === 'date' || type === 'number' || type === 'float';
+      });
   }
-
   private getBaseAlgorithmRequestBody() {
     const cohortsIds = this.allCohorts.map(cohort => cohort.id);
     return {
@@ -969,5 +977,50 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     this.selectedCoxPredictors = [];
 
     this.loading = false;
+  }
+
+  filterVariables(search: string) {
+    const filterValue = (search || '').toLowerCase().trim();
+
+    if (!filterValue) {
+      this.filteredVariables = [...this.variables];
+      return;
+    }
+
+    this.filteredVariables = this.variables.filter(variable => {
+      const variableName = String(variable.label || '').toLowerCase();
+      const displayName = String(variable.display_name || '').toLowerCase();
+      return (
+        variableName.includes(filterValue) ||
+        displayName.includes(filterValue)
+      );
+    });
+
+    //this.groupVariables(this.filteredVariables);
+  }
+
+  private formatVariableName(name: string): string {
+    if (!name) return '';
+
+    // 1. reemplazar _
+    let formatted = name.replace(/_/g, ' ');
+
+    // 2. minúsculas + capitalizar palabras
+    formatted = formatted.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+    return formatted;
+  }
+
+  private getFilteredBaseVariables(): any[] {
+    return this.variableFilterCtrl.value
+      ? this.filteredVariables
+      : this.variables;
+  }
+
+  onVariableSelectOpened(opened: boolean): void {
+    if (opened) {
+      this.variableFilterCtrl.setValue('');
+      this.filteredVariables = [...this.variables];
+    }
   }
 }

@@ -94,7 +94,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   dataSourceCenters = new MatTableDataSource<any>();
   displayedColumnsCenters: string[] = [];
-
+  cohortColumnLabelMap: Record<string, string> = {};
   observable_coes_granted$: Observable<any> | undefined;
   observable_data_preparation_cohort$: Observable<any> | undefined;
   observable_data_preparation_center$: Observable<any> | undefined;
@@ -277,6 +277,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   }
 
   updateCohortsTable() {
+    this.cohortColumnLabelMap = {};
     if (!this.selectedValue) return;
 
     let variableCohorts: any[] = [];
@@ -287,57 +288,66 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCohorts.data = [];
 
     if (this.selectedValue.datatype === 'Categorical' || this.selectedValue.datatype === 'Boolean') {
+      const rowsByValue: Record<string, any> = {};
       const totalRow: any = { [variableName]: 'Total' };
       const missingRow: any = { [variableName]: 'Missing' };
       this.displayedColumnsCohorts.push(variableName);
 
       this.summaryStatisticsCohorts.forEach((statistic: any, index: number) => {
         const variableData = statistic.rps_cohort?.counts_unique_values?.[variableId] || {};
-        const cohortLabel = `Cohort ${index + 1}`;
         const variableCounts = statistic.rps_cohort?.categorical_count?.[variableId] || {};
+
+        const cohortLabel = `Cohort ${index + 1}`;
+        this.cohortColumnLabelMap[cohortLabel] = this.getOriginalCohortName(
+          statistic.cohort_name,
+          cohortLabel
+        );
+
         this.displayedColumnsCohorts.push(cohortLabel);
-        console.log("variableData: ", variableData);
 
         let missing = Number(variableCounts['missing'] || 0);
-        const sortedValues = Object.keys(variableData)
-          .filter(val => val !== 'N/A')
-          .sort((a, b) => {
-            return a.localeCompare(b, undefined, {
-              sensitivity: 'base'
-            });
-          });
+        missing += Number(variableData['N/A'] || 0);
 
-        sortedValues.forEach((val: string, i: number) => {
-          if (val != "N/A") {
+        Object.keys(variableData)
+          .filter(val => val !== 'N/A')
+          .forEach((val: string) => {
             const displayValue = this.selectedValue.variable_name === 'topography'
               ? this.mapTopographyValue(val)
               : val;
 
-
-            if (variableCohorts.length <= i) {
-              variableCohorts.push({
-                [variableName]: displayValue,
-                [cohortLabel]: variableData[val]
-              });
-            } else {
-              variableCohorts[i][cohortLabel] = variableData[val];
+            if (!rowsByValue[val]) {
+              rowsByValue[val] = {
+                [variableName]: displayValue
+              };
             }
-          }
-          else {
-            missing += variableData[val]
-          }
-        });
 
+            rowsByValue[val][cohortLabel] = variableData[val];
+          });
 
         const total = Number(variableCounts['count'] || 0);
-
         const missingPerc = total > 0 ? (missing / total) * 100 : 0;
 
         totalRow[cohortLabel] = total;
         missingRow[cohortLabel] = `${missing} (${missingPerc.toFixed(1)}%)`;
       });
+
+      variableCohorts = Object.keys(rowsByValue)
+        .sort((a, b) => {
+          const labelA = this.selectedValue.variable_name === 'topography'
+            ? this.mapTopographyValue(a)
+            : a;
+
+          const labelB = this.selectedValue.variable_name === 'topography'
+            ? this.mapTopographyValue(b)
+            : b;
+
+          return labelA.localeCompare(labelB, undefined, { sensitivity: 'base' });
+        })
+        .map(val => rowsByValue[val]);
+
       variableCohorts.push(missingRow);
       variableCohorts.push(totalRow);
+
 
     } else if (this.isNumericVariableType(this.selectedValue.datatype)) {
       variableCohorts = this.summaryTableNum.map(row => ({ ...row }));
@@ -375,8 +385,6 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         });
       });
     }
-
-
 
     this.dataSourceCohorts.data = variableCohorts;
     this.dataSourceCohorts._updateChangeSubscription();
@@ -470,8 +478,16 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           this.displayedColumnsCenters.push(centerName);
 
           let missing = Number(variableCounts['missing'] || 0);
+          missing += Number(variableData['N/A'] || 0);
+          const sortedValues = Object.keys(variableData)
+            .filter(val => val !== 'N/A')
+            .sort((a, b) => {
+              return a.localeCompare(b, undefined, {
+                sensitivity: 'base'
+              });
+            });
 
-          Object.keys(variableData).forEach((val: string, i: number) => {
+          sortedValues.forEach((val: string, i: number) => {
             if (val !== 'N/A') {
               const displayValue = this.selectedValue.variable_name === 'topography'
                 ? this.mapTopographyValue(val)
@@ -1425,6 +1441,18 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     return formatted;
   }
 
+  formatHeader(column: string): string {
+    if (column === 'Statistics') {
+      return column;
+    }
+
+    if (column.startsWith('Cohort ')) {
+      return this.cohortColumnLabelMap[column] || column;
+    }
+
+    return this.formatVariableName(column);
+  }
+
   private groupVariables(variables: any[]) {
     const groups: { [key: string]: any[] } = {};
 
@@ -1496,5 +1524,19 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       result = this.topographyMap[value] + " (" + value + ")"
 
     return result
+  }
+
+  onVariableSelectOpened(opened: boolean): void {
+    this.variableFilterCtrl.setValue('', { emitEvent: false });
+    this.filteredVariables = [...this.optionsVariables];
+    this.groupVariables(this.filteredVariables);
+  }
+
+  getOriginalCohortName(vantage6Name: string, fallback: string): string {
+    const matchedCohort = this.allCohorts.find((cohort: any) =>
+      String(cohort?.vantage6_cohort_name || '') === String(vantage6Name || '')
+    );
+
+    return matchedCohort?.cohort_name || fallback;
   }
 }

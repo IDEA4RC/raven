@@ -13,6 +13,7 @@ export class Cohort {
   query_execution_id: number;
   dataframe_vantage_id: number;
   task_id_vantage: number;
+  vantage6_cohort_name: string;
 
 
 
@@ -32,6 +33,7 @@ export class Cohort {
       this.query_execution_id = Cohort.query_execution_id || 0;
       this.dataframe_vantage_id = Cohort.dataframe_vantage_id || 0;
       this.task_id_vantage = Cohort.task_id_vantage || 0;
+      this.vantage6_cohort_name =  Cohort.vantage6_cohort_name || '';
 
     }
   }

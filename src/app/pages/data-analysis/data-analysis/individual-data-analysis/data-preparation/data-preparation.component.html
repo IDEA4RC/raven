@@ -62,8 +62,8 @@
             <mat-form-field appearance="outline">
               <mat-label>{{'pages.data-analysis.data_preparation.select' | translate}}</mat-label>
 
-              <mat-select [(value)]="selectedValue" (selectionChange)="onVariableSelected($event.value)"
-                [disabled]="isLoading">
+              <mat-select [(value)]="selectedValue" (openedChange)="onVariableSelectOpened($event)"
+                (selectionChange)="onVariableSelected($event.value)" [disabled]="isLoading">
 
                 <!-- Buscador -->
                 <mat-option>
@@ -173,14 +173,14 @@
 
             <div *ngIf="selectedValue" style="width: 100%;">
               <!-- Sub title -->
-              <div>
+              <!-- <div>
                 <div class="variable-title">
                   {{ selectedValue.variable_name }}
                 </div>
                 <span class="variable-description">
                   Description: {{ selectedValue.variable_description }}
                 </span>
-              </div>
+              </div> -->
 
               <!-- Cohorts table -->
               <div class="table-container" *ngIf="showCohorts">
@@ -190,7 +190,7 @@
                 <table mat-table [dataSource]="dataSourceCohorts" class="statistics-table">
                   <!-- Column Column -->
                   <ng-container *ngFor="let column of displayedColumnsCohorts" [matColumnDef]="column">
-                    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+                    <th mat-header-cell *matHeaderCellDef>{{ formatHeader(column) }}</th>
                     <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsCohorts"></tr>
@@ -204,8 +204,8 @@
                 </span>
                 <div *ngFor="let cohort of objectKeys(centersTables)">
                   <div>
-                    <h4>{{'pages.data-analysis.data_preparation.centers_statistics_for_cohort' | translate}}: {{ cohort
-                      }}</h4>
+                    <h4>{{'pages.data-analysis.data_preparation.centers_statistics_for_cohort' | translate}}:
+                      {{ getOriginalCohortName(cohort, cohort) }}</h4>
                   </div>
                   <!-- Table -->
                   <app-statistics-table [type]="'centers'" [data]=centersTables[cohort]
@@ -214,8 +214,8 @@
 
                 <div class="numeric-center-charts" *ngIf="isNumericVariableSelected() && numericCenterCharts.length">
                   <div class="cohort-chart-group" *ngFor="let cohortCharts of numericCenterCharts">
-                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}: {{
-                      cohortCharts.cohort }}</h4>
+                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}:
+                      {{ getOriginalCohortName(cohortCharts.cohort, cohortCharts.cohort) }}</h4>
                     <div class="chart-grid">
                       <div class="chart-card" *ngFor="let chartData of cohortCharts.charts">
                         <p class="chart-title">{{ chartData.title }}</p>

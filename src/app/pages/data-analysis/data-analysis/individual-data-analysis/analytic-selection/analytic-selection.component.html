@@ -56,9 +56,10 @@
                         date:'dd/MM/yyyy'}} </td>
                 </ng-container>
 
-                 <!-- Workspace Name Column -->
+                <!-- Workspace Name Column -->
                 <ng-container matColumnDef="status_task">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.cohort-selection.status'
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        {{'pages.data-analysis.cohort-selection.status'
                         | translate}}</th>
                     <td mat-cell *matCellDef="let element"> {{element.status_task}} </td>
                 </ng-container>
@@ -122,6 +123,10 @@
                         class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.select-analysis-method-label'
                         | translate}}</mat-label>
                     <mat-select [(value)]="selectedMethod" (selectionChange)="onMethodChange($event.value)">
+                        <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                            [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                            [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                        </ngx-mat-select-search>
                         <mat-option *ngFor="let method of methods" [value]="method.value">
                             {{ method.label }}
                         </mat-option>
@@ -140,28 +145,44 @@
             </div>
             <ng-container [ngSwitch]="selectedMethod">
                 <div class="right-column" *ngSwitchCase="'crosstabulation'">
-                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.crosstab-parameters-title' | translate}}</p>
-                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-column-help' | translate}}</p>
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.crosstab-parameters-title' |
+                        translate}}</p>
+                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-column-help' |
+                        translate}}</p>
                     <div class="variable-selector">
                         <mat-form-field appearance="outline" class="algorithm-select">
-                            <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-column-variable-label' | translate}}</mat-label>
+                            <mat-label
+                                class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-column-variable-label'
+                                | translate}}</mat-label>
                             <mat-select [(value)]="selectedColumnVariable"
+                              (openedChange)="onVariableSelectOpened($event)"
                                 (selectionChange)="onColumnVariableChange($event.value)">
-
+                                <mat-option>
+                                    <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                        [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                        [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate"></ngx-mat-select-search>
+                                </mat-option>
                                 <mat-option *ngFor="let variable of getCategoricalVariables()" [value]="variable.value">
-                                    {{ variable.label }}
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-row-help' | translate}}</p>
+                        <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.crosstab-row-help' |
+                            translate}}</p>
                         <mat-form-field appearance="outline" class="algorithm-select">
-                            <mat-label class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-row-variables-label' | translate}}</mat-label>
+                            <mat-label
+                                class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-row-variables-label'
+                                | translate}}</mat-label>
                             <mat-select [(value)]="selectedRowVariables" multiple
                                 (selectionChange)="onSelectionChange($event)">
-
-                                <mat-option *ngFor="let variable of getAvailableRowVariables()" [value]="variable.value">
-                                    {{ variable.label }}
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getAvailableRowVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -183,35 +204,48 @@
                 <div class="right-column" *ngSwitchCase="'kaplan-meier'">
                     <p class="algorithm-text">Kaplan-Meier Parameters</p>
                     <p class="algorithm-subtext">Select time, censor, and optionally strata variables</p>
-                    
+
                     <div class="variable-selector">
                         <!-- Time Column -->
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Time Column *</mat-label>
                             <mat-select [(value)]="selectedTimeColumn">
-                                <mat-option *ngFor="let variable of getTimeAndDateVariables()" [value]="variable.value">
-                                    {{ variable.label }} 
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search><mat-option *ngFor="let variable of getTimeAndDateVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        
+
                         <!-- Censor Column -->
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Censor Column*</mat-label>
                             <mat-select [(value)]="selectedCensorColumn">
-                                <mat-option *ngFor="let variable of getBooleanVariables()" [value]="variable.value">
-                                    {{ variable.label }} 
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getBooleanVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        
+
                         <!-- Strata Column (Optional) -->
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Strata Column (Optional)</mat-label>
                             <mat-select [(value)]="selectedStrataColumn">
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
                                 <mat-option>-- None --</mat-option>
                                 <mat-option *ngFor="let variable of getCategoricalVariables()" [value]="variable.value">
-                                    {{ variable.label }}
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -219,19 +253,23 @@
                 </div>
 
                 <div class="right-column" *ngSwitchCase="'t-test'">
-                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
-                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' | translate}}</p>
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}
+                    </p>
+                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' |
+                        translate}}</p>
                 </div>
 
                 <div class="right-column" *ngSwitchCase="'table1'">
-                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
-                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' | translate}}</p>
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}
+                    </p>
+                    <p class="algorithm-subtext">{{'pages.data-analysis.analytic-selection.no-variables-required' |
+                        translate}}</p>
                 </div>
 
                 <div class="right-column" *ngSwitchCase="'glm'">
                     <p class="algorithm-text">GLM Parameters</p>
                     <p class="algorithm-subtext">Select family, predictor variables, and outcome variable</p>
-                    
+
                     <div class="variable-selector">
                         <!-- Family Selector (always visible) -->
                         <mat-form-field appearance="outline" class="algorithm-select">
@@ -242,27 +280,37 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        
+
                         <!-- Predictor Variables (only when family is selected) -->
                         <mat-form-field appearance="outline" class="algorithm-select" *ngIf="isGLMFamilySelected()">
                             <mat-label class="algorithm-search-label">Predictor Variables *</mat-label>
                             <mat-select [(value)]="selectedPredictors" multiple>
-                                <mat-option *ngFor="let variable of getPredictorVariables()" [value]="variable.value">
-                                    {{ variable.label }} ({{ variable.type }})
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getPredictorVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        
+
                         <!-- Outcome Variable (only when family is selected) -->
                         <mat-form-field appearance="outline" class="algorithm-select" *ngIf="isGLMFamilySelected()">
                             <mat-label class="algorithm-search-label">Outcome Variable *</mat-label>
                             <mat-select [(value)]="selectedOutcome">
-                                <mat-option *ngFor="let variable of getOutcomeVariables()" [value]="variable.value">
-                                    {{ variable.label }} ({{ variable.type }})
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getOutcomeVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        
+
                         <!-- Help text showing allowed outcome type -->
                         <p class="algorithm-subtext" *ngIf="isGLMFamilySelected()">
                             {{ getOutcomeHelpText() }}
@@ -272,13 +320,19 @@
 
                 <div class="right-column" *ngSwitchCase="'coxph'">
                     <p class="algorithm-text">CoxPH Parameters</p>
-                    <p class="algorithm-subtext">Select the time-to-event column, the event indicator, and one or more explanatory variables.</p>
+                    <p class="algorithm-subtext">Select the time-to-event column, the event indicator, and one or more
+                        explanatory variables.</p>
                     <div class="variable-selector">
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Time Column *</mat-label>
                             <mat-select [(value)]="selectedCoxTimeColumn">
-                                <mat-option *ngFor="let variable of getTimeAndDateVariables()" [value]="variable.value">
-                                    {{ variable.label }}
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getTimeAndDateVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -286,8 +340,13 @@
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Outcome Column *</mat-label>
                             <mat-select [(value)]="selectedCoxOutcomeColumn">
-                                <mat-option *ngFor="let variable of getBooleanVariables()" [value]="variable.value">
-                                    {{ variable.label }}
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getBooleanVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -295,8 +354,13 @@
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Explanatory Variables *</mat-label>
                             <mat-select [(value)]="selectedCoxPredictors" multiple>
-                                <mat-option *ngFor="let variable of getPredictorVariables()" [value]="variable.value">
-                                    {{ variable.label }} ({{ variable.type }})
+                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                </ngx-mat-select-search>
+                                <mat-option *ngFor="let variable of getPredictorVariables()"
+                                    [value]="variable.value">
+                                    {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -314,7 +378,8 @@
                 </div>
 
                 <div class="right-column" *ngSwitchDefault>
-                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}</p>
+                    <p class="algorithm-text">{{'pages.data-analysis.analytic-selection.parameters-title' | translate}}
+                    </p>
                     <p class="algorithm-subtext">Select a method to configure its parameters.</p>
                 </div>
             </ng-container>
@@ -325,7 +390,7 @@
     <!-- Card Footer -->
     <mat-card-actions class="footer">
         <!-- Back button -->
-        <button mat-button  type="button" class="back-button"
+        <button mat-button type="button" class="back-button"
             (click)="goBackAlgorithms()">{{'pages.data-analysis.analytic-selection.back' | translate}}</button>
         <!-- Save and Execute button -->
         <button mat-raised-button color="primary" class="continue-button" type="button" (click)="saveAlgorithm()"

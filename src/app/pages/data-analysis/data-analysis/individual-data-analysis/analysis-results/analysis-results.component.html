@@ -93,11 +93,12 @@
 
         <mat-card class="inner-card" style="margin-top: 20px !important;">
           <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.analysis-results' | translate }}</h3>
-
+          Each cell contains the observed count followed by the row percentage and column percentage: count (row %,
+          column %).
           <ng-container [ngSwitch]="currentView">
             <div *ngSwitchCase="'crosstab'">
               <div *ngFor="let table of crosstabTables" class="table-container">
-                <h2>{{ formatLabel(table.cohortName) }}</h2>
+
                 <p class="secondary-label" *ngIf="table.columnVariable">
                   <strong>{{ 'pages.data-analysis.analysis-results.column-variable' | translate }}:</strong> {{
                   formatLabel(table.columnVariable) }}

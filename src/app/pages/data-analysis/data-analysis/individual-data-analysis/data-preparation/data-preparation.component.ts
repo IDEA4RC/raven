@@ -707,6 +707,9 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           case 'to_boolean':
             requestObservable = this.dataAnalysisService.createToBoolean(data);
             break;
+          case 'annotate_treatments':
+            requestObservable = this.dataAnalysisService.createAnnotateTreatments(data);
+            break;
           case 'computed_variables':
           default:
             requestObservable = this.dataAnalysisService.createBasicArithmeticRequest(data);

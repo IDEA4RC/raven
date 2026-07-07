@@ -164,6 +164,35 @@
         </td>
       </tr>
 
+      <!-- Annotate Treatments -->
+      <tr *ngIf="isAnnotateTreatments()">
+        <td><label>Output prefix</label></td>
+        <td>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Prefix for generated columns</mat-label>
+            <input matInput formControlName="prefixValue" placeholder="trt_pattern_"
+              (input)="updateAnnotateTreatmentPrefix($any($event.target).value)">
+          </mat-form-field>
+          <p class="info-text">
+            This operation generates 20 independent boolean columns. The prefix will be applied to each generated
+            treatment pattern column.
+          </p>
+        </td>
+      </tr>
+
+      <tr *ngIf="isAnnotateTreatments()">
+        <td colspan="2">
+          <div class="annotate-treatments-config">
+            <p class="helper-text">Configure the thresholds used to classify each patient into treatment patterns.</p>
+            <div class="annotate-treatments-grid">
+              <mat-form-field *ngFor="let field of annotateTreatmentFields" appearance="outline" class="full-width">
+                <mat-label>{{ field.label }}</mat-label>
+                <input matInput type="number" [formControlName]="field.controlName" min="0" step="1">
+              </mat-form-field>
+            </div>
+          </div>
+        </td>
+      </tr>
       <!-- Merge Categories -->
       <tr *ngIf="isMergeCategories()">
         <td><label>Select categorical variable</label></td>
@@ -223,7 +252,7 @@
       </tr>
 
       <!-- Computed y Merge -->
-      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean() && !isMergeCategories()">
+      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean() && !isMergeCategories() && !isAnnotateTreatments()">
         <tr>
           <td>
             <label>
@@ -234,11 +263,11 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="column1">
                 <mat-option>
-                <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                  [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                  [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                </ngx-mat-select-search>
-              </mat-option>
+                  <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                  </ngx-mat-select-search>
+                </mat-option>
                 <mat-option *ngFor="let variable of getAvailableVariables()" [value]="variable.variable_id">
                   {{variable.display_name}}
                 </mat-option>
@@ -255,7 +284,7 @@
           </td>
           <td>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-select formControlName="column2">                
+              <mat-select formControlName="column2">
                 <mat-option *ngFor="let variable of getAvailableColumn2()" [value]="variable.variable_id">
                   {{variable.display_name}}
                 </mat-option>
@@ -277,7 +306,7 @@
       </ng-container>
 
       <!-- Output column -->
-      <tr *ngIf="!isOneHotEncoding()">
+      <tr *ngIf="!isOneHotEncoding() && !isAnnotateTreatments() ">
         <td><label>Name of the new variable</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">

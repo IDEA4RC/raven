@@ -91,3 +91,15 @@
 .chips-container {
   margin-top: 8px;
 }
+
+.annotate-treatments-config {
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.annotate-treatments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}

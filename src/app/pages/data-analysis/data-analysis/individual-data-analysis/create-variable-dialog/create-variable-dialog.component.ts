@@ -15,6 +15,11 @@ interface UniqueValue {
   count: number;
 }
 
+interface AnnotateTreatmentField {
+  controlName: string;
+  label: string;
+}
+
 interface OperationOption {
   label: string;
   value: 'add' | 'subtract' | 'multiply' | 'divide';
@@ -22,7 +27,7 @@ interface OperationOption {
 
 interface CategoryOption {
   label: string;
-  value: 'computed_variables' | 'merge_variables' | 'merge_categories' | 'timedelta' | 'one_hot_encoding' | 'to_boolean';
+  value: 'computed_variables' | 'merge_variables' | 'merge_categories' | 'timedelta' | 'one_hot_encoding' | 'to_boolean' | 'annotate_treatments';
 }
 
 @Component({
@@ -31,6 +36,53 @@ interface CategoryOption {
   styleUrl: './create-variable-dialog.component.scss'
 })
 export class CreateVariableDialogComponent implements OnInit {
+  private readonly annotateTreatmentDefaults = {
+    prefixValue: 'trt_pattern_',
+    general_rule_days: 90,
+    concomitant_start_gap: 14,
+    concomitant_end_gap: 14,
+    surgery_postop_radio_days: 120,
+    surgery_adjuvant_chemo_days: 120,
+    postop_radio_concomi_start_gap: 14,
+    postop_radio_concomi_end_gap: 14,
+    radio_adjuvant_chemo_days: 120,
+    concomi_radio_adj_start_gap: 14,
+    concomi_radio_adj_end_gap: 14,
+    concomi_radio_adj_to_next: 90,
+    chemo_immuno_days: 180,
+    neoadj_chemo_to_radio: 90,
+    neoadj_chemo_to_surgery: 90,
+    neoadj_concomi_to_phase: 90,
+    neoadj_concomi_chemo2_start_gap: 14,
+    neoadj_concomi_chemo2_end_gap: 14,
+    neoadj_concomi_adj_to_next: 90,
+    neoadj_radio_adj_chemo1_to_radio: 90,
+    neoadj_radio_adj_chemo2_to_chemo: 90
+  };
+
+  annotateTreatmentFields: AnnotateTreatmentField[] = [
+    { controlName: 'general_rule_days', label: 'General rule days' },
+    { controlName: 'concomitant_start_gap', label: 'Concomitant start gap' },
+    { controlName: 'concomitant_end_gap', label: 'Concomitant end gap' },
+    { controlName: 'surgery_postop_radio_days', label: 'Surgery post-op radio days' },
+    { controlName: 'surgery_adjuvant_chemo_days', label: 'Surgery adjuvant chemo days' },
+    { controlName: 'postop_radio_concomi_start_gap', label: 'Post-op radio concomitant start gap' },
+    { controlName: 'postop_radio_concomi_end_gap', label: 'Post-op radio concomitant end gap' },
+    { controlName: 'radio_adjuvant_chemo_days', label: 'Radio adjuvant chemo days' },
+    { controlName: 'concomi_radio_adj_start_gap', label: 'Concomitant radio adjuvant start gap' },
+    { controlName: 'concomi_radio_adj_end_gap', label: 'Concomitant radio adjuvant end gap' },
+    { controlName: 'concomi_radio_adj_to_next', label: 'Concomitant radio adjuvant to next' },
+    { controlName: 'chemo_immuno_days', label: 'Chemo immuno days' },
+    { controlName: 'neoadj_chemo_to_radio', label: 'Neoadjuvant chemo to radio' },
+    { controlName: 'neoadj_chemo_to_surgery', label: 'Neoadjuvant chemo to surgery' },
+    { controlName: 'neoadj_concomi_to_phase', label: 'Neoadjuvant concomitant to phase' },
+    { controlName: 'neoadj_concomi_chemo2_start_gap', label: 'Neoadjuvant concomitant chemo2 start gap' },
+    { controlName: 'neoadj_concomi_chemo2_end_gap', label: 'Neoadjuvant concomitant chemo2 end gap' },
+    { controlName: 'neoadj_concomi_adj_to_next', label: 'Neoadjuvant concomitant adjuvant to next' },
+    { controlName: 'neoadj_radio_adj_chemo1_to_radio', label: 'Neoadjuvant radio adjuvant chemo1 to radio' },
+    { controlName: 'neoadj_radio_adj_chemo2_to_chemo', label: 'Neoadjuvant radio adjuvant chemo2 to chemo' }
+  ];
+
   form: FormGroup;
 
   categoryOptions: CategoryOption[] = [
@@ -39,7 +91,8 @@ export class CreateVariableDialogComponent implements OnInit {
     { label: 'Merge Categories', value: 'merge_categories' },
     { label: 'TimeDelta', value: 'timedelta' },
     { label: 'One Hot Encoding', value: 'one_hot_encoding' },
-    { label: 'To Boolean', value: 'to_boolean' }
+    { label: 'To Boolean', value: 'to_boolean' },
+    { label: 'Annotate Treatments', value: 'annotate_treatments' }
   ];
 
   operationOptions: OperationOption[] = [
@@ -72,6 +125,26 @@ export class CreateVariableDialogComponent implements OnInit {
       operation: ['add', Validators.required],
       outputColumn: ['', Validators.required],
       prefixValue: ['', Validators.required],
+      general_rule_days: [this.annotateTreatmentDefaults.general_rule_days],
+      concomitant_start_gap: [this.annotateTreatmentDefaults.concomitant_start_gap],
+      concomitant_end_gap: [this.annotateTreatmentDefaults.concomitant_end_gap],
+      surgery_postop_radio_days: [this.annotateTreatmentDefaults.surgery_postop_radio_days],
+      surgery_adjuvant_chemo_days: [this.annotateTreatmentDefaults.surgery_adjuvant_chemo_days],
+      postop_radio_concomi_start_gap: [this.annotateTreatmentDefaults.postop_radio_concomi_start_gap],
+      postop_radio_concomi_end_gap: [this.annotateTreatmentDefaults.postop_radio_concomi_end_gap],
+      radio_adjuvant_chemo_days: [this.annotateTreatmentDefaults.radio_adjuvant_chemo_days],
+      concomi_radio_adj_start_gap: [this.annotateTreatmentDefaults.concomi_radio_adj_start_gap],
+      concomi_radio_adj_end_gap: [this.annotateTreatmentDefaults.concomi_radio_adj_end_gap],
+      concomi_radio_adj_to_next: [this.annotateTreatmentDefaults.concomi_radio_adj_to_next],
+      chemo_immuno_days: [this.annotateTreatmentDefaults.chemo_immuno_days],
+      neoadj_chemo_to_radio: [this.annotateTreatmentDefaults.neoadj_chemo_to_radio],
+      neoadj_chemo_to_surgery: [this.annotateTreatmentDefaults.neoadj_chemo_to_surgery],
+      neoadj_concomi_to_phase: [this.annotateTreatmentDefaults.neoadj_concomi_to_phase],
+      neoadj_concomi_chemo2_start_gap: [this.annotateTreatmentDefaults.neoadj_concomi_chemo2_start_gap],
+      neoadj_concomi_chemo2_end_gap: [this.annotateTreatmentDefaults.neoadj_concomi_chemo2_end_gap],
+      neoadj_concomi_adj_to_next: [this.annotateTreatmentDefaults.neoadj_concomi_adj_to_next],
+      neoadj_radio_adj_chemo1_to_radio: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo1_to_radio],
+      neoadj_radio_adj_chemo2_to_chemo: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo],
       trueValueInput: [''],
       description: [''],
       endDateMode: ['none'],          // 'none' | 'fixed' | 'variable'
@@ -110,6 +183,7 @@ export class CreateVariableDialogComponent implements OnInit {
     this.form.get('category')?.valueChanges.subscribe(() => {
       this.onCategoryChange();
     });
+    this.onCategoryChange();
 
     // Suscribirse a cambios en column1 para actualizar valores únicos cuando es to_boolean o merge_categories
     this.form.get('column1')?.valueChanges.subscribe(() => {
@@ -132,13 +206,22 @@ export class CreateVariableDialogComponent implements OnInit {
       column1: null,
       column2: null,
       operation: category === 'computed_variables' ? 'add' : null,
-      prefixValue: '',
-      trueValueInput: ''
+      outputColumn: '',
+      prefixValue: category === 'annotate_treatments' ? this.annotateTreatmentDefaults.prefixValue : '',
+      trueValueInput: '',
+      endDateMode: 'none',
+      to_date: null,
+      to_date_column: null
     });
+
+    if (category === 'annotate_treatments') {
+      this.form.patchValue(this.annotateTreatmentDefaults);
+    }
 
     // Resetear lista de trueValues y grupos de merge_categories
     this.trueValues = [];
     this.mergeCategoryGroups = [];
+    this.availableUniqueValues = [];
 
     // Actualizar validadores según la categoría
     const column1Control = this.form.get('column1');
@@ -149,7 +232,7 @@ export class CreateVariableDialogComponent implements OnInit {
 
     // Todos necesitan column1
     column1Control?.setValidators([Validators.required]);
-    column1Control?.updateValueAndValidity();
+
 
     // To Boolean: solo column y outputColumn, true_values en array
     if (category === 'to_boolean') {
@@ -157,6 +240,15 @@ export class CreateVariableDialogComponent implements OnInit {
       operationControl?.clearValidators();
       prefixControl?.clearValidators();
       outputColumnControl?.setValidators([Validators.required]);
+    }
+    // Annotate Treatments: solo prefix y parámetros numéricos
+    else if (category === 'annotate_treatments') {
+      column1Control?.clearValidators();
+      column2Control?.clearValidators();
+      operationControl?.clearValidators();
+      outputColumnControl?.clearValidators();
+
+      prefixControl?.setValidators([Validators.required]);
     }
     // Merge Categories: solo column y outputColumn, mapping requerido
     else if (category === 'merge_categories') {
@@ -195,6 +287,7 @@ export class CreateVariableDialogComponent implements OnInit {
     operationControl?.updateValueAndValidity();
     prefixControl?.updateValueAndValidity();
     outputColumnControl?.updateValueAndValidity();
+    column1Control?.updateValueAndValidity();
   }
 
   /**
@@ -299,6 +392,10 @@ export class CreateVariableDialogComponent implements OnInit {
     return this.form.get('category')?.value === 'to_boolean';
   }
 
+  isAnnotateTreatments(): boolean {
+    return this.form.get('category')?.value === 'annotate_treatments';
+  }
+
   /**
    * Agrega un grupo de categorías para merge_categories
    */
@@ -401,6 +498,39 @@ export class CreateVariableDialogComponent implements OnInit {
       }))
       .filter(item => item.value !== 'N/A') // Excluir missing values
       .sort((a, b) => b.count - a.count);
+  }
+
+  private readNumberControl(controlName: string, fallback: number): number {
+    const rawValue = this.form.get(controlName)?.value;
+
+    if (rawValue === null || rawValue === undefined || rawValue === '') {
+      return fallback;
+    }
+
+    const parsedValue = Number(rawValue);
+    return Number.isNaN(parsedValue) ? fallback : parsedValue;
+  }
+
+  private readStringControl(controlName: string, fallback: string): string {
+    const rawValue = String(this.form.get(controlName)?.value ?? '').trim();
+    return rawValue || fallback;
+  }
+
+  updateAnnotateTreatmentPrefix(value: string): void {
+    const normalizedPrefix = String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '')
+      .replace(/_+/g, '_');
+
+    const finalPrefix = normalizedPrefix
+      ? normalizedPrefix.endsWith('_')
+        ? normalizedPrefix
+        : `${normalizedPrefix}_`
+      : this.annotateTreatmentDefaults.prefixValue;
+
+    this.form.patchValue({ prefixValue: finalPrefix }, { emitEvent: false });
   }
 
   /**
@@ -533,6 +663,36 @@ export class CreateVariableDialogComponent implements OnInit {
             column: toBooleanColumn,
             output_column: outputColumn,
             true_values: this.trueValues
+          }
+        };
+        break;
+
+      case 'annotate_treatments':
+        result = {
+          method: category,
+          data: {
+            analysis_id: analysisId,
+            prefix: this.readStringControl('prefixValue', this.annotateTreatmentDefaults.prefixValue),
+            general_rule_days: this.readNumberControl('general_rule_days', this.annotateTreatmentDefaults.general_rule_days),
+            concomitant_start_gap: this.readNumberControl('concomitant_start_gap', this.annotateTreatmentDefaults.concomitant_start_gap),
+            concomitant_end_gap: this.readNumberControl('concomitant_end_gap', this.annotateTreatmentDefaults.concomitant_end_gap),
+            surgery_postop_radio_days: this.readNumberControl('surgery_postop_radio_days', this.annotateTreatmentDefaults.surgery_postop_radio_days),
+            surgery_adjuvant_chemo_days: this.readNumberControl('surgery_adjuvant_chemo_days', this.annotateTreatmentDefaults.surgery_adjuvant_chemo_days),
+            postop_radio_concomi_start_gap: this.readNumberControl('postop_radio_concomi_start_gap', this.annotateTreatmentDefaults.postop_radio_concomi_start_gap),
+            postop_radio_concomi_end_gap: this.readNumberControl('postop_radio_concomi_end_gap', this.annotateTreatmentDefaults.postop_radio_concomi_end_gap),
+            radio_adjuvant_chemo_days: this.readNumberControl('radio_adjuvant_chemo_days', this.annotateTreatmentDefaults.radio_adjuvant_chemo_days),
+            concomi_radio_adj_start_gap: this.readNumberControl('concomi_radio_adj_start_gap', this.annotateTreatmentDefaults.concomi_radio_adj_start_gap),
+            concomi_radio_adj_end_gap: this.readNumberControl('concomi_radio_adj_end_gap', this.annotateTreatmentDefaults.concomi_radio_adj_end_gap),
+            concomi_radio_adj_to_next: this.readNumberControl('concomi_radio_adj_to_next', this.annotateTreatmentDefaults.concomi_radio_adj_to_next),
+            chemo_immuno_days: this.readNumberControl('chemo_immuno_days', this.annotateTreatmentDefaults.chemo_immuno_days),
+            neoadj_chemo_to_radio: this.readNumberControl('neoadj_chemo_to_radio', this.annotateTreatmentDefaults.neoadj_chemo_to_radio),
+            neoadj_chemo_to_surgery: this.readNumberControl('neoadj_chemo_to_surgery', this.annotateTreatmentDefaults.neoadj_chemo_to_surgery),
+            neoadj_concomi_to_phase: this.readNumberControl('neoadj_concomi_to_phase', this.annotateTreatmentDefaults.neoadj_concomi_to_phase),
+            neoadj_concomi_chemo2_start_gap: this.readNumberControl('neoadj_concomi_chemo2_start_gap', this.annotateTreatmentDefaults.neoadj_concomi_chemo2_start_gap),
+            neoadj_concomi_chemo2_end_gap: this.readNumberControl('neoadj_concomi_chemo2_end_gap', this.annotateTreatmentDefaults.neoadj_concomi_chemo2_end_gap),
+            neoadj_concomi_adj_to_next: this.readNumberControl('neoadj_concomi_adj_to_next', this.annotateTreatmentDefaults.neoadj_concomi_adj_to_next),
+            neoadj_radio_adj_chemo1_to_radio: this.readNumberControl('neoadj_radio_adj_chemo1_to_radio', this.annotateTreatmentDefaults.neoadj_radio_adj_chemo1_to_radio),
+            neoadj_radio_adj_chemo2_to_chemo: this.readNumberControl('neoadj_radio_adj_chemo2_to_chemo', this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo)
           }
         };
         break;

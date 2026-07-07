@@ -325,6 +325,11 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
+   createAnnotateTreatments(data: any) {
+    const url = `/raven-api/v1/data-preparation/create_annotate_treatments`;
+    return this.postRequest(url, data)
+  }
+
   createKaplanMeier(data: any) {
     const url = `/raven-api/v1/data-preparation/create_kaplan_meier`;
     return this.postRequest(url, data)

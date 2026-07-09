@@ -146,7 +146,7 @@ export class CreateVariableDialogComponent implements OnInit {
       neoadj_radio_adj_chemo1_to_radio: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo1_to_radio],
       neoadj_radio_adj_chemo2_to_chemo: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo],
       trueValueInput: [''],
-      description: [''],
+      //description: [''],
       endDateMode: ['none'],          // 'none' | 'fixed' | 'variable'
       to_date: [null],
       to_date_column: [null],
@@ -514,23 +514,6 @@ export class CreateVariableDialogComponent implements OnInit {
   private readStringControl(controlName: string, fallback: string): string {
     const rawValue = String(this.form.get(controlName)?.value ?? '').trim();
     return rawValue || fallback;
-  }
-
-  updateAnnotateTreatmentPrefix(value: string): void {
-    const normalizedPrefix = String(value || '')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^a-z0-9_]/g, '')
-      .replace(/_+/g, '_');
-
-    const finalPrefix = normalizedPrefix
-      ? normalizedPrefix.endsWith('_')
-        ? normalizedPrefix
-        : `${normalizedPrefix}_`
-      : this.annotateTreatmentDefaults.prefixValue;
-
-    this.form.patchValue({ prefixValue: finalPrefix }, { emitEvent: false });
   }
 
   /**

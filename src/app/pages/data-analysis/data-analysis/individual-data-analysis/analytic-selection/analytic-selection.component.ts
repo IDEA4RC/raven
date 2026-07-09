@@ -312,7 +312,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   getAvailableRowVariables() {
     const baseVariables = this.shouldShowVariableSelector()
-      ? this.getCategoricalVariables()
+      ? this.getCategoricalAndBooleanVariables()
       : this.variables;
 
     if (!this.selectedColumnVariable) {
@@ -491,6 +491,14 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       .filter(variable => (variable.type || '').toLowerCase() === 'boolean');
   }
 
+  getCategoricalAndBooleanVariables() {
+    return this.getFilteredBaseVariables()
+      .filter(variable => {
+        const type = (variable.type || '').toLowerCase();
+
+        return type === 'categorical' || type === 'boolean';
+      });
+  }
 
   getTimeAndDateVariables() {
     return this.getFilteredBaseVariables()

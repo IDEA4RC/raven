@@ -162,7 +162,7 @@
                                         [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                         [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate"></ngx-mat-select-search>
                                 </mat-option>
-                                <mat-option *ngFor="let variable of getCategoricalVariables()" [value]="variable.value">
+                                <mat-option *ngFor="let variable of getCategoricalAndBooleanVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>

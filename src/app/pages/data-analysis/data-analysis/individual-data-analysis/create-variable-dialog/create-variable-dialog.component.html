@@ -165,34 +165,42 @@
       </tr>
 
       <!-- Annotate Treatments -->
-      <tr *ngIf="isAnnotateTreatments()">
-        <td><label>Output prefix</label></td>
-        <td>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Prefix for generated columns</mat-label>
-            <input matInput formControlName="prefixValue" placeholder="trt_pattern_"
-              (input)="updateAnnotateTreatmentPrefix($any($event.target).value)">
-          </mat-form-field>
-          <p class="info-text">
-            This operation generates 20 independent boolean columns. The prefix will be applied to each generated
-            treatment pattern column.
-          </p>
-        </td>
-      </tr>
+      <ng-container *ngIf="isAnnotateTreatments()">
+        <tr *ngIf="isAnnotateTreatments()">
+          <td><label>Column prefix (Name for generated columns)</label></td>
+          <td>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="prefixValue">
+            </mat-form-field>
+          </td>
+        </tr>
 
-      <tr *ngIf="isAnnotateTreatments()">
-        <td colspan="2">
-          <div class="annotate-treatments-config">
-            <p class="helper-text">Configure the thresholds used to classify each patient into treatment patterns.</p>
-            <div class="annotate-treatments-grid">
-              <mat-form-field *ngFor="let field of annotateTreatmentFields" appearance="outline" class="full-width">
-                <mat-label>{{ field.label }}</mat-label>
-                <input matInput type="number" [formControlName]="field.controlName" min="0" step="1">
-              </mat-form-field>
-            </div>
-          </div>
-        </td>
-      </tr>
+        <tr>
+          <td colspan="2">
+            <p class="helper-text">
+              This operation generates 20 independent boolean columns. The prefix will be applied to each generated
+              treatment pattern column.
+            </p>
+
+            <p class="helper-text">
+              Configure the thresholds used to classify each patient into treatment patterns.
+            </p>
+          </td>
+        </tr>
+
+
+        <tr *ngFor="let field of annotateTreatmentFields">
+          <td><label>{{ field.label }}</label></td>
+          <td>
+            <mat-form-field appearance="outline" class="full-width">
+
+              <input matInput type="number" [formControlName]="field.controlName" min="0" step="1">
+            </mat-form-field>
+
+          </td>
+        </tr>
+      </ng-container>
+
       <!-- Merge Categories -->
       <tr *ngIf="isMergeCategories()">
         <td><label>Select categorical variable</label></td>
@@ -252,7 +260,8 @@
       </tr>
 
       <!-- Computed y Merge -->
-      <ng-container *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean() && !isMergeCategories() && !isAnnotateTreatments()">
+      <ng-container
+        *ngIf="!isTimeDelta() && !isOneHotEncoding() && !isToBoolean() && !isMergeCategories() && !isAnnotateTreatments()">
         <tr>
           <td>
             <label>
@@ -315,14 +324,14 @@
         </td>
       </tr>
 
-      <tr>
+      <!--<tr>
         <td><label>Brief description</label></td>
         <td>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="description">
           </mat-form-field>
         </td>
-      </tr>
+      </tr>-->
     </table>
 
   </mat-dialog-content>

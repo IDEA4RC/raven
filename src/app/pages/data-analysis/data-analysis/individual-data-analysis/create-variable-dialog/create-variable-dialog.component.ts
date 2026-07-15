@@ -57,7 +57,10 @@ export class CreateVariableDialogComponent implements OnInit {
     neoadj_concomi_chemo2_end_gap: 14,
     neoadj_concomi_adj_to_next: 90,
     neoadj_radio_adj_chemo1_to_radio: 90,
-    neoadj_radio_adj_chemo2_to_chemo: 90
+    neoadj_radio_adj_chemo2_to_chemo: 90,
+    adj_chemo_to_concomi_chemo: 90,
+    radio_to_surgery: 90,
+    adj_chemo_to_radio: 90
   };
 
   annotateTreatmentFields: AnnotateTreatmentField[] = [
@@ -80,7 +83,10 @@ export class CreateVariableDialogComponent implements OnInit {
     { controlName: 'neoadj_concomi_chemo2_end_gap', label: 'Neoadjuvant concomitant chemo2 end gap' },
     { controlName: 'neoadj_concomi_adj_to_next', label: 'Neoadjuvant concomitant adjuvant to next' },
     { controlName: 'neoadj_radio_adj_chemo1_to_radio', label: 'Neoadjuvant radio adjuvant chemo1 to radio' },
-    { controlName: 'neoadj_radio_adj_chemo2_to_chemo', label: 'Neoadjuvant radio adjuvant chemo2 to chemo' }
+    { controlName: 'neoadj_radio_adj_chemo2_to_chemo', label: 'Neoadjuvant radio adjuvant chemo2 to chemo' },
+    { controlName: 'adj_chemo_to_concomi_chemo', label: 'Adjuvant chemo to concomitant chemo' },
+    { controlName: 'radio_to_surgery', label: 'Radio to surgery' },
+    { controlName: 'adj_chemo_to_radio', label: 'Adjuvant chemo to radio' }
   ];
 
   form: FormGroup;
@@ -145,6 +151,9 @@ export class CreateVariableDialogComponent implements OnInit {
       neoadj_concomi_adj_to_next: [this.annotateTreatmentDefaults.neoadj_concomi_adj_to_next],
       neoadj_radio_adj_chemo1_to_radio: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo1_to_radio],
       neoadj_radio_adj_chemo2_to_chemo: [this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo],
+      adj_chemo_to_concomi_chemo: [this.annotateTreatmentDefaults.adj_chemo_to_concomi_chemo],
+      radio_to_surgery: [this.annotateTreatmentDefaults.radio_to_surgery],
+      adj_chemo_to_radio: [this.annotateTreatmentDefaults.adj_chemo_to_radio],
       trueValueInput: [''],
       //description: [''],
       endDateMode: ['none'],          // 'none' | 'fixed' | 'variable'
@@ -675,7 +684,11 @@ export class CreateVariableDialogComponent implements OnInit {
             neoadj_concomi_chemo2_end_gap: this.readNumberControl('neoadj_concomi_chemo2_end_gap', this.annotateTreatmentDefaults.neoadj_concomi_chemo2_end_gap),
             neoadj_concomi_adj_to_next: this.readNumberControl('neoadj_concomi_adj_to_next', this.annotateTreatmentDefaults.neoadj_concomi_adj_to_next),
             neoadj_radio_adj_chemo1_to_radio: this.readNumberControl('neoadj_radio_adj_chemo1_to_radio', this.annotateTreatmentDefaults.neoadj_radio_adj_chemo1_to_radio),
-            neoadj_radio_adj_chemo2_to_chemo: this.readNumberControl('neoadj_radio_adj_chemo2_to_chemo', this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo)
+            neoadj_radio_adj_chemo2_to_chemo: this.readNumberControl('neoadj_radio_adj_chemo2_to_chemo', this.annotateTreatmentDefaults.neoadj_radio_adj_chemo2_to_chemo),
+            adj_chemo_to_concomi_chemo: this.readNumberControl('adj_chemo_to_concomi_chemo', this.annotateTreatmentDefaults.adj_chemo_to_concomi_chemo),
+            radio_to_surgery: this.readNumberControl('radio_to_surgery', this.annotateTreatmentDefaults.radio_to_surgery),
+            adj_chemo_to_radio: this.readNumberControl('adj_chemo_to_radio', this.annotateTreatmentDefaults.adj_chemo_to_radio)
+            
           }
         };
         break;

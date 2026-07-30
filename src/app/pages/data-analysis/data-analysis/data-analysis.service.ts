@@ -388,4 +388,9 @@ export class DataAnalysisService {
     return this.getRequest(url);
   }
 
+  saveTable1View(data: any) {
+    const url = `/raven-api/v1/table1-saved-views/`;
+    return this.postRequest(url, data)
+  }
+
 }

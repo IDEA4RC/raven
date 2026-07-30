@@ -1,0 +1,75 @@
+<div *ngFor="let table of kaplanMeierTables" class="table-container">
+    <h2>{{ formatLabel(table.cohortName) }}</h2>
+
+    <!-- Kaplan-Meier Chart -->
+    <div class="chart-container" style="margin-bottom: 30px;">
+        <canvas baseChart [data]="kaplanMeierChartData" [options]="kaplanMeierChartOptions" type="line">
+        </canvas>
+    </div>
+
+    <div *ngIf="(logRankTables?.length ?? 0) > 0" class="logrank-container">
+
+        <h3>Log-rank test (p-values)</h3>
+
+        <!-- Heatmap matrix -->
+        <div class="heatmap">
+
+            <!-- HEADER -->
+            <div class="row">
+                <div class="cell empty"></div>
+
+                <div class="cell header" *ngFor="let c of logRankTables[0].cohortNames">
+                    {{ formatLabel(c) }}
+                </div>
+            </div>
+
+            <!-- ROWS -->
+            <div class="row" *ngFor="let r of logRankTables[0].cohortNames; let i = index">
+
+                <div class="cell header">
+                    {{ formatLabel(r) }}
+                </div>
+
+                <div class="cell" *ngFor="let c of logRankTables[0].cohortNames; let j = index"
+                    [style.background]="getPValueColor(logRankTables[0].matrix[i][j])">
+
+                    {{ logRankTables[0].matrix[i][j] !== null
+                    ? (logRankTables[0].matrix[i][j] | number:'1.3-3')
+                    : '-' }}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Data table below chart -->
+    <div *ngFor="let curve of table.curves" class="kaplan-meier-curve">
+        <h3>{{ formatLabel(curve.cohortName) }}</h3>
+
+        <table class="statistics-table">
+            <thead>
+                <tr>
+                    <th>{{ 'pages.data-analysis.analysis-results.time' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.survival' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.at-risk' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.censored' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.observed' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.ci-lower' | translate }}</th>
+                    <th>{{ 'pages.data-analysis.analysis-results.ci-upper' | translate }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let point of curve.points">
+                    <td>{{ point.time }}</td>
+                    <td>{{ point.survival | number:'1.4-4' }}</td>
+                    <td>{{ point.atRisk }}</td>
+                    <td>{{ point.censored }}</td>
+                    <td>{{ point.observed }}</td>
+                    <td>{{ point.ciLower !== undefined ? (point.ciLower | number:'1.4-4') : '-' }}</td>
+                    <td>{{ point.ciUpper !== undefined ? (point.ciUpper | number:'1.4-4') : '-' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -91,314 +91,35 @@
 
         <!-- SECOND ROW -->
 
-        <mat-card class="inner-card" style="margin-top: 20px !important;">
-          <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.analysis-results' | translate }}</h3>
-          Each cell contains the observed count followed by the row percentage and column percentage: count (row %,
-          column %).
-          <ng-container [ngSwitch]="currentView">
-            <div *ngSwitchCase="'crosstab'">
-              <div *ngFor="let table of crosstabTables" class="table-container">
+        <ng-container [ngSwitch]="currentView">
 
-                <p class="secondary-label" *ngIf="table.columnVariable">
-                  <strong>{{ 'pages.data-analysis.analysis-results.column-variable' | translate }}:</strong> {{
-                  formatLabel(table.columnVariable) }}
-                </p>
+          <app-crosstabulation-results *ngSwitchCase="'crosstab'" [resultData]="rawTaskResult"
+            [selectedAlgorithm]="selectedAlgorithm">
+          </app-crosstabulation-results>
 
-                <table class="statistics-table">
-                  <thead>
-                    <tr>
-                      <th *ngFor="let rowHeader of table.rowHeaders">{{ formatLabel(rowHeader) }}</th>
-                      <th *ngFor="let valueHeader of table.valueHeaders">{{ formatLabel(valueHeader) }}</th>
-                    </tr>
-                  </thead>
+          <app-t-test-results *ngSwitchCase="'ttest'" [resultData]="rawTaskResult">
+          </app-t-test-results>
 
-                  <tbody>
-                    <tr *ngFor="let row of table.rows" [class.total-row]="row.isTotalRow">
-                      <td *ngFor="let rowHeader of table.rowHeaders">{{ row.rowValues[rowHeader] }}</td>
-                      <td *ngFor="let valueHeader of table.valueHeaders">{{ row.valueValues[valueHeader] }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+          <app-kaplan-meier-results *ngSwitchCase="'kaplan-meier'" [resultData]="rawTaskResult">
+          </app-kaplan-meier-results>
 
-                <div class="chi2" *ngIf="table.chi2 || table.pValue">
-                  <p *ngIf="table.chi2"><strong>{{ 'pages.data-analysis.analysis-results.chi2' | translate }}:</strong>
-                    {{ table.chi2 }}</p>
-                  <p *ngIf="table.pValue"><strong>{{ 'pages.data-analysis.analysis-results.p-value' | translate
-                      }}:</strong> {{ table.pValue }}</p>
-                </div>
-              </div>
-            </div>
+          <!-- <app-log-rank-results *ngSwitchCase="'log-rank'" [resultData]="rawTaskResult">
+          </app-log-rank-results> -->
 
-            <div *ngSwitchCase="'ttest'">
-              <div *ngFor="let table of tTestTables" class="table-container">
-                <h2>{{ formatLabel(table.cohortName) }}</h2>
+          <app-glm-results *ngSwitchCase="'glm'" [resultData]="rawTaskResult">
+          </app-glm-results>
 
-                <table class="statistics-table">
-                  <thead>
-                    <tr>
-                      <th>{{ 'pages.data-analysis.analysis-results.variable' | translate }}</th>
-                      <th *ngFor="let metricHeader of table.metricHeaders">{{ formatLabel(metricHeader) }}</th>
-                    </tr>
-                  </thead>
+          <app-table1-results *ngSwitchCase="'table1'" [resultData]="rawTaskResult" [topographyMap]="topographyMap" [selectedAlgorithm]="selectedAlgorithm">
+          </app-table1-results>
 
-                  <tbody>
-                    <tr *ngFor="let row of table.rows">
-                      <td>{{ formatLabel(row.variableName) }}</td>
-                      <td *ngFor="let metricHeader of table.metricHeaders">{{ row.metrics[metricHeader] }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <app-placeholder-results *ngSwitchCase="'placeholder'" [algorithmName]="name_algorithm"
+            [message]="underConstructionMessage">
+          </app-placeholder-results>
 
-            <div *ngSwitchCase="'kaplan-meier'">
-              <div *ngFor="let table of kaplanMeierTables" class="table-container">
-                <h2>{{ formatLabel(table.cohortName) }}</h2>
+          <app-placeholder-results *ngSwitchDefault [algorithmName]="name_algorithm" message="No results available.">
+          </app-placeholder-results>
 
-                <!-- Kaplan-Meier Chart -->
-                <div class="chart-container" style="margin-bottom: 30px;">
-                  <canvas baseChart [data]="kaplanMeierChartData" [options]="kaplanMeierChartOptions" type="line">
-                  </canvas>
-                </div>
-
-                <div *ngIf="(logRankTables?.length ?? 0) > 0" class="logrank-container">
-
-                  <h3>Log-rank test (p-values)</h3>
-
-                  <!-- Heatmap matrix -->
-                  <div class="heatmap">
-
-                    <!-- HEADER -->
-                    <div class="row">
-                      <div class="cell empty"></div>
-
-                      <div class="cell header" *ngFor="let c of logRankTables[0].cohortNames">
-                        {{ formatLabel(c) }}
-                      </div>
-                    </div>
-
-                    <!-- ROWS -->
-                    <div class="row" *ngFor="let r of logRankTables[0].cohortNames; let i = index">
-
-                      <div class="cell header">
-                        {{ formatLabel(r) }}
-                      </div>
-
-                      <div class="cell" *ngFor="let c of logRankTables[0].cohortNames; let j = index"
-                        [style.background]="getPValueColor(logRankTables[0].matrix[i][j])">
-
-                        {{ logRankTables[0].matrix[i][j] !== null
-                        ? (logRankTables[0].matrix[i][j] | number:'1.3-3')
-                        : '-' }}
-
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Data table below chart -->
-                <div *ngFor="let curve of table.curves" class="kaplan-meier-curve">
-                  <h3>{{ formatLabel(curve.cohortName) }}</h3>
-
-                  <table class="statistics-table">
-                    <thead>
-                      <tr>
-                        <th>{{ 'pages.data-analysis.analysis-results.time' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.survival' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.at-risk' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.censored' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.observed' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.ci-lower' | translate }}</th>
-                        <th>{{ 'pages.data-analysis.analysis-results.ci-upper' | translate }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let point of curve.points">
-                        <td>{{ point.time }}</td>
-                        <td>{{ point.survival | number:'1.4-4' }}</td>
-                        <td>{{ point.atRisk }}</td>
-                        <td>{{ point.censored }}</td>
-                        <td>{{ point.observed }}</td>
-                        <td>{{ point.ciLower !== undefined ? (point.ciLower | number:'1.4-4') : '-' }}</td>
-                        <td>{{ point.ciUpper !== undefined ? (point.ciUpper | number:'1.4-4') : '-' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div *ngSwitchCase="'log-rank'">
-              <div *ngFor="let table of logRankTables" class="table-container">
-                <h2>{{ 'pages.data-analysis.analysis-results.log-rank-results' | translate }}</h2>
-
-                <table class="statistics-table">
-                  <thead>
-                    <tr>
-                      <th>{{ 'pages.data-analysis.analysis-results.cohort-1' | translate }}</th>
-                      <th>{{ 'pages.data-analysis.analysis-results.cohort-2' | translate }}</th>
-                      <th>{{ 'pages.data-analysis.analysis-results.p-value' | translate }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let row of table.rows">
-                      <td>{{ formatLabel(row.cohort1) }}</td>
-                      <td>{{ formatLabel(row.cohort2) }}</td>
-                      <td>{{ row.pValue }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div *ngSwitchCase="'glm'">
-              <div *ngIf="glmTable" class="table-container">
-                <h2>Generalized Linear Model (GLM) Results</h2>
-
-                <!-- Global Model Notes -->
-                <div class="model-notes" style="margin-bottom: 30px;">
-                  <h3>Model Notes</h3>
-                  <p><strong>Global Iterations:</strong> {{ glmTable.globalDetails.iterations }}</p>
-                  <p><strong>All Models Converged:</strong> {{ glmTable.globalDetails.allConverged ? 'Yes' : 'No' }}</p>
-                </div>
-
-                <!-- Coefficient (Forest Plot) Chart -->
-                <div style="margin-bottom: 40px;">
-                  <h3>1. Coefficients by Cohort (Forest Plot)</h3>
-                  <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions"
-                      type="bar"></canvas>
-                  </div>
-                  <p class="chart-description">
-                    <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor.
-                    The horizontal lines show 95% confidence intervals. Effects crossing the vertical dashed line at 0
-                    are uncertain.
-                  </p>
-                </div>
-
-                <!-- Deviance Reduction Chart -->
-                <div style="margin-bottom: 40px;">
-                  <h3>2. Deviance Reduction</h3>
-                  <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions"
-                      type="bar"></canvas>
-                  </div>
-                  <p class="chart-description">
-                    <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with
-                    predictors).
-                    A larger drop indicates that predictors help explain the outcome.
-                  </p>
-                </div>
-
-                <!-- Summary Table for each cohort -->
-                <div *ngFor="let cohort of glmTable.cohorts" style="margin-bottom: 40px;">
-                  <h3>Summary for {{ formatLabel(cohort.cohortName) }}</h3>
-
-                  <div style="margin-bottom: 20px;">
-                    <h4>Model Details</h4>
-                    <table class="statistics-table model-details-table">
-                      <tbody>
-                        <tr>
-                          <td><strong>Converged:</strong></td>
-                          <td>{{ cohort.details.converged ? 'Yes' : 'No' }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Dispersion:</strong></td>
-                          <td>{{ cohort.details.dispersion | number:'1.4-4' }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Dispersion Estimated:</strong></td>
-                          <td>{{ cohort.details.isDispersionEstimated ? 'Yes' : 'No' }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Number of Observations:</strong></td>
-                          <td>{{ cohort.details.numObservations }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Number of Variables:</strong></td>
-                          <td>{{ cohort.details.numVariables }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Null Deviance:</strong></td>
-                          <td>{{ cohort.details.nullDeviance | number:'1.2-2' }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Model Deviance:</strong></td>
-                          <td>{{ cohort.details.deviance | number:'1.2-2' }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Deviance Reduction:</strong></td>
-                          <td>{{ (cohort.details.nullDeviance - cohort.details.deviance) | number:'1.2-2' }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <h4>Coefficients</h4>
-                  <table class="statistics-table">
-                    <thead>
-                      <tr>
-                        <th>Predictor</th>
-                        <th>β</th>
-                        <th>SE</th>
-                        <th>z</th>
-                        <th>p-value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let coef of cohort.coefficients">
-                        <td>{{ formatLabel(coef.predictor) }}</td>
-                        <td>{{ coef.beta | number:'1.4-4' }}</td>
-                        <td>{{ coef.stdError | number:'1.4-4' }}</td>
-                        <td>{{ coef.zValue | number:'1.2-2' }}</td>
-                        <td>{{ coef.pValue === 0 ? '&lt;1e-300' : (coef.pValue | number:'1.2-2') }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div *ngSwitchCase="'table1'">
-              <div *ngIf="table1Table" class="table-container">
-                <h2>Table 1: Summary Statistics</h2>
-
-                <table class="statistics-table_1">
-                  <thead>
-                    <tr>
-                      <th>Characteristic</th>
-                      <th *ngFor="let cohort of table1Table.cohortNames">{{ formatLabel(cohort) }} (n={{
-                        table1Table.cohortCounts[cohort] }})</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let row of table1Table.rows" [class.header-row]="!row.isSub"
-                      [class.sub-row]="row.isSub">
-                      <td class="characteristic-cell">
-                        {{ row.characteristic }}
-                      </td>
-                      <td *ngFor="let cohort of table1Table.cohortNames">{{ row[cohort] }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div *ngSwitchCase="'placeholder'" class="under-construction">
-              <h4>{{ formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.algorithm' | translate) }}
-              </h4>
-              <p>{{ underConstructionMessage }}</p>
-            </div>
-
-            <div *ngSwitchDefault class="under-construction">
-              <h4>{{ 'pages.data-analysis.analysis-results.no-results' | translate }}</h4>
-              <p>{{ 'pages.data-analysis.analysis-results.select-algorithm-to-load' | translate }}</p>
-            </div>
-          </ng-container>
-
-
-        </mat-card>
+        </ng-container>
       </mat-card-content>
 
       <!-- Card Footer -->

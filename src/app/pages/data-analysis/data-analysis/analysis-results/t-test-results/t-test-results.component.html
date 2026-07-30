@@ -1,0 +1,25 @@
+<div *ngFor="let table of tTestTables" class="table-container">
+    <h2>{{ formatLabel(table.cohortName) }}</h2>
+
+    <table class="statistics-table">
+        <thead>
+            <tr>
+                <th>{{ 'pages.data-analysis.analysis-results.variable' | translate }}</th>
+
+                <th *ngFor="let metricHeader of table.metricHeaders">
+                    {{ formatLabel(metricHeader) }}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let row of table.rows">
+                <td>{{ formatLabel(row.variableName) }}</td>
+
+                <td *ngFor="let metricHeader of table.metricHeaders">
+                    {{ row.metrics[metricHeader] }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

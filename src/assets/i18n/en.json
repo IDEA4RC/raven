@@ -220,7 +220,8 @@
         "no-variables-required": "This method does not require variable selection.",
         "save-execute": "Save & Execute",
         "continue": "Continue",
-        "back": "Back"
+        "back": "Back",
+        "variables-input": "Input Variables"
       },
       "analysis-results": {
         "analysis-results": "Analysis Results",

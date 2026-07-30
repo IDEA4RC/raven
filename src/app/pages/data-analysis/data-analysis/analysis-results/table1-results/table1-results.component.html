@@ -1,0 +1,110 @@
+<div *ngIf="table" class="table-container">
+
+  <h2>Table 1: Summary Statistics</h2>
+
+  <div class="table-actions">
+    <ng-container *ngIf="isEditing; else viewModeButtons">
+      <button mat-stroked-button type="button" (click)="expandAll()">
+        Expand all
+      </button>
+
+      <button mat-stroked-button type="button" (click)="collapseAll()">
+        Collapse all
+      </button>
+
+      <button mat-stroked-button type="button" (click)="selectAll()">
+        Select all
+      </button>
+
+      <button mat-stroked-button type="button" (click)="deselectAll()">
+        Deselect all
+      </button>
+
+      <button mat-raised-button type="button" (click)="selectDefaultVariables()">
+        Last selection
+      </button>
+      <button mat-raised-button color="accent" (click)="finishEditing()">
+        Done
+      </button>
+    </ng-container>
+
+    <ng-template #viewModeButtons>
+      <button mat-raised-button color="primary" (click)="startEditing()">
+        Edit
+      </button>
+    </ng-template>
+  </div>
+
+  <table class="statistics-table_1">
+    <thead>
+      <tr>
+        <th>Characteristic</th>
+
+        <th *ngFor="let cohort of table.cohortNames">
+          {{ formatLabel(cohort) }} (n={{ table.cohortCounts[cohort] }})
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <ng-container *ngFor="let group of groups">
+
+        <tr class="header-row" *ngIf="isEditing || group.visible">
+          <td class="characteristic-cell group-cell">
+
+            <mat-checkbox *ngIf="isEditing" class="row-checkbox" [checked]="group.visible"
+              (change)="toggleVisible(group)" (click)="$event.stopPropagation()">
+            </mat-checkbox>
+
+            <span class="group-label">
+              {{ group.label }}
+            </span>
+
+            <button mat-icon-button type="button" class="collapse-button"
+              [disabled]="!group.visible || group.subRows.length === 0"
+              (click)="toggleExpanded(group); $event.stopPropagation()">
+
+              <mat-icon>
+                {{ group.expanded ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+
+            </button>
+
+          </td>
+
+          <td *ngFor="let cohort of table.cohortNames">
+            {{ group.mainRow[cohort] }}
+          </td>
+        </tr>
+
+        <ng-container *ngIf="(group.visible || isEditing) && group.expanded">
+          <tr *ngFor="let row of group.subRows" class="sub-row">
+
+            <td class="characteristic-cell sub-characteristic-cell">
+              {{ row.characteristic }}
+            </td>
+
+            <td *ngFor="let cohort of table.cohortNames">
+              {{ row[cohort] }}
+            </td>
+
+          </tr>
+        </ng-container>
+
+      </ng-container>
+      <tr *ngIf="!isEditing && hiddenCount > 0" class="hidden-info-row">
+        <td [attr.colspan]="table.cohortNames.length + 1">
+          {{ hiddenCount }} variables hidden. Click "Edit" to modify.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+
+</div>
+
+<div *ngIf="!table" class="under-construction">
+  <h4>Table 1</h4>
+  <p>No Table 1 data was returned.</p>
+</div>

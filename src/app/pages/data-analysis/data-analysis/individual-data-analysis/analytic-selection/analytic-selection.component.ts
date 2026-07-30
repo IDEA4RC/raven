@@ -38,7 +38,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   // Table components
   dataSource = new MatTableDataSource<Algorithm>();
-  displayedColumns: string[] = ['id', 'algorithm_name', 'creation_date', 'update_date', 'status_task', 'action'];
+  displayedColumns: string[] = ['id', 'algorithm_name', 'input_variables', 'creation_date', 'update_date', 'status_task', 'action'];
   allCohorts: any[] = []; // Loaded from cohort selection
   algorithmsList: Algorithm[] = []
   //Selection forms
@@ -166,7 +166,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
               type: this.mapDatatype(v.dtype),
               display_name: this.formatVariableName(v.name)
             }));
-          console.log("variables: ", this.variables);
           this.filteredVariables = [...this.variables];
           this.filterVariables(this.variableFilterCtrl.value);
 
@@ -175,7 +174,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
         error: err => console.error('Error fetching subtask number', err)
       });
 
-      console.log("Selected service .selectedItems$ in onInit of analytic selection ", items);
     });
     const urlSegments = this.router.url.split('/');
     const workspaceIndex = urlSegments.indexOf('workspace');
@@ -240,11 +238,10 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     this.resetAlgorithmForm();
   }
   openAlgorithm(algorithm_id: number) {
-    console.log("algorithm id: ", algorithm_id);
 
     // Obtener el algoritmo seleccionado de la lista
     const selectedAlgorithm = this.algorithmsList.find(alg => alg.id === algorithm_id);
-
+   
     if (selectedAlgorithm) {
       // Pasar el algoritmo a través del servicio
       this.selectionService.setSelected([
@@ -253,8 +250,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
           cohorts: this.allCohorts
         }
       ]);
-      console.log("Selected algorithm:", selectedAlgorithm);
-      console.log("cohorts: ", this.allCohorts)
+      
     }
 
     this.nextStep.emit();
@@ -648,7 +644,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   getAlgorithmsList() {
     const cohortsIds = this.allCohorts.map(cohort => cohort.id);
-    console.log("cohorts id:", cohortsIds);
 
     let body = {
       cohort_ids: cohortsIds
@@ -881,7 +876,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   checkAlgorithmsStatus(): void {
     this.algorithmsList.forEach((algorithm: any, index: number) => {
-      console.log("Algoritm: ", algorithm, " index : ", index);
 
       const taskId = algorithm.task_id;
 
@@ -936,7 +930,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
       // 1️⃣ Obtener subtaskId
       const subtaskNumber = await this.dataAnalysisService.getSubTask(taskId).toPromise();
       const subtaskId = Number(subtaskNumber);
-      console.log("subtaskId: ", subtaskId);
 
       // 2️⃣ Actualizar subtask status
       const bodySubtaskUpdate = {

@@ -26,8 +26,16 @@ import { StatisticsTableComponent } from './data-analysis/individual-data-analys
 import { CreateVariableDialogComponent } from './data-analysis/individual-data-analysis/create-variable-dialog/create-variable-dialog.component';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { Table1ResultsComponent } from './data-analysis/analysis-results/table1-results/table1-results.component';
+import { CrosstabulationResultsComponent } from "./data-analysis/analysis-results/crosstabulation-results/crosstabulation-results.component";
+import { GlmResultsComponent } from './data-analysis/analysis-results/glm-results/glm-results.component';
+import { KaplanMeierResultsComponent } from './data-analysis/analysis-results/kaplan-meier-results/kaplan-meier-results.component';
+import { TTestResultsComponent } from './data-analysis/analysis-results/t-test-results/t-test-results.component';
+import { CoxPHResultsComponent } from './data-analysis/analysis-results/cox-ph-results/cox-ph-results.component';
+import { PlaceholderResultsComponent } from './data-analysis/analysis-results/placeholder-results/placeholder-results.component';
 @NgModule({
-  declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
+  declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, Table1ResultsComponent, CrosstabulationResultsComponent, GlmResultsComponent,
+    KaplanMeierResultsComponent, TTestResultsComponent, CoxPHResultsComponent, PlaceholderResultsComponent,
     DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
   imports: [
     CommonModule,
@@ -45,6 +53,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatDialogModule,
     MatChipsModule,
     NgxMatSelectSearchModule
-]
+  ]
 })
 export class DataAnalysisModule { }

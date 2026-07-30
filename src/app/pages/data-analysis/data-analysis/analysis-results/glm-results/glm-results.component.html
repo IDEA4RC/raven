@@ -1,0 +1,107 @@
+<div *ngIf="glmTable" class="table-container">
+    <h2>Generalized Linear Model (GLM) Results</h2>
+
+    <!-- Global Model Notes -->
+    <div class="model-notes" style="margin-bottom: 30px;">
+        <h3>Model Notes</h3>
+        <p><strong>Global Iterations:</strong> {{ glmTable.globalDetails.iterations }}</p>
+        <p><strong>All Models Converged:</strong> {{ glmTable.globalDetails.allConverged ? 'Yes' : 'No' }}</p>
+    </div>
+
+    <!-- Coefficient (Forest Plot) Chart -->
+    <div style="margin-bottom: 40px;">
+        <h3>1. Coefficients by Cohort (Forest Plot)</h3>
+        <div style="height: 400px; margin-bottom: 30px;">
+            <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions"
+                type="bar"></canvas>
+        </div>
+        <p class="chart-description">
+            <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor.
+            The horizontal lines show 95% confidence intervals. Effects crossing the vertical dashed line at 0
+            are uncertain.
+        </p>
+    </div>
+
+    <!-- Deviance Reduction Chart -->
+    <div style="margin-bottom: 40px;">
+        <h3>2. Deviance Reduction</h3>
+        <div style="height: 400px; margin-bottom: 30px;">
+            <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions" type="bar"></canvas>
+        </div>
+        <p class="chart-description">
+            <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with
+            predictors).
+            A larger drop indicates that predictors help explain the outcome.
+        </p>
+    </div>
+
+    <!-- Summary Table for each cohort -->
+    <div *ngFor="let cohort of glmTable.cohorts" style="margin-bottom: 40px;">
+        <h3>Summary for {{ formatLabel(cohort.cohortName) }}</h3>
+
+        <div style="margin-bottom: 20px;">
+            <h4>Model Details</h4>
+            <table class="statistics-table model-details-table">
+                <tbody>
+                    <tr>
+                        <td><strong>Converged:</strong></td>
+                        <td>{{ cohort.details.converged ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dispersion:</strong></td>
+                        <td>{{ cohort.details.dispersion | number:'1.4-4' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dispersion Estimated:</strong></td>
+                        <td>{{ cohort.details.isDispersionEstimated ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of Observations:</strong></td>
+                        <td>{{ cohort.details.numObservations }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of Variables:</strong></td>
+                        <td>{{ cohort.details.numVariables }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Null Deviance:</strong></td>
+                        <td>{{ cohort.details.nullDeviance | number:'1.2-2' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model Deviance:</strong></td>
+                        <td>{{ cohort.details.deviance | number:'1.2-2' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Deviance Reduction:</strong></td>
+                        <td>{{ (cohort.details.nullDeviance - cohort.details.deviance) | number:'1.2-2' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Coefficients</h4>
+        <table class="statistics-table">
+            <thead>
+                <tr>
+                    <th>Predictor</th>
+                    <th>β</th>
+                    <th>SE</th>
+                    <th>z</th>
+                    <th>p-value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let coef of cohort.coefficients">
+                    <td>{{ formatLabel(coef.predictor) }}</td>
+                    <td>{{ coef.beta | number:'1.4-4' }}</td>
+                    <td>{{ coef.stdError | number:'1.4-4' }}</td>
+                    <td>{{ coef.zValue | number:'1.2-2' }}</td>
+                    <td>{{ coef.pValue === 0 ? '&lt;1e-300' : (coef.pValue | number:'1.2-2') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div *ngIf="!glmTable" class="placeholder-container">
+    <h2>{{ noResultsMessage }}</h2>
+</div>

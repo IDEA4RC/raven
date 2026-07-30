@@ -1,0 +1,50 @@
+<p>
+    Each cell contains the observed count followed by the row percentage and column percentage: count (row %, column %).
+</p>
+
+<div *ngFor="let table of crosstabTables" class="table-container">
+
+    <p class="secondary-label" *ngIf="table.columnVariable">
+        <strong>{{ 'pages.data-analysis.analysis-results.column-variable' | translate }}:</strong>
+        {{ formatLabel(table.columnVariable) }}
+    </p>
+
+    <table class="statistics-table">
+        <thead>
+            <tr>
+                <th *ngFor="let rowHeader of table.rowHeaders">
+                    {{ formatLabel(rowHeader) }}
+                </th>
+
+                <th *ngFor="let valueHeader of table.valueHeaders">
+                    {{ formatLabel(valueHeader) }}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let row of table.rows" [class.total-row]="row.isTotalRow">
+                <td *ngFor="let rowHeader of table.rowHeaders">
+                    {{ row.rowValues[rowHeader] }}
+                </td>
+
+                <td *ngFor="let valueHeader of table.valueHeaders">
+                    {{ row.valueValues[valueHeader] }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="chi2" *ngIf="table.chi2 || table.pValue">
+        <p *ngIf="table.chi2">
+            <strong>{{ 'pages.data-analysis.analysis-results.chi2' | translate }}:</strong>
+            {{ table.chi2 }}
+        </p>
+
+        <p *ngIf="table.pValue">
+            <strong>{{ 'pages.data-analysis.analysis-results.p-value' | translate }}:</strong>
+            {{ table.pValue }}
+        </p>
+    </div>
+
+</div>

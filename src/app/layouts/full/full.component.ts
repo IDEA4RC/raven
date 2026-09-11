@@ -203,7 +203,8 @@ export class FullComponent implements OnInit {
           { displayName: 'Data Discovery', iconName: 'search', route: `/workspace/${workspace.id}/data-discovery` },
           { displayName: 'Data Permit', iconName: 'lock-open', route: `/workspace/${workspace.id}/data-permit` },
           { displayName: 'Data Analysis', iconName: 'chart-line', route: `/workspace/${workspace.id}/data-analysis` },
-          { displayName: 'Data Finalization', iconName: 'check', route: `/workspace/${workspace.id}/data-finalization` }
+          { displayName: 'Data Finalization', iconName: 'check', route: `/workspace/${workspace.id}/data-finalization` },
+          { displayName: 'Result Report', iconName: 'report', route: `/workspace/${workspace.id}/result-report` }
         ]
       });
     }

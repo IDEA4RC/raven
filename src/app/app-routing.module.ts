@@ -48,6 +48,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'workspace/:id/result-report',
+        loadChildren: () =>
+          import('./pages/result-report/result-report.module').then(
+            (m) => m.ResultReportModule
+          ),
+      },
+      {
         path: 'discovery',
         loadChildren: () =>
           import('./pages/data-discovery/data-discovery.module').then(

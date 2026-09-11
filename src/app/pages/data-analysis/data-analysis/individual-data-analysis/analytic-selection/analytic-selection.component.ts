@@ -13,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { FormControl } from '@angular/forms';
 import { interval, forkJoin, of } from 'rxjs';
 import { switchMap, takeWhile, catchError, map } from 'rxjs/operators';
+import { ResultReportService } from '../../../../result-report/result-report.service';
 
 @Component({
   selector: 'app-analytic-selection',
@@ -38,7 +39,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   // Table components
   dataSource = new MatTableDataSource<Algorithm>();
-  displayedColumns: string[] = ['id', 'algorithm_name', 'creation_date', 'update_date', 'status_task', 'action'];
+  displayedColumns: string[] = ['id', 'algorithm_name', 'creation_date', 'update_date', 'status_task', 'in_report', 'action'];
+  reportAlgorithmIds: number[] = [];
   allCohorts: any[] = []; // Loaded from cohort selection
   algorithmsList: Algorithm[] = []
   //Selection forms
@@ -131,7 +133,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   constructor(
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
-    public selectionService: SelectionService
+    public selectionService: SelectionService,
+    private resultReportService: ResultReportService
   ) { }
 
   ngOnInit(): void {
@@ -189,6 +192,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
         console.error('Workspace ID no es un número válido');
         return;
       }
+      this.loadReportSelection();
     }
 
     this.getAlgorithmsList()
@@ -963,6 +967,31 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   canShowAction(algorithm: any): boolean {
     return (algorithm?.status_task || '').toLowerCase() === 'completed';
+  }
+
+  /** Loads which algorithms are currently included in this workspace's Result Report. */
+  loadReportSelection(): void {
+    if (!this.workspaceId) return;
+    this.resultReportService.getReport(this.workspaceId).subscribe({
+      next: (report) => {
+        this.reportAlgorithmIds = report.algorithm_ids || [];
+      },
+    });
+  }
+
+  isIncludedInReport(algorithmId: number): boolean {
+    return this.reportAlgorithmIds.includes(algorithmId);
+  }
+
+  toggleIncludeInReport(algorithmId: number): void {
+    if (!this.workspaceId) return;
+    const next = this.isIncludedInReport(algorithmId)
+      ? this.reportAlgorithmIds.filter(id => id !== algorithmId)
+      : [...this.reportAlgorithmIds, algorithmId];
+    this.reportAlgorithmIds = next;
+    this.resultReportService
+      .updateReport(this.workspaceId, { algorithm_ids: next })
+      .subscribe();
   }
 
   private resetAlgorithmForm(): void {

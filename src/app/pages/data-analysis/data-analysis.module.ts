@@ -27,8 +27,8 @@ import { CreateVariableDialogComponent } from './data-analysis/individual-data-a
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 @NgModule({
-  declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, 
-    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
+  declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent,
+    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(AnalysisRoutes),
@@ -44,7 +44,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     NgApexchartsModule,
     MatDialogModule,
     MatChipsModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    AnalysisResultsComponent
 ]
 })
 export class DataAnalysisModule { }

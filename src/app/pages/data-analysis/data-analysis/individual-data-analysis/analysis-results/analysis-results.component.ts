@@ -1,8 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { BaseChartDirective } from 'ng2-charts';
+import { ngxCsv } from 'ngx-csv/ngx-csv';
 import { DataAnalysisService } from '../../data-analysis.service';
 import { SelectionService } from '../selection.service';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { TopographyService } from 'src/app/services/topography.service';
+import { MaterialModule } from '../../../../../material.module';
 
 const ALGORITHMS = {
     CROSSTABULATION: 'crosstabulation',
@@ -20,7 +25,7 @@ const ALGORITHMS = {
 
 type AlgorithmMethod = typeof ALGORITHMS[keyof typeof ALGORITHMS];
 
-interface SelectedAlgorithm {
+export interface SelectedAlgorithm {
     id?: number;
     method_name?: string;
     description?: string;
@@ -157,6 +162,8 @@ interface Table1DisplayTable {
 
 @Component({
     selector: 'app-analysis-results',
+    standalone: true,
+    imports: [CommonModule, MaterialModule, TranslateModule, BaseChartDirective],
     templateUrl: './analysis-results.component.html',
     styleUrl: './analysis-results.component.scss'
 })
@@ -324,7 +331,42 @@ export class AnalysisResultsComponent implements OnInit {
 
     topographyMap: Record<string, string> = {};
 
+    @ViewChild('kmChart') kmChartRef?: BaseChartDirective;
+    @ViewChild('glmCoefChart') glmCoefChartRef?: BaseChartDirective;
+    @ViewChild('glmDevChart') glmDevChartRef?: BaseChartDirective;
+
     @Output() previousStep = new EventEmitter<void>();
+
+    /**
+     * True once this algorithm's result has been fetched and rendered (or
+     * failed/has no task). Result Report checks this on every embedded
+     * instance before capturing the printable HTML, since fetchTaskResult()
+     * is async and starts as soon as this component is created - possibly
+     * well before the user clicks "Generate" - so it's exposed as state
+     * (checked on demand) rather than a one-shot event Result Report might
+     * start listening for only after it already fired.
+     */
+    resultReady = false;
+
+    /**
+     * Optional: when provided, the component renders this algorithm directly
+     * instead of subscribing to SelectionService.selectedItems$. Used when
+     * embedding this component outside its original Data Analysis stepper
+     * context (e.g. Result Report). Leave unset to preserve the original
+     * behavior.
+     */
+    @Input() algorithmOverride: SelectedAlgorithm | null = null;
+
+    /**
+     * When true, renders Execution Status / Analysis Results / Data Overview
+     * as plain stacked sections instead of mat-tab-group. mat-tab-group only
+     * ever attaches the currently active tab's content to the DOM, which
+     * makes it unsuitable for Result Report's PDF capture (it needs all
+     * three sections at once). Only used off-screen for that capture -
+     * normal interactive use (Data Analysis, Result Report's own preview
+     * list) is untouched.
+     */
+    @Input() printMode = false;
 
     constructor(
         private dataAnalysisService: DataAnalysisService,
@@ -334,29 +376,38 @@ export class AnalysisResultsComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.selectionService.selectedItems$.subscribe(items => {
-            if (!items || items.length === 0) {
-                this.currentView = 'empty';
-                this.underConstructionMessage = 'No algorithm selected.';
-                return;
-            }
+        if (this.algorithmOverride) {
+            this.applySelectedAlgorithm(this.algorithmOverride);
+        } else {
+            this.selectionService.selectedItems$.subscribe(items => {
+                if (!items || items.length === 0) {
+                    this.currentView = 'empty';
+                    this.underConstructionMessage = 'No algorithm selected.';
+                    return;
+                }
 
-            this.selectedAlgorithm = items[0] as SelectedAlgorithm;
-            this.selectedCohorts = this.selectedAlgorithm.cohorts || [];
-            this.initializeSelectedAlgorithm(this.selectedAlgorithm);
-
-            if (this.selectedAlgorithm.task_id) {
-                this.fetchTaskResult(this.selectedAlgorithm.task_id);
-                this.getTaskStatistics(this.selectedAlgorithm.task_id);
-                return;
-            }
-
-            this.setPlaceholderView(this.selectedAlgorithm.method_name, 'This algorithm does not have a task result yet.');
-        });
+                this.applySelectedAlgorithm(items[0] as SelectedAlgorithm);
+            });
+        }
 
         this.topographyService.getTopographyMap().subscribe(map => {
             this.topographyMap = map;
         });
+    }
+
+    private applySelectedAlgorithm(selectedAlgorithm: SelectedAlgorithm): void {
+        this.selectedAlgorithm = selectedAlgorithm;
+        this.selectedCohorts = selectedAlgorithm.cohorts || [];
+        this.initializeSelectedAlgorithm(selectedAlgorithm);
+
+        if (selectedAlgorithm.task_id) {
+            this.fetchTaskResult(selectedAlgorithm.task_id);
+            this.getTaskStatistics(selectedAlgorithm.task_id);
+            return;
+        }
+
+        this.setPlaceholderView(selectedAlgorithm.method_name, 'This algorithm does not have a task result yet.');
+        this.resultReady = true;
     }
 
     initializeSelectedAlgorithm(selectedAlgorithm: SelectedAlgorithm): void {
@@ -395,10 +446,12 @@ export class AnalysisResultsComponent implements OnInit {
                 }
 
                 this.renderSelectedAlgorithm(this.rawTaskResult);
+                this.resultReady = true;
             },
             error: (err) => {
                 console.error('Error obteniendo el resultado de la tarea:', err);
                 this.setPlaceholderView(this.name_algorithm, 'Result could not be loaded.');
+                this.resultReady = true;
             }
         });
     }
@@ -2072,6 +2125,111 @@ export class AnalysisResultsComponent implements OnInit {
 
     goBack(): void {
         this.previousStep.emit();
+    }
+
+    /** Whether the current view has a CSV-exportable table. */
+    canDownloadCsv(): boolean {
+        return ['crosstab', 'ttest', 'table1', 'log-rank', 'glm', 'kaplan-meier'].includes(this.currentView);
+    }
+
+    /** Flattens the currently displayed table into rows and downloads as CSV. */
+    downloadCsv(): void {
+        const rows = this.buildCsvRows();
+        if (!rows || rows.length === 0) {
+            return;
+        }
+
+        // ngx-csv ignores `showLabels` entirely — it only writes a header row
+        // when `headers` is explicitly provided. Rows may have differing keys
+        // (e.g. different cohorts/columns per table), so collect the union.
+        const headerSet = new Set<string>();
+        rows.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
+        const headers = Array.from(headerSet);
+        const normalizedRows = rows.map(row => {
+            const normalized: Record<string, unknown> = {};
+            headers.forEach(header => (normalized[header] = row[header] ?? ''));
+            return normalized;
+        });
+
+        const filename = `${this.name_algorithm || 'analysis'}_results`;
+        const options = {
+            fieldSeparator: ',',
+            quoteStrings: '"',
+            decimalseparator: '.',
+            showLabels: true,
+            showTitle: false,
+            title: filename,
+            useBom: true,
+            noDownload: false,
+            headers,
+        };
+
+        new ngxCsv(normalizedRows, filename, options);
+    }
+
+    private buildCsvRows(): Record<string, unknown>[] {
+        switch (this.currentView) {
+            case 'crosstab':
+                return this.crosstabTables.flatMap(table =>
+                    table.rows.map(row => ({
+                        cohort: table.cohortName,
+                        ...row.rowValues,
+                        ...row.valueValues,
+                    }))
+                );
+            case 'ttest':
+                return this.tTestTables.flatMap(table =>
+                    table.rows.map(row => ({
+                        cohort: table.cohortName,
+                        variable: row.variableName,
+                        ...row.metrics,
+                    }))
+                );
+            case 'table1':
+                return (this.table1Table?.rows || []).map(row => ({ ...row }));
+            case 'log-rank':
+                return this.logRankTables.flatMap(table => table.rows.map(row => ({ ...row })));
+            case 'kaplan-meier':
+                return this.kaplanMeierTables.flatMap(table =>
+                    table.curves.flatMap(curve =>
+                        curve.points.map(point => ({
+                            cohort: curve.cohortName,
+                            time: point.time,
+                            survival: point.survival,
+                            at_risk: point.atRisk,
+                            censored: point.censored,
+                            observed: point.observed,
+                            ci_lower: point.ciLower ?? '',
+                            ci_upper: point.ciUpper ?? '',
+                        }))
+                    )
+                );
+            case 'glm':
+                return (this.glmTable?.cohorts || []).flatMap(cohort =>
+                    cohort.coefficients.map(coef => ({
+                        cohort: cohort.cohortName,
+                        predictor: coef.predictor,
+                        beta: coef.beta,
+                        std_error: coef.stdError,
+                        z_value: coef.zValue,
+                        p_value: coef.pValue,
+                    }))
+                );
+            default:
+                return [];
+        }
+    }
+
+    /** Triggers a PNG download of a chart via Chart.js's native toBase64Image(). */
+    downloadChartPng(chartRef: BaseChartDirective | undefined, filename: string): void {
+        const dataUrl = chartRef?.toBase64Image();
+        if (!dataUrl) {
+            return;
+        }
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${filename}.png`;
+        link.click();
     }
 
     /*

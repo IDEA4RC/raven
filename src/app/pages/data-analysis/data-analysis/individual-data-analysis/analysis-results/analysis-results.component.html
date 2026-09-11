@@ -1,5 +1,43 @@
-<mat-tab-group class="custom-tabs">
-  <mat-tab label="{{ 'pages.data-analysis.analysis-results.execution-status-tab' | translate }}">
+<!--
+  Normal interactive use (Data Analysis, Result Report's own preview list):
+  a plain mat-tab-group, unchanged.
+  Print capture (Result Report's off-screen PDF source, printMode=true):
+  mat-tab-group only ever attaches the active tab's content to the DOM, so
+  a static capture would be missing whichever tabs weren't selected. The
+  PDF needs all three sections, so in that mode the same three blocks are
+  stacked directly instead of being wrapped in tabs.
+-->
+<ng-container *ngIf="!printMode; else stackedView">
+  <mat-tab-group class="custom-tabs">
+    <mat-tab label="{{ 'pages.data-analysis.analysis-results.execution-status-tab' | translate }}">
+      <ng-container *ngTemplateOutlet="executionStatusTpl"></ng-container>
+    </mat-tab>
+    <mat-tab label="{{ 'pages.data-analysis.analysis-results.analysis-results-tab' | translate }}">
+      <ng-container *ngTemplateOutlet="analysisResultsTpl"></ng-container>
+    </mat-tab>
+    <mat-tab label="{{ 'pages.data-analysis.analysis-results.data-overview-tab' | translate }}">
+      <ng-container *ngTemplateOutlet="dataOverviewTpl"></ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</ng-container>
+
+<ng-template #stackedView>
+  <div class="stacked-report-view">
+    <h3 class="stacked-section-heading">{{ 'pages.data-analysis.analysis-results.execution-status-tab' | translate }}
+    </h3>
+    <ng-container *ngTemplateOutlet="executionStatusTpl"></ng-container>
+
+    <h3 class="stacked-section-heading">{{ 'pages.data-analysis.analysis-results.analysis-results-tab' | translate }}
+    </h3>
+    <ng-container *ngTemplateOutlet="analysisResultsTpl"></ng-container>
+
+    <h3 class="stacked-section-heading">{{ 'pages.data-analysis.analysis-results.data-overview-tab' | translate }}
+    </h3>
+    <ng-container *ngTemplateOutlet="dataOverviewTpl"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #executionStatusTpl>
     <div class="execution-container">
       <!-- Status message -->
       <div class="status-message">
@@ -65,10 +103,9 @@
           'pages.data-analysis.analysis-results.back' | translate }}</button>
       </div>
     </div>
-  </mat-tab>
+</ng-template>
 
-  <mat-tab label="{{ 'pages.data-analysis.analysis-results.analysis-results-tab' | translate }}">
-
+<ng-template #analysisResultsTpl>
     <mat-card class="container">
 
       <mat-card-content class="card-content">
@@ -92,7 +129,12 @@
         <!-- SECOND ROW -->
 
         <mat-card class="inner-card" style="margin-top: 20px !important;">
-          <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.analysis-results' | translate }}</h3>
+          <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.analysis-results' | translate }}</h3>
+            <button mat-stroked-button color="primary" *ngIf="canDownloadCsv()" (click)="downloadCsv()">
+              <mat-icon>download</mat-icon> Download CSV
+            </button>
+          </div>
           Each cell contains the observed count followed by the row percentage and column percentage: count (row %,
           column %).
           <ng-container [ngSwitch]="currentView">
@@ -156,9 +198,15 @@
                 <h2>{{ formatLabel(table.cohortName) }}</h2>
 
                 <!-- Kaplan-Meier Chart -->
-                <div class="chart-container" style="margin-bottom: 30px;">
-                  <canvas baseChart [data]="kaplanMeierChartData" [options]="kaplanMeierChartOptions" type="line">
+                <div class="chart-container" style="margin-bottom: 16px;">
+                  <canvas #kmChart="base-chart" baseChart [data]="kaplanMeierChartData"
+                    [options]="kaplanMeierChartOptions" type="line">
                   </canvas>
+                </div>
+                <div style="margin-bottom: 30px;">
+                  <button mat-stroked-button color="primary" (click)="downloadChartPng(kmChartRef, 'kaplan_meier')">
+                    <mat-icon>download</mat-icon> Download PNG
+                  </button>
                 </div>
 
                 <div *ngIf="(logRankTables?.length ?? 0) > 0" class="logrank-container">
@@ -266,9 +314,15 @@
                 <!-- Coefficient (Forest Plot) Chart -->
                 <div style="margin-bottom: 40px;">
                   <h3>1. Coefficients by Cohort (Forest Plot)</h3>
-                  <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmCoefficientChartData" [options]="glmCoefficientChartOptions"
-                      type="bar"></canvas>
+                  <div style="height: 400px; margin-bottom: 16px;">
+                    <canvas #glmCoefChart="base-chart" baseChart [data]="glmCoefficientChartData"
+                      [options]="glmCoefficientChartOptions" type="bar"></canvas>
+                  </div>
+                  <div style="margin-bottom: 30px;">
+                    <button mat-stroked-button color="primary"
+                      (click)="downloadChartPng(glmCoefChartRef, 'glm_coefficients')">
+                      <mat-icon>download</mat-icon> Download PNG
+                    </button>
                   </div>
                   <p class="chart-description">
                     <strong>Interpretation:</strong> Each point represents the estimated effect (β) of a predictor.
@@ -280,9 +334,15 @@
                 <!-- Deviance Reduction Chart -->
                 <div style="margin-bottom: 40px;">
                   <h3>2. Deviance Reduction</h3>
-                  <div style="height: 400px; margin-bottom: 30px;">
-                    <canvas baseChart [data]="glmDevianceChartData" [options]="glmDevianceChartOptions"
-                      type="bar"></canvas>
+                  <div style="height: 400px; margin-bottom: 16px;">
+                    <canvas #glmDevChart="base-chart" baseChart [data]="glmDevianceChartData"
+                      [options]="glmDevianceChartOptions" type="bar"></canvas>
+                  </div>
+                  <div style="margin-bottom: 30px;">
+                    <button mat-stroked-button color="primary"
+                      (click)="downloadChartPng(glmDevChartRef, 'glm_deviance')">
+                      <mat-icon>download</mat-icon> Download PNG
+                    </button>
                   </div>
                   <p class="chart-description">
                     <strong>Interpretation:</strong> Compares the null model (no predictors) to the fitted model (with
@@ -409,9 +469,9 @@
 
       </mat-card-actions>
     </mat-card>
+</ng-template>
 
-  </mat-tab>
-  <mat-tab label="{{ 'pages.data-analysis.analysis-results.data-overview-tab' | translate }}">
+<ng-template #dataOverviewTpl>
     <mat-card class="container">
 
       <mat-card-content class="card-content">
@@ -431,5 +491,4 @@
 
       </mat-card-actions>
     </mat-card>
-  </mat-tab>
-</mat-tab-group>
+</ng-template>

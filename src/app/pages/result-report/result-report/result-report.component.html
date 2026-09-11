@@ -1,0 +1,237 @@
+<div class="result-report-container" *ngIf="report && step === 1">
+  <mat-accordion [multi]="true">
+    <!-- Project Information -->
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Project Information</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput [(ngModel)]="report.title" (blur)="saveField('title')" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Background</mat-label>
+        <textarea matInput placeholder="Healthcare context, target population,"
+          [(ngModel)]="report.background" (blur)="saveField('background')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Objective</mat-label>
+        <textarea matInput placeholder="Description of natural history"
+          [(ngModel)]="report.objective" (blur)="saveField('objective')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Hypothesis</mat-label>
+        <textarea matInput placeholder="Describe the hypothesis of the study..."
+          [(ngModel)]="report.hypothesis" (blur)="saveField('hypothesis')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Team</mat-label>
+        <textarea matInput placeholder="Brief CV of PI, and list of team members, etc..."
+          [(ngModel)]="report.team" (blur)="saveField('team')"></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- Open Science Information -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Open Science Information</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Funding</mat-label>
+        <textarea matInput [(ngModel)]="report.funding" (blur)="saveField('funding')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Conflicts of interest</mat-label>
+        <textarea matInput placeholder="Declare any conflicts of interest and financial disclosures for the Team."
+          [(ngModel)]="report.conflicts_of_interest" (blur)="saveField('conflicts_of_interest')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Protocol</mat-label>
+        <textarea matInput placeholder="Indicate where a study protocol can be accessed / state that a protocol was not prepared"
+          [(ngModel)]="report.protocol" (blur)="saveField('protocol')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Registration</mat-label>
+        <textarea matInput placeholder="Provide registration information for the study, including register name and registration number, or state that the study was not registered."
+          [(ngModel)]="report.registration" (blur)="saveField('registration')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data Sharing</mat-label>
+        <textarea matInput placeholder="Provide details of the availability of the study data."
+          [(ngModel)]="report.data_sharing" (blur)="saveField('data_sharing')"></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- Data information -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Data information</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data sources</mat-label>
+        <textarea matInput placeholder="Description of the source of data and the rationale for using these data."
+          [(ngModel)]="report.data_sources" (blur)="saveField('data_sources')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Metadata</mat-label>
+        <textarea matInput placeholder="Description of the involved variables, data quality, etc."
+          [(ngModel)]="report.metadata_description" (blur)="saveField('metadata_description')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Cohorts Selection</mat-label>
+        <textarea matInput placeholder="Describe the eligibility criteria for cohort selection, number of cases, etc..."
+          [(ngModel)]="report.cohorts_selection" (blur)="saveField('cohorts_selection')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data Preparation</mat-label>
+        <textarea matInput placeholder="Describe any data pre-processing and quality checking, etc..."
+          [(ngModel)]="report.data_preparation" (blur)="saveField('data_preparation')"></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+
+    <!-- Analysis Information -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Analysis Information</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Analysis Overview</mat-label>
+        <textarea matInput placeholder="Description of the analysis and algorithms: Algorithm name, functions, variables, runs, etc..."
+          [(ngModel)]="report.analysis_overview" (blur)="saveField('analysis_overview')"></textarea>
+      </mat-form-field>
+
+      <table class="analysis-selection-table" *ngIf="availableAlgorithms.length > 0">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Cohorts</th>
+            <th>Creation Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let algorithm of availableAlgorithms">
+            <tr>
+              <td>
+                <mat-checkbox
+                  [checked]="isSelected(algorithm.id)"
+                  (change)="toggleAlgorithm(algorithm.id)"
+                ></mat-checkbox>
+              </td>
+              <td>{{ algorithm.method_name }}</td>
+              <td>{{ algorithm.cohort_names.join(', ') }}</td>
+              <td>{{ algorithm.creation_date | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ algorithm.status_task || '-' }}</td>
+              <td>
+                <button mat-icon-button (click)="toggleExpand(algorithm)">
+                  <mat-icon>{{ expandedAlgorithmId === algorithm.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="expandedAlgorithmId === algorithm.id">
+              <td colspan="6" class="analysis-detail">
+                <app-analysis-results
+                  *ngIf="algorithm.task_id; else noTask"
+                  [algorithmOverride]="toSelectedAlgorithm(algorithm)"
+                ></app-analysis-results>
+                <ng-template #noTask>
+                  <span>No task associated with this analysis.</span>
+                </ng-template>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      <p *ngIf="availableAlgorithms.length === 0">No analyses have been executed in this workspace yet.</p>
+    </mat-expansion-panel>
+
+    <!-- Results and Finding -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Results and Finding</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Study results</mat-label>
+        <textarea matInput placeholder="Give an overall interpretation of the main results, including issues of fairness in the context of the objectives and previous studies."
+          [(ngModel)]="report.study_results" (blur)="saveField('study_results')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Limitations</mat-label>
+        <textarea matInput placeholder="Discuss any limitations of the study (such as a non-representative sample, sample size, overfitting, missing data) and their effects on any biases, statistical uncertainty, and generalizability."
+          [(ngModel)]="report.limitations" (blur)="saveField('limitations')"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Future works</mat-label>
+        <textarea matInput placeholder="Discuss any next steps for future research."
+          [(ngModel)]="report.future_works" (blur)="saveField('future_works')"></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="result-report-actions">
+    <button mat-raised-button color="primary" (click)="goToStep2()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 2: Final Report Creation -->
+<div class="result-report-container" *ngIf="report && step === 2">
+  <h2>Final Report Creation</h2>
+
+  <div class="result-report-actions" style="justify-content: flex-start; gap: 8px;">
+    <button mat-raised-button color="primary" (click)="generateReport()" [disabled]="generating">
+      {{ generating ? 'Generating...' : 'Generate' }}
+    </button>
+    <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="!pdfBlob">
+      <mat-icon>download</mat-icon> Download
+    </button>
+    <button mat-raised-button (click)="printPdf()" [disabled]="!pdfBlob">
+      <mat-icon>print</mat-icon> Print
+    </button>
+  </div>
+
+  <iframe *ngIf="pdfPreviewUrl" [src]="pdfPreviewUrl" class="pdf-preview"></iframe>
+
+  <!--
+    Off-screen source used to build the PDF content (tables + charts
+    captured via canvas.toDataURL). Not meant to be viewed on this page -
+    positioned outside the viewport rather than hidden, so charts still
+    lay out and paint correctly.
+  -->
+  <div #printableContainer class="printable-container printable-container--offscreen">
+    <ng-container *ngFor="let algorithm of selectedAlgorithms()">
+      <h2>{{ algorithm.method_name }}</h2>
+      <app-analysis-results
+        #arRef
+        *ngIf="algorithm.task_id"
+        [algorithmOverride]="toSelectedAlgorithm(algorithm)"
+        [printMode]="true"
+      ></app-analysis-results>
+    </ng-container>
+  </div>
+
+  <div class="result-report-actions">
+    <button mat-button (click)="goToStep1()">Back</button>
+  </div>
+</div>
+
+<div class="result-report-loading" *ngIf="loading">Loading report...</div>

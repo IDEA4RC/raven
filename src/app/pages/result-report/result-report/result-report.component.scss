@@ -1,0 +1,67 @@
+.result-report-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+  display: block;
+}
+
+.analysis-selection-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+
+  th,
+  td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
+
+.analysis-detail {
+  background: rgba(0, 0, 0, 0.03);
+  max-width: 0; /* forces the td to respect the table's own width instead of growing to fit wide nested content */
+  overflow-x: auto;
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 300px;
+    overflow: auto;
+  }
+}
+
+.result-report-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.result-report-loading {
+  padding: 24px;
+  text-align: center;
+}
+
+.pdf-preview {
+  width: 100%;
+  height: 600px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.printable-container {
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  padding: 12px;
+}
+
+.printable-container--offscreen {
+  position: absolute;
+  top: 0;
+  left: -10000px;
+  width: 900px;
+  /* Charts need real layout to paint onto their canvas, so this is moved
+     out of the viewport instead of display:none/visibility:hidden. */
+}

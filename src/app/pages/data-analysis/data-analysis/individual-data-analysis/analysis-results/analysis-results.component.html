@@ -1,4 +1,4 @@
-<mat-tab-group class="custom-tabs">
+<mat-tab-group class="custom-tabs" [(selectedIndex)]="selectedTabIndex">
   <mat-tab label="{{ 'pages.data-analysis.analysis-results.execution-status-tab' | translate }}">
     <div class="execution-container">
       <!-- Status message -->
@@ -9,8 +9,8 @@
 
       <!-- Execution Info -->
       <div class="execution-info">
-        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}: {{ executionDuration
-          }}</span>
+        <span class="chip">{{ 'pages.data-analysis.analysis-results.execution-time' | translate }}:
+          {{ executionDuration }}</span>
         <!--<span class="chip" *ngIf="taskStatistics?.initOrg?.id !== undefined">
           {{ 'pages.data-analysis.analysis-results.initiating-organisation' | translate }}: {{ taskStatistics?.initOrg?.id }}
         </span>
@@ -73,53 +73,78 @@
 
       <mat-card-content class="card-content">
         <!-- FIRST ROW -->
-
         <mat-card class="inner-card">
-          <h3 class="section-title">{{ 'pages.data-analysis.analysis-results.algorithm-overview' | translate }}</h3>
-          <div class="section-content">
-            <p><strong>{{ 'pages.data-analysis.analysis-results.name' | translate }}:</strong> {{
-              formatLabel(name_algorithm) }}</p>
-            <p><strong>{{ 'pages.data-analysis.analysis-results.cohorts' | translate }}:</strong> {{ cohorts_string }}
-            </p>
-            <p *ngIf="row_variables_text"><strong>{{ 'pages.data-analysis.analysis-results.rows' | translate
-                }}:</strong> {{ row_variables_text }}</p>
-            <p *ngIf="column_variable_text"><strong>{{ 'pages.data-analysis.analysis-results.columns' | translate
-                }}:</strong> {{ column_variable_text }}</p>
+          <mat-card-content>
+            <h3 class="section-title">
+              {{ 'pages.data-analysis.analysis-results.algorithm-overview' | translate }}
+            </h3>
 
-          </div>
+            <div class="section-content">
+              <p>
+                <strong>
+                  {{ 'pages.data-analysis.analysis-results.name' | translate }}:
+                </strong>
+              </p>
+
+              <p>{{ formatLabel(name_algorithm) }}</p>
+
+              <p>
+                <strong>
+                  {{ 'pages.data-analysis.analysis-results.cohorts' | translate }}:
+                </strong>
+              </p>
+
+              <p>{{ cohorts_string }}</p>
+
+              <ng-container *ngIf="row_variables_text">
+                <p>
+                  <strong>
+                    {{ 'pages.data-analysis.analysis-results.rows' | translate }}:
+                  </strong>
+                </p>
+
+                <p>{{ row_variables_text }}</p>
+              </ng-container>
+
+              <p *ngIf="column_variable_text">
+                <strong>
+                  {{ 'pages.data-analysis.analysis-results.columns' | translate }}:
+                </strong>
+
+                {{ column_variable_text }}
+              </p>
+            </div>
+          </mat-card-content>
         </mat-card>
 
         <!-- SECOND ROW -->
+        <div class="results-container">
+          <ng-container [ngSwitch]="currentView">
+            <app-crosstabulation-results *ngSwitchCase="'crosstab'" [resultData]="rawTaskResult"
+              [selectedAlgorithm]="selectedAlgorithm">
+            </app-crosstabulation-results>
 
-        <ng-container [ngSwitch]="currentView">
+            <app-t-test-results *ngSwitchCase="'ttest'" [resultData]="rawTaskResult">
+            </app-t-test-results>
 
-          <app-crosstabulation-results *ngSwitchCase="'crosstab'" [resultData]="rawTaskResult"
-            [selectedAlgorithm]="selectedAlgorithm">
-          </app-crosstabulation-results>
+            <app-kaplan-meier-results *ngSwitchCase="'kaplan-meier'" [resultData]="rawTaskResult">
+            </app-kaplan-meier-results>
 
-          <app-t-test-results *ngSwitchCase="'ttest'" [resultData]="rawTaskResult">
-          </app-t-test-results>
+            <app-glm-results *ngSwitchCase="'glm'" [resultData]="rawTaskResult">
+            </app-glm-results>
 
-          <app-kaplan-meier-results *ngSwitchCase="'kaplan-meier'" [resultData]="rawTaskResult">
-          </app-kaplan-meier-results>
+            <app-table1-results *ngSwitchCase="'table1'" [resultData]="rawTaskResult" [topographyMap]="topographyMap"
+              [selectedAlgorithm]="selectedAlgorithm">
+            </app-table1-results>
 
-          <!-- <app-log-rank-results *ngSwitchCase="'log-rank'" [resultData]="rawTaskResult">
-          </app-log-rank-results> -->
+            <app-placeholder-results *ngSwitchCase="'placeholder'" [algorithmName]="name_algorithm"
+              [message]="underConstructionMessage">
+            </app-placeholder-results>
 
-          <app-glm-results *ngSwitchCase="'glm'" [resultData]="rawTaskResult">
-          </app-glm-results>
-
-          <app-table1-results *ngSwitchCase="'table1'" [resultData]="rawTaskResult" [topographyMap]="topographyMap" [selectedAlgorithm]="selectedAlgorithm">
-          </app-table1-results>
-
-          <app-placeholder-results *ngSwitchCase="'placeholder'" [algorithmName]="name_algorithm"
-            [message]="underConstructionMessage">
-          </app-placeholder-results>
-
-          <app-placeholder-results *ngSwitchDefault [algorithmName]="name_algorithm" message="No results available.">
-          </app-placeholder-results>
-
-        </ng-container>
+            <app-placeholder-results *ngSwitchDefault [algorithmName]="name_algorithm" message="No results available.">
+            </app-placeholder-results>
+          </ng-container>
+        </div>
       </mat-card-content>
 
       <!-- Card Footer -->
@@ -132,24 +157,24 @@
     </mat-card>
 
   </mat-tab>
-  <mat-tab label="{{ 'pages.data-analysis.analysis-results.data-overview-tab' | translate }}">
+  <mat-tab label="{{
+    'pages.data-analysis.analysis-results.data-overview-tab'
+      | translate
+  }}">
     <mat-card class="container">
-
       <mat-card-content class="card-content">
-        <div class="under-construction">
-          <h4>{{ 'pages.data-analysis.analysis-results.data-overview' | translate }}</h4>
-          <p>{{ 'pages.data-analysis.analysis-results.under-construction-for' | translate:{ algorithm:
-            (formatLabel(name_algorithm) || ('pages.data-analysis.analysis-results.this-algorithm' | translate)) } }}
-          </p>
-        </div>
+        <app-data-overview [selectedAlgorithm]="selectedAlgorithm" [selectedCohorts]="selectedCohorts"
+          [topographyMap]="topographyMap">
+        </app-data-overview>
       </mat-card-content>
 
-      <!-- Card Footer -->
       <mat-card-actions class="footer">
-        <!-- Back button -->
-        <button mat-button class="back-button" (click)="goBack()">{{'pages.data-analysis.cohort-selection.back' |
-          translate}}</button>
-
+        <button mat-button class="back-button" (click)="goBack()">
+          {{
+          'pages.data-analysis.cohort-selection.back'
+          | translate
+          }}
+        </button>
       </mat-card-actions>
     </mat-card>
   </mat-tab>

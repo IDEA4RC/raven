@@ -325,7 +325,7 @@ export class DataAnalysisService {
     return this.postRequest(url, data)
   }
 
-   createAnnotateTreatments(data: any) {
+  createAnnotateTreatments(data: any) {
     const url = `/raven-api/v1/data-preparation/create_annotate_treatments`;
     return this.postRequest(url, data)
   }
@@ -391,6 +391,19 @@ export class DataAnalysisService {
   saveTable1View(data: any) {
     const url = `/raven-api/v1/table1-saved-views/`;
     return this.postRequest(url, data)
+  }
+
+  deleteAlgorithm(algorithm_id: number) {
+    const url = `/raven-api/v1/algorithms/delete_algorithm/${algorithm_id}`;
+    return this.deleteRequest(url);
+  }
+
+  getAlgorithms(workspace_id: number) {
+    const url = `/raven-api/v1/algorithms/workspace/${workspace_id}`;
+
+    this.getRequest(url).subscribe((data) => {
+      this.algorithm.next(data); // 🔥 esto es lo que falta
+    });
   }
 
 }

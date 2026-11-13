@@ -1,95 +1,214 @@
-/* --- CONTENEDOR --- */
+/* =========================================
+   CONTENEDOR DE LA TABLA
+   ========================================= */
+
 .table-container {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
   margin-top: 16px;
+  box-sizing: border-box;
+
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
-/* --- TABLA BASE --- */
+
+/* =========================================
+   TABLA
+   ========================================= */
+
 .statistics-table_1 {
   width: 100%;
+
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-/* --- HEADER --- */
-.statistics-table_1 th {
-  background: #6C757D;
-  color: #FFF;
-  font-weight: 600;
-  text-align: center;
-  padding: 10px;
+
+/* =========================================
+   DISTRIBUCIÓN DE COLUMNAS
+   ========================================= */
+
+/*
+ * La primera columna ocupa todo el espacio sobrante.
+ */
+.statistics-table_1 col.characteristic-column {
+  width: auto;
 }
 
-/* Primera columna alineada a la izquierda */
+/*
+ * Cada cohorte ocupa un ancho compacto y constante.
+ */
+.statistics-table_1 col.cohort-column {
+  width: 140px;
+}
+
+
+/* =========================================
+   CELDAS GENERALES
+   ========================================= */
+
+.statistics-table_1 th,
+.statistics-table_1 td {
+  padding: 10px 16px;
+
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.statistics-table_1 th {
+  color: #ffffff;
+  background: #6c757d;
+
+  font-weight: 600;
+  text-align: center;
+}
+
+.statistics-table_1 td {
+  color: #3a4752;
+  border-bottom: 1px solid #dbe1e6;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   PRIMERA COLUMNA
+   ========================================= */
+
 .statistics-table_1 th:first-child,
 .statistics-table_1 td:first-child {
   text-align: left;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
-/* --- CELDAS --- */
-.statistics-table_1 td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #DBE1E6;
-  color: #3A4752;
-  font-size: 14px;
-  word-wrap: break-word;
+
+/* =========================================
+   COLUMNAS DE COHORTES
+   ========================================= */
+
+.statistics-table_1 th:not(:first-child),
+.statistics-table_1 td:not(:first-child) {
+  width: 140px;
+  min-width: 140px;
+
+  text-align: center;
+  white-space: nowrap;
 }
 
-/* --- FILA GRUPO (títulos principales) --- */
+
+/* =========================================
+   FILAS PRINCIPALES DE VARIABLES
+   ========================================= */
+
 .header-row {
   background: #f1f5f9;
 }
 
 .header-row td {
+  color: #255e87;
   font-weight: 600;
-  color: #255E87;
 }
 
-/* --- SUBFILAS --- */
-.sub-row td:first-child {
-  padding-left: 48px;
-  color: #555;
-  font-weight: 400;
-}
 
-/* --- HOVER --- */
-.statistics-table_1 tr:hover {
-  background-color: #f9fafb;
-}
+/* =========================================
+   CHECKBOX + FLECHA + TÍTULO
+   ========================================= */
 
-/* --- CELDA COMPLEJA (checkbox + label + botón) --- */
+/*
+ * El <td> conserva su comportamiento normal como celda.
+ * No debe tener display: flex.
+ */
 .group-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 260px;
+  display: table-cell;
 }
 
-/* Label flexible (evita "Su...") */
+.group-cell-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+
+  width: 100%;
+  min-width: 0;
+}
+
 .group-label {
   flex: 1;
   min-width: 0;
+
+  line-height: 1.5;
   white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
-/* Botón expand/collapse */
+.row-checkbox,
+.collapse-button {
+  flex: 0 0 auto;
+}
+
+.row-checkbox {
+  margin-top: 2px;
+}
+
 .collapse-button {
   width: 32px;
   height: 32px;
+
+  margin-top: -4px;
+  padding: 4px;
 }
 
-/* Checkbox */
-.row-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+/* =========================================
+   SUBFILAS
+   ========================================= */
+
+.sub-row td:first-child {
+  padding-left: 48px;
+
+  color: #555555;
+  font-weight: 400;
 }
 
-/* --- FILAS OCULTAS INFO --- */
-.hidden-info-row td {
+.sub-characteristic-cell {
+  line-height: 1.5;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+
+/* =========================================
+   FILAS OCULTAS
+   ========================================= */
+
+.statistics-table_1 .hidden-info-row td {
+  padding: 12px;
+
+  color: #666666;
+  background: #f8fafb;
+
   font-style: italic;
   text-align: center;
-  padding: 12px;
-  color: #666;
+  white-space: normal;
+}
+
+
+/* =========================================
+   HOVER
+   ========================================= */
+
+.statistics-table_1 tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.statistics-table_1 tbody .header-row:hover {
+  background-color: #e9f0f5;
 }

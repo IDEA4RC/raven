@@ -60,7 +60,7 @@ interface TaskStatistics {
     styleUrl: './analysis-results.component.scss'
 })
 export class AnalysisResultsComponent implements OnInit {
-
+    selectedTabIndex = 0;
     selectedAlgorithm: SelectedAlgorithm | null = null;
     name_algorithm = '';
     cohorts_string = 'Pending result';
@@ -85,6 +85,7 @@ export class AnalysisResultsComponent implements OnInit {
     topographyMap: Record<string, string> = {};
 
     @Output() previousStep = new EventEmitter<void>();
+    private activeTaskId: number | null = null;
 
     constructor(
         private dataAnalysisService: DataAnalysisService,
@@ -94,25 +95,30 @@ export class AnalysisResultsComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.selectionService.selectedItems$.subscribe(items => {
-            if (!items || items.length === 0) {
+        this.selectionService.selectedAlgorithm$.subscribe(selectedAlgorithm => {
+            this.resetResultsState();
+
+            if (!selectedAlgorithm) {
                 this.currentView = 'empty';
                 this.underConstructionMessage = 'No algorithm selected.';
                 return;
             }
 
-            this.selectedAlgorithm = items[0] as SelectedAlgorithm;
+            this.selectedAlgorithm = selectedAlgorithm as SelectedAlgorithm;
+            this.activeTaskId = this.selectedAlgorithm.task_id ?? null;
             this.selectedCohorts = this.selectedAlgorithm.cohorts || [];
             this.initializeSelectedAlgorithm(this.selectedAlgorithm);
 
             if (this.selectedAlgorithm.task_id) {
-                //this.analysisId = this.selectedAlgorithm.id || null;
                 this.fetchTaskResult(this.selectedAlgorithm.task_id);
                 this.getTaskStatistics(this.selectedAlgorithm.task_id);
                 return;
             }
 
-            this.setPlaceholderView(this.selectedAlgorithm.method_name, 'This algorithm does not have a task result yet.');
+            this.setPlaceholderView(
+                this.selectedAlgorithm.method_name,
+                'This algorithm does not have a task result yet.'
+            );
         });
 
         this.topographyService.getTopographyMap().subscribe(map => {
@@ -145,6 +151,10 @@ export class AnalysisResultsComponent implements OnInit {
     fetchTaskResult(taskId: number): void {
         this.dataAnalysisService.getTaskResult(taskId).subscribe({
             next: (result) => {
+                if (this.activeTaskId !== taskId) {
+                    return;
+                }
+
                 this.rawTaskResult = result?.result ?? result ?? {};
                 const cohortNames = Object.keys(this.rawTaskResult || {});
                 if (cohortNames.length > 0) {
@@ -153,6 +163,7 @@ export class AnalysisResultsComponent implements OnInit {
                 }
 
                 this.renderSelectedAlgorithm(this.rawTaskResult);
+                this.rawTaskResult = result?.result ?? result ?? {};
             },
             error: (err) => {
                 console.error('Error obteniendo el resultado de la tarea:', err);
@@ -290,14 +301,6 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
 
-
-
-
-
-
-
-
-
     computeMean(stats: any): number | null {
         if (!stats) return null;
 
@@ -380,9 +383,30 @@ export class AnalysisResultsComponent implements OnInit {
         this.underConstructionMessage = message || `${algorithmLabel} is under construction.`;
     }
 
-
-
-
+    private resetResultsState(): void {
+        this.selectedTabIndex = 0;
+        this.selectedAlgorithm = null;
+        this.selectedCohorts = [];
+        this.name_algorithm = '';
+        this.cohorts_string = 'Pending result';
+        this.list_variables_text = '';
+        this.row_variables_text = '';
+        this.column_variable_text = '';
+        this.rawTaskResult = null;
+        this.taskStatistics = null;
+        this.executionDuration = '-';
+        this.activeTaskId = null;
+        this.data = [
+            {
+                id: '-',
+                name: '-',
+                status: '-',
+                org: '-',
+                user: '-',
+                created: '-'
+            }
+        ];
+    }
 
 
     parseRowVariables(selectedAlgorithm: SelectedAlgorithm | null): string[] {
@@ -471,6 +495,7 @@ export class AnalysisResultsComponent implements OnInit {
 
 
     goBack(): void {
+        this.selectedTabIndex = 0;
         this.previousStep.emit();
     }
 

@@ -1,0 +1,310 @@
+<div class="data-overview">
+    <div *ngIf="isOverviewNotApplicable" class="overview-message">
+        <mat-icon>info</mat-icon>
+
+        <div>
+            <h3>{{ overviewNotApplicableTitle }}</h3>
+            <p>{{ overviewNotApplicableMessage }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="!isOverviewNotApplicable && loading" class="overview-state">
+        <mat-spinner diameter="42"></mat-spinner>
+
+        <p>Loading variable summaries...</p>
+    </div>
+
+    <div *ngIf="
+      !isOverviewNotApplicable &&
+      !loading &&
+      errorMessage
+    " class="overview-message overview-error">
+        <mat-icon>error_outline</mat-icon>
+
+        <div>
+            <h3>Data overview could not be loaded</h3>
+            <p>{{ errorMessage }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="
+      !isOverviewNotApplicable &&
+      !loading &&
+      !errorMessage &&
+      !hasVariables
+    " class="overview-message">
+        <mat-icon>info</mat-icon>
+
+        <div>
+            <h3>No variables available</h3>
+
+            <p>
+                No variables were identified for the
+                selected algorithm.
+            </p>
+        </div>
+    </div>
+
+    <div *ngIf="
+      !isOverviewNotApplicable &&
+      !loading &&
+      !errorMessage &&
+      hasVariables
+    " class="overview-content">
+        <div class="overview-heading">
+            <div>
+                <h2>Data overview</h2>
+
+                <p>
+                    Summary statistics for the variables
+                    used by the selected algorithm.
+                </p>
+            </div>
+
+            <span class="variable-count">
+                {{ variables.length }}
+                {{
+                variables.length === 1
+                ? 'variable'
+                : 'variables'
+                }}
+            </span>
+        </div>
+
+        <div class="variable-grid">
+            <mat-card *ngFor="
+          let variable of variables;
+          trackBy: trackVariable
+        " class="variable-card">
+                <mat-card-header>
+                    <div class="variable-card-heading">
+                        <div>
+                            <mat-card-title>
+                                {{ variable.label }}
+                            </mat-card-title>
+
+                            <mat-card-subtitle>
+                                {{ variable.name }}
+                            </mat-card-subtitle>
+                        </div>
+
+                        <div class="variable-badges">
+                            <span class="variable-badge role-badge">
+                                {{ variable.role }}
+                            </span>
+
+                            <span class="variable-badge type-badge">
+                                {{ variable.datatype }}
+                            </span>
+                        </div>
+                    </div>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <section class="summary-section">
+                        <h3>Cohort statistics</h3>
+
+                        <div class="table-scroll-container">
+                            <table class="overview-table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            {{
+                                            variable.cohortTable
+                                            .firstColumnLabel
+                                            }}
+                                        </th>
+
+                                        <th *ngFor="
+                        let column of
+                          variable.cohortTable
+                            .columns;
+                        trackBy: trackColumn
+                      ">
+                                            {{ column.label }}
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr *ngFor="
+                      let row of
+                        variable.cohortTable.rows;
+                      trackBy: trackRow
+                    " [class.summary-row]="
+                      row.isSummary
+                    ">
+                                        <td>{{ row.label }}</td>
+
+                                        <td *ngFor="
+                        let column of
+                          variable.cohortTable
+                            .columns;
+                        trackBy: trackColumn
+                      ">
+                                            {{ row.values[column.key] }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section *ngIf="variable.centerTables.length" class="summary-section">
+                        <h3>Centers statistics</h3>
+
+                        <mat-accordion multi>
+                            <mat-expansion-panel *ngFor="
+                  let centerTable of
+                    variable.centerTables;
+                  trackBy: trackCenterTable
+                ">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ centerTable.cohortLabel }}
+                                    </mat-panel-title>
+
+                                    <mat-panel-description>
+                                        Statistics by center
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="table-scroll-container">
+                                    <table class="overview-table">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    {{
+                                                    centerTable.table
+                                                    .firstColumnLabel
+                                                    }}
+                                                </th>
+
+                                                <th *ngFor="
+                            let column of
+                              centerTable.table
+                                .columns;
+                            trackBy: trackColumn
+                          ">
+                                                    {{ column.label }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr *ngFor="
+                          let row of
+                            centerTable.table.rows;
+                          trackBy: trackRow
+                        " [class.summary-row]="
+                          row.isSummary
+                        ">
+                                                <td>{{ row.label }}</td>
+
+                                                <td *ngFor="
+                            let column of
+                              centerTable.table
+                                .columns;
+                            trackBy: trackColumn
+                          ">
+                                                    {{ row.values[column.key] }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </section>
+
+                    <section *ngIf="variable.chartGroups.length" class="summary-section">
+                        <h3>Visual overview</h3>
+
+                        <mat-accordion multi>
+                            <mat-expansion-panel
+                                *ngFor="let chartGroup of variable.chartGroups; trackBy: trackChartGroup">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ chartGroup.cohortLabel }}
+                                    </mat-panel-title>
+
+                                    <mat-panel-description>
+                                        Charts by center
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <ng-template matExpansionPanelContent>
+                                    <div class="chart-grid">
+                                        <mat-card *ngIf="chartGroup.distributionChart" class="chart-card">
+                                            <mat-card-title>
+                                                Distribution by center
+                                            </mat-card-title>
+
+                                            <p class="chart-description">
+                                                The box represents the interquartile range and the central line
+                                                represents the median.
+                                            </p>
+
+                                            <apx-chart [series]="chartGroup.distributionChart.series"
+                                                [chart]="chartGroup.distributionChart.chart"
+                                                [plotOptions]="chartGroup.distributionChart.plotOptions"
+                                                [xaxis]="chartGroup.distributionChart.xaxis"
+                                                [yaxis]="chartGroup.distributionChart.yaxis"
+                                                [dataLabels]="chartGroup.distributionChart.dataLabels"
+                                                [colors]="chartGroup.distributionChart.colors"
+                                                [legend]="chartGroup.distributionChart.legend"
+                                                [tooltip]="chartGroup.distributionChart.tooltip">
+                                            </apx-chart>
+                                        </mat-card>
+
+                                        <mat-card *ngIf="chartGroup.meanChart" class="chart-card">
+                                            <mat-card-title>
+                                                Mean by center
+                                            </mat-card-title>
+
+                                            <p class="chart-description">
+                                                Comparison of the mean value reported by each center.
+                                            </p>
+
+                                            <apx-chart [series]="chartGroup.meanChart.series"
+                                                [chart]="chartGroup.meanChart.chart"
+                                                [plotOptions]="chartGroup.meanChart.plotOptions"
+                                                [xaxis]="chartGroup.meanChart.xaxis"
+                                                [dataLabels]="chartGroup.meanChart.dataLabels"
+                                                [colors]="chartGroup.meanChart.colors"
+                                                [legend]="chartGroup.meanChart.legend"
+                                                [tooltip]="chartGroup.meanChart.tooltip">
+                                            </apx-chart>
+                                        </mat-card>
+
+                                        <mat-card class="chart-card">
+                                            <mat-card-title>
+                                                Missing data by center
+                                            </mat-card-title>
+
+                                            <p class="chart-description">
+                                                Percentage of missing observations relative to the total number
+                                                of observations in each center.
+                                            </p>
+
+                                            <apx-chart [series]="chartGroup.missingChart.series"
+                                                [chart]="chartGroup.missingChart.chart"
+                                                [plotOptions]="chartGroup.missingChart.plotOptions"
+                                                [xaxis]="chartGroup.missingChart.xaxis"
+                                                [yaxis]="chartGroup.missingChart.yaxis"
+                                                [dataLabels]="chartGroup.missingChart.dataLabels"
+                                                [colors]="chartGroup.missingChart.colors"
+                                                [legend]="chartGroup.missingChart.legend"
+                                                [tooltip]="chartGroup.missingChart.tooltip">
+                                            </apx-chart>
+                                        </mat-card>
+                                    </div>
+                                </ng-template>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </section>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

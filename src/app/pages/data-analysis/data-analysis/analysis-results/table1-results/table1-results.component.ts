@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
+
 
 interface Table1Row {
   characteristic: string;
@@ -32,6 +33,11 @@ export class Table1ResultsComponent implements OnChanges {
   @Input() resultData: any;
   @Input() topographyMap: Record<string, string> = {};
   @Input() selectedAlgorithm: any = null;
+  @ViewChild('table1Start')
+  table1Start?: ElementRef<HTMLElement>;
+
+  @ViewChild('table1End')
+  table1End?: ElementRef<HTMLElement>;
 
   table: Table1DisplayTable | null = null;
   groups: Table1Group[] = [];
@@ -52,10 +58,14 @@ export class Table1ResultsComponent implements OnChanges {
     'topography_subsite',
   ];
 
+  searchText = '';
+
+
+
   constructor(
-      private dataAnalysisService: DataAnalysisService,
-     
-    ) { }
+    private dataAnalysisService: DataAnalysisService,
+
+  ) { }
   ngOnChanges(): void {
     this.renderTable1();
   }
@@ -67,6 +77,7 @@ export class Table1ResultsComponent implements OnChanges {
     if (!this.resultData) {
       this.table = null;
       this.groups = [];
+      this.searchText = '';
       return;
     }
 
@@ -76,11 +87,12 @@ export class Table1ResultsComponent implements OnChanges {
     if (!rawResult) {
       this.table = null;
       this.groups = [];
+      this.searchText = '';
       return;
     }
 
     const result = this.normalizeResult(rawResult);
-
+    console.log("Normalized result: ", result);
     const cohortNames = Object.keys(result);
     const rows: Table1Row[] = [];
 
@@ -298,6 +310,7 @@ export class Table1ResultsComponent implements OnChanges {
       cohortCounts
     };
 
+    console.log("Table1DisplayTable: ", this.table);
     this.buildGroups();
   }
 
@@ -403,7 +416,10 @@ export class Table1ResultsComponent implements OnChanges {
     };
 
     (rawResult.partials || []).forEach((partial: any) => {
+      console.log("Processing partial: ", partial);
       const orgId = String(partial.organization_id);
+
+      console.log("Organization ID: ", orgId);
 
       if (!orgId) {
         console.warn('No organization_id found in partial', partial);
@@ -411,6 +427,7 @@ export class Table1ResultsComponent implements OnChanges {
       }
 
       const cohort = orgMap[orgId] || `ORG_${orgId}`;
+      console.log("Organization ID cohort: ", cohort);
 
       let numRows = 0;
       const rawNumRows = partial.num_rows_per_node;
@@ -424,27 +441,13 @@ export class Table1ResultsComponent implements OnChanges {
         console.warn('Unexpected num_rows_per_node format', rawNumRows);
       }
 
-      if (orgId === '11') {
-        (partial.partials || []).forEach((partialAphp: any) => {
-          const orgIdAphp = String(partialAphp.organization_id);
+      result[cohort] = {
+        numeric: partial.numeric || {},
+        counts_unique_values: partial.counts_unique_values || {},
+        date: partial.date || {},
+        num_rows: numRows
+      };
 
-          if (orgIdAphp === '11') {
-            result[cohort] = {
-              numeric: partialAphp.numeric || {},
-              counts_unique_values: partialAphp.counts_unique_values || {},
-              date: partialAphp.date || {},
-              num_rows: numRows
-            };
-          }
-        });
-      } else {
-        result[cohort] = {
-          numeric: partial.numeric || {},
-          counts_unique_values: partial.counts_unique_values || {},
-          date: partial.date || {},
-          num_rows: numRows
-        };
-      }
     });
 
     return result;
@@ -474,18 +477,57 @@ export class Table1ResultsComponent implements OnChanges {
       .join(' ');
   }
 
-  formatDate(value?: string): string {
-    if (!value) {
+  formatDate(value?: string | number): string {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ''
+    ) {
       return '-';
     }
 
-    const date = new Date(value);
+    /*
+     * El backend puede devolver el año como número:
+     * 1957
+     */
+    if (typeof value === 'number') {
+      if (
+        Number.isInteger(value) &&
+        value >= 1000 &&
+        value <= 9999
+      ) {
+        return String(value);
+      }
 
-    if (Number.isNaN(date.getTime())) {
       return '-';
     }
 
-    return date.toISOString().slice(0, 10);
+    const normalizedValue = String(value).trim();
+
+    /*
+     * Año sin mes ni día:
+     * "1957"
+     */
+    if (/^\d{4}$/.test(normalizedValue)) {
+      return normalizedValue;
+    }
+
+    /*
+     * Conserva compatibilidad si alguna fecha todavía llega como:
+     * "1957-01-01"
+     * "1957/01/01"
+     * "1957-01-01T00:00:00"
+     *
+     * Como Table 1 debe mostrar solamente el año,
+     * devolvemos los primeros cuatro dígitos.
+     */
+    const yearMatch = normalizedValue.match(/^(\d{4})/);
+
+    if (yearMatch) {
+      return yearMatch[1];
+    }
+
+    return '-';
   }
 
   getSelectedVariables(): string[] {
@@ -510,8 +552,21 @@ export class Table1ResultsComponent implements OnChanges {
   }
 
   saveView(selectedVariables: string[]): void {
-    const analysisId = this.selectedAlgorithm?.cohorts[0]?.analysis_id || null
-    
+    const analysisId = this.selectedAlgorithm?.cohorts[0]?.analysis_id;
+    const cohortId = this.selectedAlgorithm?.cohorts[0]?.id;
+    const bodySave = {
+      name: 'default',
+      analysis_id: analysisId,
+      cohort_ids: cohortId !== undefined ? [cohortId] : [],
+      selected_variables: selectedVariables
+    };
+    console.log('Saving view with body:', bodySave);
+    this.dataAnalysisService.saveTable1View(bodySave).subscribe
+      ({
+        next: (response) => { console.log('View saved successfully:', response); },
+        error: (error) => { console.error('Error saving view:', error); }
+      });
+
     const cohortIds = this.selectedAlgorithm?.cohorts[0]?.id || null
     if (!analysisId || !cohortIds) {
       console.error('Missing analysisId or cohortIds. Cannot save view.');
@@ -525,7 +580,7 @@ export class Table1ResultsComponent implements OnChanges {
     };
 
     console.log('Saving view with payload:', payload);
-   
+
   }
 
 
@@ -535,5 +590,83 @@ export class Table1ResultsComponent implements OnChanges {
 
   get hiddenCount(): number {
     return this.groups.filter(g => !g.visible).length;
+  }
+
+  get filteredGroups(): Table1Group[] {
+    const search = this.normalizeSearchText(this.searchText);
+
+    if (!search) {
+      return this.groups;
+    }
+
+    return this.groups.filter(group => {
+      const label = this.normalizeSearchText(group.label);
+      const id = this.normalizeSearchText(group.id);
+
+      return label.includes(search) || id.includes(search);
+    });
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+  }
+
+  selectFiltered(): void {
+    this.filteredGroups.forEach(group => {
+      group.visible = true;
+    });
+  }
+
+  deselectFiltered(): void {
+    this.filteredGroups.forEach(group => {
+      group.visible = false;
+    });
+  }
+
+  expandFiltered(): void {
+    this.filteredGroups.forEach(group => {
+      group.expanded = true;
+    });
+  }
+
+  collapseFiltered(): void {
+    this.filteredGroups.forEach(group => {
+      group.expanded = false;
+    });
+  }
+
+  scrollToTableStart(): void {
+    this.table1Start?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  scrollToTableEnd(): void {
+    this.table1End?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end'
+    });
+  }
+
+  private normalizeSearchText(value: string): string {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ');
+  }
+
+  get tableMinimumWidth(): number {
+    const characteristicMinimumWidth = 450;
+    const cohortColumnWidth = 140;
+    const numberOfCohorts = this.table?.cohortNames.length ?? 0;
+
+    return (
+      characteristicMinimumWidth +
+      numberOfCohorts * cohortColumnWidth
+    );
   }
 }

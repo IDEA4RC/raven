@@ -208,22 +208,88 @@
                       {{ getOriginalCohortName(cohort, cohort) }}</h4>
                   </div>
                   <!-- Table -->
-                  <app-statistics-table [type]="'centers'" [data]=centersTables[cohort]
-                    [columns]=displayedColumnsCenters></app-statistics-table>
+                  <app-statistics-table [type]="'centers'" [data]="centersTables[cohort]"
+                    [columns]="displayedColumnsCentersByCohort[cohort]">
+                  </app-statistics-table>
                 </div>
 
-                <div class="numeric-center-charts" *ngIf="isNumericVariableSelected() && numericCenterCharts.length">
-                  <div class="cohort-chart-group" *ngFor="let cohortCharts of numericCenterCharts">
-                    <h4>{{'pages.data-analysis.data_preparation.center_charts_for_cohort' | translate}}:
-                      {{ getOriginalCohortName(cohortCharts.cohort, cohortCharts.cohort) }}</h4>
-                    <div class="chart-grid">
-                      <div class="chart-card" *ngFor="let chartData of cohortCharts.charts">
-                        <p class="chart-title">{{ chartData.title }}</p>
-                        <apx-chart [series]="chartData.series" [chart]="chartData.chart" [xaxis]="chartData.xaxis"
-                          [plotOptions]="chartData.plotOptions" [dataLabels]="chartData.dataLabels"
-                          [colors]="chartData.colors">
-                        </apx-chart>
-                      </div>
+                <div class="center-charts" *ngIf="selectedValue && centerCharts.length">
+                  <div class="cohort-chart-group" *ngFor="let cohortCharts of centerCharts">
+                    <h4>
+                      Statistics for cohort:
+                      {{
+                      getOriginalCohortName(
+                      cohortCharts.cohort,
+                      cohortCharts.cohort
+                      )
+                      }}
+                    </h4>
+
+                    <div class="center-chart-grid" [class.single-chart]="
+        !cohortCharts.distributionChart
+      ">
+                      <mat-card *ngIf="cohortCharts.distributionChart" class="chart-card">
+                        <mat-card-title class="chart-title">
+                          Distribution by center
+                        </mat-card-title>
+
+                        <mat-card-content>
+                          <p class="chart-description">
+                            The box represents the interquartile
+                            range, the central line represents the
+                            median and the orange point represents
+                            the mean.
+                          </p>
+
+                          <apx-chart [series]="
+              cohortCharts.distributionChart.series
+            " [chart]="
+              cohortCharts.distributionChart.chart
+            " [plotOptions]="
+              cohortCharts.distributionChart.plotOptions
+            " [xaxis]="
+              cohortCharts.distributionChart.xaxis
+            " [yaxis]="
+              cohortCharts.distributionChart.yaxis
+            " [dataLabels]="
+              cohortCharts.distributionChart.dataLabels
+            " [markers]="
+              cohortCharts.distributionChart.markers
+            " [stroke]="
+              cohortCharts.distributionChart.stroke
+            " [colors]="
+              cohortCharts.distributionChart.colors
+            " [legend]="
+              cohortCharts.distributionChart.legend
+            " [tooltip]="
+              cohortCharts.distributionChart.tooltip
+            ">
+                          </apx-chart>
+                        </mat-card-content>
+                      </mat-card>
+
+                      <mat-card class="chart-card">
+                        <mat-card-title class="chart-title">
+                          Missing data by center
+                        </mat-card-title>
+
+                        <mat-card-content>
+                          <p class="chart-description">
+                            Percentage of missing observations
+                            relative to the total number of
+                            observations in each center.
+                          </p>
+
+                          <apx-chart [series]="cohortCharts.missingChart.series"
+                            [chart]="cohortCharts.missingChart.chart" [plotOptions]="
+              cohortCharts.missingChart.plotOptions
+            " [xaxis]="cohortCharts.missingChart.xaxis" [yaxis]="cohortCharts.missingChart.yaxis" [dataLabels]="
+              cohortCharts.missingChart.dataLabels
+            " [colors]="cohortCharts.missingChart.colors" [legend]="cohortCharts.missingChart.legend"
+                            [tooltip]="cohortCharts.missingChart.tooltip">
+                          </apx-chart>
+                        </mat-card-content>
+                      </mat-card>
                     </div>
                   </div>
                 </div>

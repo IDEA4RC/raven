@@ -1,18 +1,17 @@
 
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DataAnalysisService } from '../../data-analysis.service';
-import { Observable } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Algorithm } from './algorithm.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { SelectionService } from '../selection.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatChipsModule } from '@angular/material/chips';
 import { FormControl } from '@angular/forms';
-import { interval, forkJoin, of } from 'rxjs';
-import { switchMap, takeWhile, catchError, map } from 'rxjs/operators';
+import { firstValueFrom, interval, Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, takeUntil, takeWhile } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-analytic-selection',
@@ -28,13 +27,16 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   private readonly METHOD_GLM = 'glm';
   private readonly METHOD_COXPH = 'coxph';
 
+  private readonly destroy$ = new Subject<void>();
+  private readonly pollingReset$ = new Subject<void>();
+  private readonly cohortChange$ = new Subject<void>();
+  private activeCohortSignature = '';
+
   // Variable to store the current workspace ID from the route
   workspaceId: number | undefined;
   analysisId: number | undefined; pollingInterval: any;
   pollingFrequency: number = 3000; // 3 segundos
   // Observables algorithm
-  observable_algorithm$: Observable<any> | undefined;
-  private algorithmSubscription: any;
 
   // Table components
   dataSource = new MatTableDataSource<Algorithm>();
@@ -123,84 +125,182 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   selection = new SelectionModel<any>(true, []);
   selectAlhorithm = false;
+  private requestedView: string | null = null;
+  private requestedAlgorithmId: number | null = null;
+  private restoredAlgorithmId: number | null = null;
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() nextStep = new EventEmitter<void>();
   @Output() previousStep = new EventEmitter<void>();
   constructor(
+    private activatedRoute: ActivatedRoute,
     private dataAnalysisService: DataAnalysisService,
     private router: Router,
     public selectionService: SelectionService
   ) { }
 
   ngOnInit(): void {
+    this.initializeRouteState();
+    this.initializeQueryParameterSubscription();
+    this.initializeCohortSubscription();
 
-    // Extract workspace ID from the current URL
-
-
-
-    this.selectionService.selectedItems$.subscribe(items => {
-      this.allCohorts = items;
-      if (!this.allCohorts || this.allCohorts.length === 0) {
-        return;
-      }
-
-      const cohortDataframeIds = this.allCohorts.map(cohort => cohort.dataframe_vantage_id);
-      if (!cohortDataframeIds[0]) {
-        return;
-      }
-
-      this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
-        next: (variables: any) => {
-          const seen = new Set<string>();
-          this.variables = variables.variablesList
-            .filter((v: any) => {
-              if (seen.has(v.name)) return false;
-              seen.add(v.name);
-              return true;
-            })
-            .map((v: any) => ({
-              label: v.name,
-              value: v.name,
-              type: this.mapDatatype(v.dtype),
-              display_name: this.formatVariableName(v.name)
-            }));
-          this.filteredVariables = [...this.variables];
-          this.filterVariables(this.variableFilterCtrl.value);
-
-        },
-
-        error: err => console.error('Error fetching subtask number', err)
+    this.variableFilterCtrl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(search => {
+        this.filterVariables(search);
       });
+  }
 
-    });
-    const urlSegments = this.router.url.split('/');
-    const workspaceIndex = urlSegments.indexOf('workspace');
-    const dataAnalysisIndex = urlSegments.indexOf('data-analysis');
+  private initializeRouteState(): void {
+    const routeParams = this.activatedRoute.pathFromRoot.reduce(
+      (params, route) => ({ ...params, ...route.snapshot.params }),
+      {} as Record<string, string>
+    );
 
-    if (workspaceIndex !== -1 && urlSegments.length > workspaceIndex + 1) {
+    const workspaceId = Number(routeParams['id'] ?? routeParams['workspaceId']);
+    const analysisId = Number(routeParams['analysisId']);
 
-      this.workspaceId = Number(urlSegments[workspaceIndex + 1]);
-      this.analysisId = Number(urlSegments[dataAnalysisIndex + 1]);
-      if (isNaN(this.workspaceId)) {
-        console.error('Workspace ID no es un número válido');
-        return;
-      }
+    if (!Number.isFinite(workspaceId) || workspaceId <= 0) {
+      console.error('Workspace ID is not valid.');
+      return;
     }
 
-    this.getAlgorithmsList()
-    // Get the observable from the service
-    this.observable_algorithm$ = this.dataAnalysisService.algorithm
+    if (!Number.isFinite(analysisId) || analysisId <= 0) {
+      console.error('Analysis ID is not valid.');
+      return;
+    }
 
-    // Subscribe to the observable patients
-    this.algorithmSubscription = this.observable_algorithm$.subscribe((data) => {
-      this.dataSource.data = this.getVisibleAlgorithms(data || []);
-    });
+    this.workspaceId = workspaceId;
+    this.analysisId = analysisId;
+  }
 
-    this.variableFilterCtrl.valueChanges.subscribe(search => {
-      this.filterVariables(search);
-    });
+  private initializeQueryParameterSubscription(): void {
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(queryParams => {
+        this.requestedView = queryParams.get('view');
+
+        const algorithmId = Number(queryParams.get('algorithmId'));
+        this.requestedAlgorithmId =
+          Number.isFinite(algorithmId) && algorithmId > 0 ? algorithmId : null;
+
+        if (this.requestedView === 'new-algorithm') {
+          this.selectAlhorithm = true;
+        } else if (this.requestedView === 'algorithms') {
+          this.selectAlhorithm = false;
+        }
+
+        if (this.algorithmsList.length) {
+          this.restoreAlgorithmFromUrl();
+        }
+      });
+  }
+
+  private initializeCohortSubscription(): void {
+    this.selectionService.selectedItems$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(items => {
+        const newCohorts = Array.isArray(items) ? items : [];
+        const newSignature = this.getCohortSignature(newCohorts);
+
+        if (newSignature === this.activeCohortSignature) {
+          return;
+        }
+
+        const hadPreviousCohorts = this.activeCohortSignature !== '';
+        this.activeCohortSignature = newSignature;
+
+        if (hadPreviousCohorts) {
+          this.resetStateForCohortChange();
+        }
+
+        this.allCohorts = newCohorts;
+
+        if (!this.allCohorts.length) {
+          this.algorithmsList = [];
+          this.dataSource.data = [];
+          this.variables = [];
+          this.filteredVariables = [];
+          return;
+        }
+
+        this.getAlgorithmsList();
+        this.loadVariablesForCurrentCohorts();
+      });
+  }
+
+  private getCohortSignature(cohorts: any[]): string {
+    return (cohorts || [])
+      .map(cohort => String(cohort?.id ?? ''))
+      .filter(Boolean)
+      .sort()
+      .join('|');
+  }
+
+  private resetStateForCohortChange(): void {
+    this.cohortChange$.next();
+    this.pollingReset$.next();
+
+    this.selectionService.clearSelectedAlgorithm();
+
+    this.restoredAlgorithmId = null;
+    this.algorithmsList = [];
+    this.dataSource.data = [];
+
+    this.variables = [];
+    this.filteredVariables = [];
+    this.variableFilterCtrl.setValue('', { emitEvent: false });
+
+    this.resetAlgorithmForm();
+    this.selectAlhorithm = false;
+  }
+
+  private loadVariablesForCurrentCohorts(): void {
+    const dataframeId = this.allCohorts
+      .map(cohort => cohort?.dataframe_vantage_id)
+      .find(id => id !== undefined && id !== null);
+
+    if (!dataframeId) {
+      this.variables = [];
+      this.filteredVariables = [];
+      return;
+    }
+
+    this.dataAnalysisService.getVariablesByDataframe(dataframeId)
+      .pipe(
+        takeUntil(this.cohortChange$),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (result: any) => {
+          const seen = new Set<string>();
+
+          this.variables = (result?.variablesList || [])
+            .filter((variable: any) => {
+              if (!variable?.name || seen.has(variable.name)) {
+                return false;
+              }
+
+              seen.add(variable.name);
+              return true;
+            })
+            .map((variable: any) => ({
+              label: variable.name,
+              value: variable.name,
+              type: this.mapDatatype(variable.dtype),
+              display_name: this.formatVariableName(variable.name)
+            }));
+
+          this.filteredVariables = [...this.variables];
+          this.filterVariables(this.variableFilterCtrl.value);
+        },
+        error: error => {
+          console.error('Error loading variables for current cohorts:', error);
+          this.variables = [];
+          this.filteredVariables = [];
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -210,10 +310,14 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from the observable to prevent memory leaks
-    if (this.algorithmSubscription) {
-      this.algorithmSubscription.unsubscribe();
-    }
+    this.cohortChange$.next();
+    this.cohortChange$.complete();
+
+    this.pollingReset$.next();
+    this.pollingReset$.complete();
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -229,35 +333,70 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   // Functions for buttons
-  selectAlgorithm() {
-    // Show the container to select an algorithm
-    this.selectAlhorithm = true;
-  }
-  goBackAlgorithms() {
-    this.selectAlhorithm = false;
+  selectAlgorithm(): void {
     this.resetAlgorithmForm();
+    this.selectAlhorithm = true;
+    this.setUrlView('new-algorithm');
   }
-  openAlgorithm(algorithm_id: number) {
 
-    // Obtener el algoritmo seleccionado de la lista
-    const selectedAlgorithm = this.algorithmsList.find(alg => alg.id === algorithm_id);
-   
-    if (selectedAlgorithm) {
-      // Pasar el algoritmo a través del servicio
-      this.selectionService.setSelected([
-        {
-          ...selectedAlgorithm,
-          cohorts: this.allCohorts
-        }
-      ]);
-      
+  goBackAlgorithms(): void {
+    this.resetAlgorithmForm();
+    this.selectAlhorithm = false;
+    this.setUrlView('algorithms');
+  }
+
+  openAlgorithm(algorithmId: number, updateUrl = true): void {
+    const selectedAlgorithm = this.algorithmsList.find(algorithm => {
+      return algorithm.id === algorithmId;
+    });
+
+    if (!selectedAlgorithm) {
+      console.error(`Algorithm ${algorithmId} was not found.`);
+      return;
+    }
+
+    this.resetAlgorithmForm();
+    this.selectAlhorithm = false;
+
+    this.selectionService.setSelectedAlgorithm({
+      ...selectedAlgorithm,
+      cohorts: this.allCohorts
+    });
+
+    if (updateUrl) {
+      this.setUrlView('algorithm-results', algorithmId);
     }
 
     this.nextStep.emit();
   }
 
-  deleteAlgorithm(algorithm_id: number) {
+  deleteAlgorithm(algorithm: Algorithm) {
+    // first confirm deletion with the user
+    this.loading = true;
+    const confirmed = confirm('Are you sure you want to delete this algorithm? This action cannot be undone.');
+    if (!confirmed) {
+      this.loading = false;
+    }
+    else {
+
+      this.dataAnalysisService.deleteAlgorithm(algorithm.id).subscribe({
+        next: () => {
+          console.log(`Algorithm with ID ${algorithm.id} deleted successfully.`);
+          this.algorithmsList = this.algorithmsList.filter(a => a.id !== algorithm.id);
+          this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+          this.checkAlgorithmsStatus()
+
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error("ERROR: 333333", err);
+          this.loading = false;
+        }
+      });
+    }
+
   }
+
 
   // Functions of algorithm selection section
   onMethodChange(value: string) {
@@ -328,7 +467,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     // Logic to save the selected algorithm and variables
     if (this.loading) return;
     this.loading = true;
-
+    console.log('Saving algorithm with method:', this.selectedMethod);
     if (!this.selectedMethod) {
       console.error('No analysis method selected');
       this.loading = false;
@@ -513,15 +652,31 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   private handleAlgorithmCreationSuccess(): void {
-    this.getAlgorithmsList();
+    this.resetAlgorithmForm();
     this.selectAlhorithm = false;
     this.loading = false;
+    this.setUrlView('algorithms');
+    this.getAlgorithmsList();
   }
 
   private handleAlgorithmCreationError(err: any): void {
     console.error('Error creando algoritmo:', err);
     this.loading = false;
   }
+
+  private setUrlView(view: string | null, algorithmId?: number): void {
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: {
+        view,
+        algorithmId: algorithmId ?? null
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+
 
   createTTestRequest() {
     const dataApplication = this.getBaseAlgorithmRequestBody();
@@ -533,6 +688,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
   createTable1Request() {
     const dataApplication = this.getBaseAlgorithmRequestBody();
+
+    console.log("dataApplication", dataApplication);
     this.dataAnalysisService.createTable1Request(dataApplication).subscribe({
       next: () => this.handleAlgorithmCreationSuccess(),
       error: (err) => this.handleAlgorithmCreationError(err)
@@ -638,27 +795,45 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBack() {
+  goBack(): void {
+    this.resetAlgorithmForm();
+    this.selectAlhorithm = false;
+    this.selectionService.clearSelectedAlgorithm();
+    this.setUrlView(null);
     this.previousStep.emit();
   }
 
-  getAlgorithmsList() {
-    const cohortsIds = this.allCohorts.map(cohort => cohort.id);
-
-    let body = {
-      cohort_ids: cohortsIds
+  getAlgorithmsList(): void {
+    if (!this.allCohorts.length) {
+      this.algorithmsList = [];
+      this.dataSource.data = [];
+      return;
     }
-    this.dataAnalysisService.getAlgorithmsListPostService(body).subscribe({
-      next: (result) => {
-        console.log("result getAlgorithmsList: ", result);
-        this.algorithmsList = result
-        this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
-        this.checkAlgorithmsStatus()
-      },
-      error: (err) => {
-        console.error("Error creando summary statistics:", err);
-      }
-    });
+
+    this.pollingReset$.next();
+
+    const cohortIds = this.allCohorts.map(cohort => cohort.id);
+    const body = { cohort_ids: cohortIds };
+
+    this.dataAnalysisService.getAlgorithmsListPostService(body)
+      .pipe(
+        takeUntil(this.cohortChange$),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: result => {
+          this.algorithmsList = Array.isArray(result) ? result : [];
+          this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+
+          this.checkAlgorithmsStatus();
+          this.restoreAlgorithmFromUrl();
+        },
+        error: error => {
+          console.error('Error loading algorithms for current cohorts:', error);
+          this.algorithmsList = [];
+          this.dataSource.data = [];
+        }
+      });
   }
 
   /*checkAlgoritmsStatus() {
@@ -667,20 +842,20 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
     }
-
+  
     this.pollingInterval = setInterval(() => {
       console.log("SET INTERVAL");
-
+  
       this.algorithmsList.forEach((algorithm: any, index: number) => {
         console.log("Algoritm: ", algorithm, " index : ", index);
-
+  
         let status = algorithm.status_task
         let taskId = algorithm.task_id
-
+  
         this.startPollingTaskStatus(taskId, status, index)
-
-
-
+  
+  
+  
         /* this.dataAnalysisService.getTaskStatus(taskId).subscribe({
            next: (res: { status: string }) => {
              if (status != res.status) {
@@ -697,8 +872,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
                  },
                  error: err => console.error('Error updateAlgorithmsStatus', err)
                });
- 
- 
+   
+   
              }
              if (status === 'completed' || status === 'crashed') {
                clearInterval(this.pollingInterval);
@@ -706,8 +881,32 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
            }
          });*/
   /*});
-}, this.pollingFrequency);
-}*/
+  }, this.pollingFrequency);
+  }*/
+
+  private restoreAlgorithmFromUrl(): void {
+    if (
+      this.requestedView !== 'algorithm-results' ||
+      !this.requestedAlgorithmId ||
+      this.restoredAlgorithmId === this.requestedAlgorithmId
+    ) {
+      return;
+    }
+
+    const requestedAlgorithm = this.algorithmsList.find(algorithm => {
+      return algorithm.id === this.requestedAlgorithmId;
+    });
+
+    if (!requestedAlgorithm) {
+      console.error(`Algorithm ${this.requestedAlgorithmId} was not found.`);
+      this.setUrlView('algorithms');
+      return;
+    }
+
+    this.restoredAlgorithmId = this.requestedAlgorithmId;
+    this.openAlgorithm(this.requestedAlgorithmId, false);
+  }
+
 
 
   mapDatatype(dtype: string): string {
@@ -736,9 +935,6 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
     return 'String';
   }
-
-
-
 
   createCrosstabRequest() {
     if (!this.selectedColumnVariable) {
@@ -772,7 +968,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
   }
 
   /*startPollingTaskStatus(taskId: number, task_status: string, index: number) {
-
+  
     this.dataAnalysisService.getTaskStatus(taskId).subscribe({
       next: (res: { status: string }) => {
         if (task_status != res.status) {
@@ -791,17 +987,17 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
           });
         }
         console.log("Estado del task:", res.status);
-
+  
         // Si está completo o falló, detenemos el polling
         if (this.taskStatus === 'completed') {
-
+  
           this.fetchTaskResult(taskId);
-
+  
           // Primero obtenemos el subtask
           this.dataAnalysisService.getSubTask(taskId).subscribe({
             next: (subtaskNumber: any) => {
               const subtaskId = Number(subtaskNumber); // <-- convertimos a número
-
+  
               let bodyUpdateAlgorithm =
               {
                 "task_id": taskId,
@@ -811,7 +1007,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
               this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
                 next: updateTaskResult => {
                   console.log("updateTaskResult subtask: ", updateTaskResult);
-
+  
                 },
                 error: err => console.error('Error updateTaskResult', err)
               });
@@ -820,7 +1016,7 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
                 next: subtaskResult => {
                   console.log("Result get subTaskREsults", subtaskResult);
                   console.log("Object.keys(subtaskResult.result)[0]", Object.keys(subtaskResult)[0]);
-
+  
                   let bodyUpdateAlgorithm =
                   {
                     "task_id": taskId,
@@ -830,11 +1026,11 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
                   this.dataAnalysisService.updateAlgorithmsStatus(bodyUpdateAlgorithm).subscribe({
                     next: updateTaskResult => {
                       console.log("updateTaskResult subtask: ", updateTaskResult);
-
+  
                     },
                     error: err => console.error('Error updateTaskResult', err)
                   });
-
+  
                 },
                 error: err => console.error('Error fetching subtask result', err)
               });
@@ -842,8 +1038,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
             error: err => console.error('Error fetching subtask number', err)
           });
         }
-
-
+  
+  
         return res.status
       },
       error: (err) => {
@@ -851,8 +1047,8 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
         return "Error2"
       }
     });
-
-
+  
+  
   }*/
 
   fetchTaskResult(taskId: number) {
@@ -875,55 +1071,87 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
 
 
   checkAlgorithmsStatus(): void {
-    this.algorithmsList.forEach((algorithm: any, index: number) => {
+    this.pollingReset$.next();
 
-      const taskId = algorithm.task_id;
+    this.algorithmsList
+      .filter(algorithm => {
+        const status = String(algorithm?.status_task || '').toLowerCase();
 
-      interval(this.pollingFrequency)
-        .pipe(
-          switchMap(() => this.dataAnalysisService.getTaskStatus(taskId).pipe(
-            catchError(err => {
-              console.error('Error fetching task status', err);
-              return of({ status: 'error' });
-            })
-          )),
-          takeWhile(res => res.status !== 'completed' && res.status !== 'crashed' && res.status !== 'killed by user', true),
-          map(res => ({ res, index }))
-        )
-        .subscribe(async ({ res, index }) => {
+        return status !== 'completed' &&
+          status !== 'crashed' &&
+          status !== 'killed by user' &&
+          !!algorithm?.task_id;
+      })
+      .forEach(algorithm => {
+        const taskId = algorithm.task_id;
 
-          const currentAlg = this.algorithmsList[index];
+        interval(this.pollingFrequency)
+          .pipe(
+            takeUntil(this.pollingReset$),
+            takeUntil(this.destroy$),
+            switchMap(() => {
+              return this.dataAnalysisService.getTaskStatus(taskId).pipe(
+                catchError(error => {
+                  console.error(`Error loading status for task ${taskId}:`, error);
+                  return of({ status: 'error' });
+                })
+              );
+            }),
+            takeWhile(response => {
+              const status = String(response?.status || '').toLowerCase();
 
-          // Actualizamos status principal si cambió
-          if (currentAlg.status_task !== res.status) {
-            currentAlg.status_task = res.status;
-
-            const updateBody = { task_id: taskId, status_task: res.status };
-            try {
-              const updatedAlg = await this.dataAnalysisService.updateAlgorithmsStatus(updateBody).toPromise();
-              this.algorithmsList[index] = updatedAlg;
-              this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
-            } catch (err) {
-              console.error('Error updating main task status', err);
-            }
-
-            if (res.status === 'completed' && algorithm.method_name === "summary") {
-              this.handleSubtask(algorithm, index);
-            }
-
-            if (res.status === 'crashed') {
-              console.error(`Task ${taskId} crashed`);
-            }
-          }
-
-          // Si task completado, hacer polling de subtask y resultados
-
-        });
-
-    });
+              return status !== 'completed' &&
+                status !== 'crashed' &&
+                status !== 'killed by user';
+            }, true)
+          )
+          .subscribe(response => {
+            this.updateAlgorithmStatusFromPolling(algorithm, response);
+          });
+      });
   }
 
-  async handleSubtask(algorithm: any, index: number) {
+  private async updateAlgorithmStatusFromPolling(
+    algorithm: any,
+    response: { status: string }
+  ): Promise<void> {
+    const taskId = algorithm.task_id;
+    const status = String(response?.status || '');
+
+    const currentAlgorithm = this.algorithmsList.find(item => {
+      return item.task_id === taskId;
+    });
+
+    if (!currentAlgorithm || currentAlgorithm.status_task === status) {
+      return;
+    }
+
+    currentAlgorithm.status_task = status;
+    this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+
+    try {
+      const updatedAlgorithm = await firstValueFrom(
+        this.dataAnalysisService.updateAlgorithmsStatus({
+          task_id: taskId,
+          status_task: status
+        })
+      );
+
+      this.algorithmsList = this.algorithmsList.map(item => {
+        return item.task_id === taskId ? updatedAlgorithm : item;
+      });
+
+      this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
+
+      if (status === 'completed' && algorithm.method_name === this.METHOD_SUMMARY) {
+        await this.handleSubtask(algorithm);
+      }
+    } catch (error) {
+      console.error(`Error updating status for task ${taskId}:`, error);
+    }
+  }
+
+  async handleSubtask(algorithm: any) {
     const taskId = algorithm.task_id;
 
     try {
@@ -938,7 +1166,9 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
         status_subtask: 'completed'
       };
       const updatedAlgSubtask = await this.dataAnalysisService.updateAlgorithmsStatus(bodySubtaskUpdate).toPromise();
-      this.algorithmsList[index] = updatedAlgSubtask;
+      this.algorithmsList = this.algorithmsList.map(a =>
+        a.task_id === taskId ? updatedAlgSubtask : a
+      );
       this.dataSource.data = this.getVisibleAlgorithms(this.algorithmsList);
 
       // 3️⃣ Obtener resultados del subtask
@@ -954,8 +1184,12 @@ export class AnalyticSelectionComponent implements OnInit, OnDestroy {
     return (algorithms || []).filter(algorithm => algorithm?.method_name !== this.METHOD_SUMMARY);
   }
 
-  canShowAction(algorithm: any): boolean {
+  canShowOpen(algorithm: any): boolean {
     return (algorithm?.status_task || '').toLowerCase() === 'completed';
+  }
+
+  canShowDelete(algorithm: any): boolean {
+    return (algorithm?.status_task || '').toLowerCase() === 'completed' || (algorithm?.status_task || '').toLowerCase() === 'crashed' || (algorithm?.status_task || '').toLowerCase() === 'killed by user';
   }
 
   private resetAlgorithmForm(): void {

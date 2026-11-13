@@ -66,9 +66,16 @@ export class KaplanMeierResultsComponent implements OnChanges {
     scales: {
       x: {
         type: 'linear',
+        min: 0,
         title: {
           display: true,
-          text: 'Time'
+          text: 'Time (years)'
+        },
+        ticks: {
+          callback: (value) => {
+            const v = Number(value);
+            return Number.isInteger(v) ? `${v}` : v.toFixed(1);
+          }
         }
       },
       y: {
@@ -108,6 +115,21 @@ export class KaplanMeierResultsComponent implements OnChanges {
       title: {
         display: true,
         text: 'Results Kaplan Meier'
+      },
+      tooltip: {
+        // Only show the survival curves, not the invisible CI band datasets
+        filter: (item) => !!item.dataset.label,
+        callbacks: {
+          title: (items) => {
+            const raw: any = items[0]?.raw;
+            if (raw?.days == null) return '';
+            return `${this.formatDuration(raw.days)} (${raw.x.toFixed(2)} years)`;
+          },
+          label: (item) => {
+            const raw: any = item.raw;
+            return `${item.dataset.label}: ${Number(raw.y).toFixed(4)}`;
+          }
+        }
       }
     },
     elements: {
@@ -163,8 +185,9 @@ export class KaplanMeierResultsComponent implements OnChanges {
         const color = colors[colorIndex % colors.length];
 
         const survivalData = curve.points.map(p => ({
-          x: p.time,
-          y: p.survival
+          x: this.daysToYears(p.time),
+          y: p.survival,
+          days: p.time
         }));
 
         datasets.push({
@@ -184,12 +207,12 @@ export class KaplanMeierResultsComponent implements OnChanges {
 
         if (hasCI) {
           const upper = curve.points.map(p => ({
-            x: p.time,
+            x: this.daysToYears(p.time),
             y: p.ciUpper ?? null
           }));
 
           const lower = curve.points.map(p => ({
-            x: p.time,
+            x: this.daysToYears(p.time),
             y: p.ciLower ?? null
           }));
 
@@ -324,6 +347,35 @@ export class KaplanMeierResultsComponent implements OnChanges {
     const b = 0;
 
     return `rgba(${r}, ${g}, ${b}, ${0.15 + intensity * 0.85})`;
+  }
+
+  private static readonly DAYS_PER_YEAR = 365.25;
+  private static readonly DAYS_PER_MONTH = 365.25 / 12;
+
+  daysToYears(days: number): number {
+    return days / KaplanMeierResultsComponent.DAYS_PER_YEAR;
+  }
+
+  /** Formats a duration in days as e.g. "1y 0m 6d" (average-length years/months). */
+  formatDuration(days: number): string {
+    if (days == null || isNaN(days)) return '-';
+    if (days <= 0) return '0d';
+
+    const { DAYS_PER_YEAR, DAYS_PER_MONTH } = KaplanMeierResultsComponent;
+    let years = Math.floor(days / DAYS_PER_YEAR);
+    let remainder = days - years * DAYS_PER_YEAR;
+    let months = Math.floor(remainder / DAYS_PER_MONTH);
+    let d = Math.round(remainder - months * DAYS_PER_MONTH);
+
+    // Normalise rounding overflow (e.g. 30.4 days rounding up to a full month)
+    if (d >= Math.round(DAYS_PER_MONTH)) { d = 0; months++; }
+    if (months >= 12) { months = 0; years++; }
+
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years}y`);
+    if (years > 0 || months > 0) parts.push(`${months}m`);
+    parts.push(`${d}d`);
+    return parts.join(' ');
   }
 
   formatLabel(value: string): string {

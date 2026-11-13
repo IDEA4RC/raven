@@ -33,10 +33,11 @@ import { KaplanMeierResultsComponent } from './data-analysis/analysis-results/ka
 import { TTestResultsComponent } from './data-analysis/analysis-results/t-test-results/t-test-results.component';
 import { CoxPHResultsComponent } from './data-analysis/analysis-results/cox-ph-results/cox-ph-results.component';
 import { PlaceholderResultsComponent } from './data-analysis/analysis-results/placeholder-results/placeholder-results.component';
+import { DataOverviewComponent } from './data-analysis/individual-data-analysis/analysis-results/data-overview/data-overview.component';
 @NgModule({
   declarations: [DataAnalysisComponent, NewAnalysisComponent, IndividualDataAnalysisComponent, CohortSelectionComponent, Table1ResultsComponent, CrosstabulationResultsComponent, GlmResultsComponent,
     KaplanMeierResultsComponent, TTestResultsComponent, CoxPHResultsComponent, PlaceholderResultsComponent,
-    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
+    DataQuaityComponent, DataPreparationComponent, AnalyticSelectionComponent, AnalysisResultsComponent, DataOverviewComponent, DialogformDeleteAnalysisComponent, StatisticsTableComponent, CreateVariableDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(AnalysisRoutes),

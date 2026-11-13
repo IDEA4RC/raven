@@ -1,110 +1,178 @@
-<div *ngIf="table" class="table-container">
+<mat-card *ngIf="table" class="inner-card">
+  <div #table1Start class="scroll-anchor"></div>
 
-  <h2>Table 1: Summary Statistics</h2>
+  <mat-card-content>
+    <h2>Table 1: Summary Statistics</h2>
 
-  <div class="table-actions">
-    <ng-container *ngIf="isEditing; else viewModeButtons">
-      <button mat-stroked-button type="button" (click)="expandAll()">
-        Expand all
-      </button>
+    <div class="table-toolbar">
+      <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+        <mat-label>Search variables</mat-label>
 
-      <button mat-stroked-button type="button" (click)="collapseAll()">
-        Collapse all
-      </button>
+        <mat-icon matPrefix>
+          search
+        </mat-icon>
 
-      <button mat-stroked-button type="button" (click)="selectAll()">
-        Select all
-      </button>
+        <input matInput type="text" [(ngModel)]="searchText" placeholder="Search by variable name" />
 
-      <button mat-stroked-button type="button" (click)="deselectAll()">
-        Deselect all
-      </button>
+        <button *ngIf="searchText" mat-icon-button matSuffix type="button" aria-label="Clear search"
+          (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
 
-      <button mat-raised-button type="button" (click)="selectDefaultVariables()">
-        Last selection
-      </button>
-      <button mat-raised-button color="accent" (click)="finishEditing()">
-        Done
-      </button>
-    </ng-container>
+      <div class="search-result-count">
+        Showing {{ filteredGroups.length }}
+        of {{ groups.length }} variables
+      </div>
 
-    <ng-template #viewModeButtons>
-      <button mat-raised-button color="primary" (click)="startEditing()">
-        Edit
-      </button>
-    </ng-template>
-  </div>
+      <div class="toolbar-navigation">
 
-  <table class="statistics-table_1">
-    <thead>
-      <tr>
-        <th>Characteristic</th>
+        <button mat-stroked-button type="button" (click)="scrollToTableEnd()">
+          <mat-icon>keyboard_arrow_down</mat-icon>Go to bottom
+        </button>
+      </div>
+    </div>
 
-        <th *ngFor="let cohort of table.cohortNames">
-          {{ formatLabel(cohort) }} (n={{ table.cohortCounts[cohort] }})
-        </th>
-      </tr>
-    </thead>
+    <div class="table-actions">
+      <ng-container *ngIf="isEditing; else viewModeButtons">
+        <button mat-stroked-button type="button" (click)="expandFiltered()">
+          Expand visible
+        </button>
 
-    <tbody>
-      <ng-container *ngFor="let group of groups">
+        <button mat-stroked-button type="button" (click)="collapseFiltered()">
+          Collapse visible
+        </button>
 
-        <tr class="header-row" *ngIf="isEditing || group.visible">
-          <td class="characteristic-cell group-cell">
+        <button mat-stroked-button type="button" (click)="selectFiltered()">
+          Select visible
+        </button>
 
-            <mat-checkbox *ngIf="isEditing" class="row-checkbox" [checked]="group.visible"
-              (change)="toggleVisible(group)" (click)="$event.stopPropagation()">
-            </mat-checkbox>
+        <button mat-stroked-button type="button" (click)="deselectFiltered()">
+          Deselect visible
+        </button>
 
-            <span class="group-label">
-              {{ group.label }}
-            </span>
+        <button mat-raised-button type="button" (click)="selectDefaultVariables()">
+          Last selection
+        </button>
 
-            <button mat-icon-button type="button" class="collapse-button"
-              [disabled]="!group.visible || group.subRows.length === 0"
-              (click)="toggleExpanded(group); $event.stopPropagation()">
+        <button mat-raised-button color="accent" type="button" (click)="finishEditing()">
+          Done
+        </button>
+      </ng-container>
 
-              <mat-icon>
-                {{ group.expanded ? 'expand_less' : 'expand_more' }}
-              </mat-icon>
+      <ng-template #viewModeButtons>
+        <button mat-raised-button color="primary" type="button" (click)="startEditing()">
+          Edit
+        </button>
+      </ng-template>
+    </div>
 
-            </button>
+    <div *ngIf="filteredGroups.length > 0; else noSearchResults" class="table-container">
+      <table class="statistics-table_1" [style.min-width.px]="tableMinimumWidth">
+        <colgroup>
+          <col class="characteristic-column" />
 
-          </td>
+          <col *ngFor="let cohort of table.cohortNames" class="cohort-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Characteristic</th>
 
-          <td *ngFor="let cohort of table.cohortNames">
-            {{ group.mainRow[cohort] }}
-          </td>
-        </tr>
+            <th *ngFor="let cohort of table.cohortNames">
+              {{ formatLabel(cohort) }}
+              (n={{ table.cohortCounts[cohort] }})
+            </th>
+          </tr>
+        </thead>
 
-        <ng-container *ngIf="(group.visible || isEditing) && group.expanded">
-          <tr *ngFor="let row of group.subRows" class="sub-row">
+        <tbody>
+          <ng-container *ngFor="let group of filteredGroups">
+            <tr class="header-row" *ngIf="isEditing || group.visible">
+              <td class="characteristic-cell group-cell">
+                <div class="group-cell-content">
+                  <mat-checkbox *ngIf="isEditing" class="row-checkbox" [checked]="group.visible"
+                    (change)="toggleVisible(group)" (click)="$event.stopPropagation()">
+                  </mat-checkbox>
+
+                  <button mat-icon-button type="button" class="collapse-button"
+                    [disabled]="!group.visible ||group.subRows.length === 0"
+                    (click)="toggleExpanded(group);$event.stopPropagation()">
+                    <mat-icon>
+                      {{
+                      group.expanded
+                      ? 'expand_less'
+                      : 'expand_more'
+                      }}
+                    </mat-icon>
+                  </button>
+
+                  <span class="group-label">
+                    {{ group.label }}
+                  </span>
+                </div>
+              </td>
+
+              <td *ngFor="let cohort of table.cohortNames">
+                {{ group.mainRow[cohort] }}
+              </td>
+            </tr>
+
+            <ng-container *ngIf="(group.visible || isEditing) && group.expanded">
+              <tr *ngFor="let row of group.subRows" class="sub-row">
 
             <td class="characteristic-cell sub-characteristic-cell">
-              {{ row.characteristic }}
-            </td>
+                  {{ row.characteristic }}
+                </td>
 
-            <td *ngFor="let cohort of table.cohortNames">
-              {{ row[cohort] }}
-            </td>
-
-          </tr>
-        </ng-container>
-
-      </ng-container>
+                <td *ngFor="let cohort of table.cohortNames">
+                  {{ row[cohort] }}
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
       <tr *ngIf="!isEditing && hiddenCount > 0" class="hidden-info-row">
         <td [attr.colspan]="table.cohortNames.length + 1">
           {{ hiddenCount }} variables hidden. Click "Edit" to modify.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
+    <ng-template #noSearchResults>
+      <div class="no-search-results">
+        <mat-icon>search_off</mat-icon>
 
+        <div>
+          <strong>No variables found</strong>
 
-</div>
+          <p>
+            No variables match "{{ searchText }}".
+          </p>
+        </div>
 
-<div *ngIf="!table" class="under-construction">
-  <h4>Table 1</h4>
-  <p>No Table 1 data was returned.</p>
+        <button mat-stroked-button type="button" (click)="clearSearch()">
+          Clear search
+        </button>
+      </div>
+    </ng-template>
+
+    <div #table1End class="scroll-anchor"></div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="!table" class="inner-card">
+  <mat-card-content>
+    <div class="under-construction">
+      <h4>Table 1</h4>
+      <p>No Table 1 data was returned.</p>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<div *ngIf="table" class="floating-navigation">
+  <button mat-mini-fab type="button" aria-label="Go to the beginning of Table 1" matTooltip="Go to top"
+    (click)="scrollToTableStart()">
+    <mat-icon>keyboard_arrow_up</mat-icon>
+  </button>
 </div>

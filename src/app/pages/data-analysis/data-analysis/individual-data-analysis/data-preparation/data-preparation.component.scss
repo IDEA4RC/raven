@@ -377,7 +377,7 @@ table tr:hover {
 
 ::ng-deep .ngx-mat-select-search-inner input {
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0;
 }
 
@@ -389,4 +389,72 @@ table tr:hover {
 .datatype {
   font-size: 12px;
   opacity: 0.6;
+}
+
+.numeric-center-charts {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.cohort-chart-group {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.cohort-chart-group>h4 {
+  margin: 0 0 16px;
+
+  color: #255e87;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.numeric-chart-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 20px;
+
+  width: 100%;
+}
+
+.chart-card {
+  width: 100%;
+  min-width: 0;
+
+  padding: 16px;
+  box-sizing: border-box;
+
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.chart-title {
+  color: #2e3a59;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chart-description {
+  min-height: 42px;
+  margin: 8px 0 16px;
+
+  color: #596f79;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chart-card apx-chart {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .numeric-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-description {
+    min-height: auto;
+  }
 }

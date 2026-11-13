@@ -59,6 +59,8 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  private readonly cohortChange$ = new Subject<void>();
+  private activeCohortSignature = '';
 
   selectedCenters: any[] = [];
   selectedCohorts: any[] = [];
@@ -86,8 +88,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
   ];
 
   centersTables: any = {};
-  numericCenterCharts: Array<{ cohort: string; charts: Array<{ title: string; series: any[]; chart: any; xaxis: any; plotOptions: any; dataLabels: any; colors: string[] }> }> = [];
+  centerCharts: Array<{
+    cohort: string;
+    distributionChart: any | null;
+    missingChart: any;
+  }> = [];
   selectedValue: any = null;
+  displayedColumnsCentersByCohort: Record<string, string[]> = {};
 
   dataSourceCohorts = new MatTableDataSource<any>();
   displayedColumnsCohorts: string[] = [];
@@ -149,43 +156,31 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
       console.error('Workspace not found in URL segments');
     }
 
-    this.selectionService.selectedItems$.subscribe(items => {
-      this.allCohorts = items;
-      this.syncCohortFilters();
-      this.tryInitializeSummaryFlow();
+    this.selectionService.selectedItems$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(items => {
+        const newCohorts = Array.isArray(items) ? items : [];
+        const newSignature = this.getCohortSignature(newCohorts);
+        const cohortsChanged =
+          this.activeCohortSignature !== '' &&
+          this.activeCohortSignature !== newSignature;
 
-      const cohortDataframeIds = this.allCohorts.map(cohort => cohort.dataframe_vantage_id);
-      if (!cohortDataframeIds.length || !cohortDataframeIds[0]) {
-        return;
-      }
+        if (cohortsChanged) {
+          this.resetCohortDependentState();
+        }
 
-      this.dataAnalysisService.getVariablesByDataframe(cohortDataframeIds[0]).subscribe({
-        next: (variables: any) => {
-          // console.log("Variables from server ", variables);
-          // console.log("Variables from server list", variables.variablesList);
-          const seen = new Set<string>();
-          this.optionsVariables = variables.variablesList
-            .filter((v: any) => {
+        this.activeCohortSignature = newSignature;
+        this.allCohorts = newCohorts;
+        this.syncCohortFilters();
 
-              if (seen.has(v.name)) return false;
-              seen.add(v.name);
-              return true;
-            })
-            .map((v: any) => ({
-              variable_name: v.name,
-              variable_id: v.name,
-              datatype: this.mapDatatype(v.dtype),
-              display_name: this.formatVariableName(v.name)
-            }));
+        if (!this.allCohorts.length) {
+          this.isLoading = false;
+          return;
+        }
 
-          this.groupVariables(this.optionsVariables);
-          this.filteredVariables = [...this.optionsVariables];
-          this.filterVariables(this.variableFilterCtrl.value);
-        },
-        error: err => console.error('Error fetching dataframe variables', err)
+        this.loadVariablesForSelectedCohorts();
+        this.tryInitializeSummaryFlow();
       });
-    });
-
 
     this.observable_data_preparation_cohort$ = this.dataAnalysisService.data_preparation_cohort;
     this.observable_data_preparation_center$ = this.dataAnalysisService.data_preparation_center;
@@ -214,6 +209,110 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.topographyService.getTopographyMap().subscribe(map => {
       this.topographyMap = map;
     });
+  }
+
+  private getCohortSignature(cohorts: any[]): string {
+    return cohorts
+      .map(cohort => String(cohort?.id ?? ''))
+      .filter(Boolean)
+      .sort()
+      .join('|');
+  }
+
+  private resetCohortDependentState(): void {
+    /*
+     * Cancel requests and polling operations associated with the previous
+     * cohort selection.
+     */
+    this.cohortChange$.next();
+
+    this.summaryFlowInitialized = false;
+    this.currentTaskId = null;
+    this.taskStatus = '';
+    this.taskLogs = '';
+
+    this.isLoading = true;
+    this.isCrashed = false;
+
+    this.selectedValue = null;
+    this.resultGlobal = [];
+    this.resultLocal = [];
+
+    this.summaryStatisticsCohorts = [];
+    this.summaryStatisticsCenters = {};
+
+    this.centersTables = {};
+    this.centerCharts  = [];
+    this.displayedColumnsCentersByCohort = {};
+
+    this.dataSourceCohorts.data = [];
+    this.displayedColumnsCohorts = [];
+    this.cohortColumnLabelMap = {};
+
+    this.dataSourceCenters.data = [];
+    this.displayedColumnsCenters = [];
+
+    this.cohortStatusList = [];
+    this.optionsVariables = [];
+    this.filteredVariables = [];
+    this.groupedVariables = [];
+
+    this.variableFilterCtrl.setValue('', { emitEvent: false });
+
+    /*
+     * showCenters and showCohorts are intentionally not reset, so the user's
+     * display preferences remain unchanged.
+     */
+  }
+
+  private loadVariablesForSelectedCohorts(): void {
+    const dataframeId = this.allCohorts
+      .map(cohort => cohort?.dataframe_vantage_id)
+      .find(id => id !== undefined && id !== null);
+
+    if (!dataframeId) {
+      this.optionsVariables = [];
+      this.filteredVariables = [];
+      this.groupedVariables = [];
+      return;
+    }
+
+    this.dataAnalysisService.getVariablesByDataframe(dataframeId)
+      .pipe(
+        takeUntil(this.cohortChange$),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (variables: any) => {
+          const seen = new Set<string>();
+
+          this.optionsVariables = (variables?.variablesList || [])
+            .filter((variable: any) => {
+              if (!variable?.name || seen.has(variable.name)) {
+                return false;
+              }
+
+              seen.add(variable.name);
+              return true;
+            })
+            .map((variable: any) => ({
+              variable_name: variable.name,
+              variable_id: variable.name,
+              datatype: this.mapDatatype(variable.dtype),
+              display_name: this.formatVariableName(variable.name)
+            }));
+
+          this.filteredVariables = [...this.optionsVariables];
+          this.groupVariables(this.filteredVariables);
+          this.filterVariables(this.variableFilterCtrl.value);
+        },
+        error: error => {
+          console.error('Error loading variables for selected cohorts:', error);
+          this.optionsVariables = [];
+          this.filteredVariables = [];
+          this.groupedVariables = [];
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -245,12 +344,13 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.summaryStatisticsCohorts = [];
     this.summaryStatisticsCenters = {};
     this.centersTables = {};
-    this.numericCenterCharts = [];
+    this.centerCharts = [];
     this.dataSourceCohorts.data = [];
     this.displayedColumnsCohorts = [];
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
     this.optionsVariables = [];
+    this.displayedColumnsCentersByCohort = {};
   }
 
   goNext() {
@@ -324,7 +424,12 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
             rowsByValue[val][cohortLabel] = variableData[val];
           });
 
-        const total = Number(variableCounts['count'] || 0);
+        const validCount = this.toFiniteNumber(
+          variableCounts.count,
+          0
+        );
+
+        const total = validCount + missing;
         const missingPerc = total > 0 ? (missing / total) * 100 : 0;
 
         totalRow[cohortLabel] = total;
@@ -358,13 +463,63 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         const cohortLabel = `Cohort ${index + 1}`;
         this.displayedColumnsCohorts.push(cohortLabel);
 
-        variableCohorts = variableCohorts.map((row: any) => {
-          const rawValue = Number(variableData[row.field] ?? 0);
-          return {
-            ...row,
-            [cohortLabel]: Number.isFinite(rawValue) ? Number(rawValue.toFixed(3)) : 0
-          };
-        });
+        variableCohorts = variableCohorts.map(
+          (row: any) => {
+            const validCount =
+              this.toFiniteNumber(
+                variableData.count,
+                0
+              );
+
+            const missingCount =
+              this.toFiniteNumber(
+                variableData.missing,
+                0
+              );
+
+            const totalCount =
+              validCount + missingCount;
+
+            if (row.field === 'mean') {
+              const mean =
+                this.getNumericMean(variableData);
+
+              return {
+                ...row,
+                [cohortLabel]:
+                  mean !== null
+                    ? Number(mean.toFixed(3))
+                    : '-'
+              };
+            }
+
+            if (row.field === 'missing') {
+              return {
+                ...row,
+                [cohortLabel]:
+                  this.formatMissingValue(
+                    missingCount,
+                    totalCount
+                  )
+              };
+            }
+
+            const rawValue =
+              variableData[row.field];
+
+            const numericValue = Number(rawValue);
+
+            return {
+              ...row,
+              [cohortLabel]:
+                rawValue !== undefined &&
+                  rawValue !== null &&
+                  Number.isFinite(numericValue)
+                  ? Number(numericValue.toFixed(3))
+                  : '-'
+            };
+          }
+        );
       });
     }
     else if (this.selectedValue.datatype === 'Date') {
@@ -376,13 +531,45 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
         const cohortLabel = `Cohort ${index + 1}`;
         this.displayedColumnsCohorts.push(cohortLabel);
 
-        variableCohorts = variableCohorts.map((row: any) => {
-          const rawValue = variableData[row.field];
-          return {
-            ...row,
-            [cohortLabel]: this.formatValue(rawValue, this.selectedValue.datatype, row.field)
-          };
-        });
+        variableCohorts = variableCohorts.map(
+          (row: any) => {
+            const validCount =
+              this.toFiniteNumber(
+                variableData.count,
+                0
+              );
+
+            const missingCount =
+              this.toFiniteNumber(
+                variableData.missing,
+                0
+              );
+
+            const totalCount =
+              validCount + missingCount;
+
+            if (row.field === 'missing') {
+              return {
+                ...row,
+                [cohortLabel]:
+                  this.formatMissingValue(
+                    missingCount,
+                    totalCount
+                  )
+              };
+            }
+
+            return {
+              ...row,
+              [cohortLabel]:
+                this.formatValue(
+                  variableData[row.field],
+                  this.selectedValue.datatype,
+                  row.field
+                )
+            };
+          }
+        );
       });
     }
 
@@ -446,213 +633,1073 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     return 'unknown';
   }
 
-  updateCentersTable() {
-    if (!this.selectedValue) return;
-
-    let variableCenters: any[] = [];
-    const variableName = this.selectedValue.variable_name;
-    const variableId = this.selectedValue.variable_id;
-
-    this.displayedColumnsCenters = [];
-    this.centersTables = {};
-
-    Object.keys(this.summaryStatisticsCenters || {}).forEach(cohortName => {
-      const cohortCenters = this.summaryStatisticsCenters[cohortName] || {};
-      const centerNames = Object.keys(cohortCenters || {});
-
-      if (!centerNames.length) return;
-
-      variableCenters = [];
-
-      if (this.selectedValue.datatype === 'Categorical' || this.selectedValue.datatype === 'Boolean') {
-        const totalRow: any = { [variableName]: 'Total' };
-        const missingRow: any = { [variableName]: 'Missing' };
-
-        this.displayedColumnsCenters = [];
-        this.displayedColumnsCenters.push(variableName);
-
-        centerNames.forEach(centerName => {
-          const variableData = cohortCenters[centerName]?.counts_unique_values?.[variableId] || {};
-          const variableCounts = cohortCenters[centerName]?.categorical?.[variableId] || {};
-
-          this.displayedColumnsCenters.push(centerName);
-
-          let missing = Number(variableCounts['missing'] || 0);
-          missing += Number(variableData['N/A'] || 0);
-          const sortedValues = Object.keys(variableData)
-            .filter(val => val !== 'N/A')
-            .sort((a, b) => {
-              return a.localeCompare(b, undefined, {
-                sensitivity: 'base'
-              });
-            });
-
-          sortedValues.forEach((val: string, i: number) => {
-            if (val !== 'N/A') {
-              const displayValue = this.selectedValue.variable_name === 'topography'
-                ? this.mapTopographyValue(val)
-                : val;
-
-              if (variableCenters.length <= i) {
-                variableCenters.push({
-                  [variableName]: displayValue,
-                  [centerName]: variableData[val]
-                });
-              } else {
-                variableCenters[i][centerName] = variableData[val];
-              }
-            } else {
-              missing += Number(variableData[val] || 0);
-            }
-          });
-
-          const total = Number(variableCounts['count'] || 0);
-          const missingPerc = total > 0 ? (missing / total) * 100 : 0;
-
-          totalRow[centerName] = total;
-          missingRow[centerName] = `${missing} (${missingPerc.toFixed(1)}%)`;
-        });
-
-        variableCenters.push(missingRow);
-        variableCenters.push(totalRow);
-      }
-
-      else if (this.isNumericVariableType(this.selectedValue.datatype)) {
-        variableCenters = this.summaryTableNum.map(row => ({ ...row }));
-
-        this.displayedColumnsCenters = [];
-        this.displayedColumnsCenters.push('Statistics');
-
-        centerNames.forEach(centerName => {
-          const variableData = cohortCenters[centerName]?.numeric?.[variableId] || {};
-
-          this.displayedColumnsCenters.push(centerName);
-
-          variableCenters = variableCenters.map((row: any) => {
-            const rawValue = Number(variableData[row.field] ?? 0);
-
-            return {
-              ...row,
-              [centerName]: Number.isFinite(rawValue)
-                ? Number(rawValue.toFixed(3))
-                : 0
-            };
-          });
-        });
-      }
-
-      else if (this.selectedValue.datatype === 'Date') {
-        variableCenters = this.summaryTableDate.map(row => ({ ...row }));
-
-        this.displayedColumnsCenters = [];
-        this.displayedColumnsCenters.push('Statistics');
-
-        centerNames.forEach(centerName => {
-          const variableData = cohortCenters[centerName]?.date?.[variableId] || {};
-
-          this.displayedColumnsCenters.push(centerName);
-
-          variableCenters = variableCenters.map((row: any) => {
-            const rawValue = variableData[row.field];
-
-            return {
-              ...row,
-              [centerName]: this.formatValue(
-                rawValue,
-                this.selectedValue.datatype,
-                row.field
-              )
-            };
-          });
-        });
-      }
-
-      this.centersTables[cohortName] = variableCenters;
-    });
-
-    // console.log("centersTables:", this.centersTables);
-    // console.log("displayedColumnsCenters:", this.displayedColumnsCenters);
-  }
-
-  buildNumericCenterCharts() {
-    if (!this.selectedValue || !this.isNumericVariableType(this.selectedValue.datatype)) {
-      this.numericCenterCharts = [];
+  updateCentersTable(): void {
+    if (!this.selectedValue) {
+      this.centersTables = {};
+      this.displayedColumnsCenters = [];
+      this.displayedColumnsCentersByCohort = {};
+      this.centerCharts = [];
       return;
     }
 
-    const variableId = this.selectedValue.variable_id;
-    const measureConfig = [
-      { key: 'q_25', title: 'Q1 per center' },
-      { key: 'median', title: 'Median per center' },
-      { key: 'q_75', title: 'Q3 per center' },
-      { key: 'missing', title: 'Missing per center' }
+    const variableName =
+      this.selectedValue.variable_name;
+
+    const variableId =
+      this.selectedValue.variable_id;
+
+    this.centersTables = {};
+    this.displayedColumnsCenters = [];
+    this.displayedColumnsCentersByCohort = {};
+
+    Object.keys(
+      this.summaryStatisticsCenters || {}
+    ).forEach(cohortName => {
+      const cohortCenters =
+        this.summaryStatisticsCenters[
+        cohortName
+        ] || {};
+
+      const centerNames =
+        Object.keys(cohortCenters);
+
+      if (!centerNames.length) {
+        return;
+      }
+
+      const centerColumnNames =
+        centerNames.map(centerName => {
+          return this.getCenterColumnLabel(
+            centerName,
+            cohortCenters[centerName]
+          );
+        });
+
+      const displayedColumns = [
+        variableName,
+        ...centerColumnNames
+      ];
+
+      this.displayedColumnsCentersByCohort[
+        cohortName
+      ] = displayedColumns;
+
+      this.displayedColumnsCenters =
+        displayedColumns;
+
+      let variableCenters: any[] = [];
+
+      if (
+        this.selectedValue.datatype ===
+        'Categorical' ||
+        this.selectedValue.datatype ===
+        'Boolean'
+      ) {
+        variableCenters =
+          this.buildCategoricalCentersTable(
+            cohortCenters,
+            centerNames,
+            variableName,
+            variableId
+          );
+      } else if (
+        this.isNumericVariableType(
+          this.selectedValue.datatype
+        )
+      ) {
+        variableCenters =
+          this.buildNumericCentersTable(
+            cohortCenters,
+            centerNames,
+            variableName,
+            variableId
+          );
+      } else if (
+        this.selectedValue.datatype === 'Date'
+      ) {
+        variableCenters =
+          this.buildDateCentersTable(
+            cohortCenters,
+            centerNames,
+            variableName,
+            variableId
+          );
+      }
+
+      this.centersTables[cohortName] =
+        variableCenters;
+    });
+
+    this.buildCenterCharts();
+  }
+
+  private buildCategoricalCentersTable(
+    cohortCenters: any,
+    centerNames: string[],
+    variableName: string,
+    variableId: string
+  ): any[] {
+    const missingValues = new Set([
+      'N/A',
+      'N/A2'
+    ]);
+
+    const categoryKeys = new Set<string>();
+
+    centerNames.forEach(centerName => {
+      const variableData =
+        cohortCenters[centerName]
+          ?.counts_unique_values
+        ?.[variableId] || {};
+
+      Object.keys(variableData).forEach(
+        categoryKey => {
+          if (!missingValues.has(categoryKey)) {
+            categoryKeys.add(categoryKey);
+          }
+        }
+      );
+    });
+
+    const sortedCategoryKeys =
+      Array.from(categoryKeys).sort(
+        (left, right) => {
+          const leftLabel =
+            this.getCategoryDisplayValue(
+              variableName,
+              left
+            );
+
+          const rightLabel =
+            this.getCategoryDisplayValue(
+              variableName,
+              right
+            );
+
+          return leftLabel.localeCompare(
+            rightLabel,
+            undefined,
+            {
+              sensitivity: 'base'
+            }
+          );
+        }
+      );
+
+    const rowsByCategory: Record<string, any> = {};
+
+    sortedCategoryKeys.forEach(categoryKey => {
+      rowsByCategory[categoryKey] = {
+        [variableName]:
+          this.getCategoryDisplayValue(
+            variableName,
+            categoryKey
+          )
+      };
+
+      centerNames.forEach(centerName => {
+        const centerColumn =
+          this.getCenterColumnLabel(
+            centerName,
+            cohortCenters[centerName]
+          );
+
+        rowsByCategory[categoryKey][
+          centerColumn
+        ] = 0;
+      });
+    });
+
+    const missingRow: any = {
+      [variableName]: 'Missing'
+    };
+
+    const totalRow: any = {
+      [variableName]: 'Total'
+    };
+
+    centerNames.forEach(centerName => {
+      const centerData =
+        cohortCenters[centerName] || {};
+
+      const centerColumn =
+        this.getCenterColumnLabel(
+          centerName,
+          centerData
+        );
+
+      const variableData =
+        centerData.counts_unique_values
+        ?.[variableId] || {};
+
+      const variableStatistics =
+        centerData.categorical
+        ?.[variableId] || {};
+
+      sortedCategoryKeys.forEach(
+        categoryKey => {
+          const count = this.toFiniteNumber(
+            variableData[categoryKey],
+            0
+          );
+
+          rowsByCategory[categoryKey][
+            centerColumn
+          ] = count;
+        }
+      );
+
+      const validCountFromCategories =
+        sortedCategoryKeys.reduce(
+          (sum, categoryKey) => {
+            return (
+              sum +
+              this.toFiniteNumber(
+                variableData[categoryKey],
+                0
+              )
+            );
+          },
+          0
+        );
+
+      const explicitValidCount =
+        this.toFiniteNumber(
+          variableStatistics.count,
+          0
+        );
+
+      const validCount =
+        explicitValidCount > 0
+          ? explicitValidCount
+          : validCountFromCategories;
+
+      const explicitMissingCount =
+        this.toFiniteNumber(
+          variableStatistics.missing,
+          0
+        );
+
+      const missingFromValues =
+        Object.keys(variableData)
+          .filter(categoryKey =>
+            missingValues.has(categoryKey)
+          )
+          .reduce((sum, categoryKey) => {
+            return (
+              sum +
+              this.toFiniteNumber(
+                variableData[categoryKey],
+                0
+              )
+            );
+          }, 0);
+
+      /*
+       * The explicit missing value is preferred because
+       * the backend can already include N/A categories in it.
+       */
+      const missingCount =
+        explicitMissingCount > 0
+          ? explicitMissingCount
+          : missingFromValues;
+
+      const totalCount =
+        this.getCenterTotal(
+          centerData,
+          validCount,
+          missingCount
+        );
+
+      missingRow[centerColumn] =
+        this.formatMissingValue(
+          missingCount,
+          totalCount
+        );
+
+      totalRow[centerColumn] =
+        totalCount;
+    });
+
+    return [
+      ...sortedCategoryKeys.map(
+        categoryKey =>
+          rowsByCategory[categoryKey]
+      ),
+      missingRow,
+      totalRow
     ];
+  }
 
-    const selectedCenterKeys = new Set(this.centerFilters.filter(center => center.selected).map(center => center.key));
-    const selectedCohortKeys = new Set(this.cohortFilters.filter(cohort => cohort.selected).map(cohort => cohort.key));
+  private getCategoryDisplayValue(
+    variableName: string,
+    categoryValue: string
+  ): string {
+    if (variableName === 'topography') {
+      return this.mapTopographyValue(categoryValue);
+    }
 
-    this.numericCenterCharts = Object.keys(this.summaryStatisticsCenters)
-      .filter(cohort => !selectedCohortKeys.size || selectedCohortKeys.has(cohort))
-      .map(cohort => {
-        const cohortCenters = this.summaryStatisticsCenters[cohort] || {};
-        const centers = this.getEffectiveCentersForCohort(cohortCenters, selectedCenterKeys);
+    return categoryValue;
+  }
+  private buildNumericCentersTable(
+    cohortCenters: any,
+    centerNames: string[],
+    variableName: string,
+    variableId: string
+  ): any[] {
+    return this.summaryTableNum.map(
+      summaryRow => {
+        const resultRow: any = {
+          [variableName]: summaryRow.Statistics
+        };
+
+        centerNames.forEach(centerName => {
+          const centerData =
+            cohortCenters[centerName] || {};
+
+          const centerColumn =
+            this.getCenterColumnLabel(
+              centerName,
+              centerData
+            );
+
+          const variableData =
+            centerData.numeric
+            ?.[variableId] || {};
+
+          const validCount =
+            this.toFiniteNumber(
+              variableData.count,
+              0
+            );
+
+          const missingCount =
+            this.toFiniteNumber(
+              variableData.missing,
+              0
+            );
+
+          const totalCount =
+            this.getCenterTotal(
+              centerData,
+              validCount,
+              missingCount
+            );
+
+          if (summaryRow.field === 'mean') {
+            const mean =
+              this.getNumericMean(variableData);
+
+            resultRow[centerColumn] =
+              mean !== null
+                ? Number(mean.toFixed(3))
+                : '-';
+
+            return;
+          }
+
+          if (summaryRow.field === 'missing') {
+            resultRow[centerColumn] =
+              this.formatMissingValue(
+                missingCount,
+                totalCount
+              );
+
+            return;
+          }
+
+          const rawValue =
+            variableData[summaryRow.field];
+
+          if (
+            rawValue === undefined ||
+            rawValue === null ||
+            rawValue === ''
+          ) {
+            resultRow[centerColumn] = '-';
+            return;
+          }
+
+          const numericValue = Number(rawValue);
+
+          resultRow[centerColumn] =
+            Number.isFinite(numericValue)
+              ? Number(numericValue.toFixed(3))
+              : '-';
+        });
+
+        return resultRow;
+      }
+    );
+  }
+
+  private buildDateCentersTable(
+    cohortCenters: any,
+    centerNames: string[],
+    variableName: string,
+    variableId: string
+  ): any[] {
+    return this.summaryTableDate.map(
+      summaryRow => {
+        const resultRow: any = {
+          [variableName]: summaryRow.Statistics
+        };
+
+        centerNames.forEach(centerName => {
+          const centerData =
+            cohortCenters[centerName] || {};
+
+          const centerColumn =
+            this.getCenterColumnLabel(
+              centerName,
+              centerData
+            );
+
+          const variableData =
+            centerData.date
+            ?.[variableId] || {};
+
+          const validCount =
+            this.toFiniteNumber(
+              variableData.count,
+              0
+            );
+
+          const missingCount =
+            this.toFiniteNumber(
+              variableData.missing,
+              0
+            );
+
+          const totalCount =
+            this.getCenterTotal(
+              centerData,
+              validCount,
+              missingCount
+            );
+
+          if (summaryRow.field === 'missing') {
+            resultRow[centerColumn] =
+              this.formatMissingValue(
+                missingCount,
+                totalCount
+              );
+
+            return;
+          }
+
+          resultRow[centerColumn] =
+            this.formatValue(
+              variableData[summaryRow.field],
+              'Date',
+              summaryRow.field
+            );
+        });
+
+        return resultRow;
+      }
+    );
+  }
+
+  private buildBoxPlotChart(
+    cohortCenters: any,
+    centers: string[],
+    variableId: string
+  ): any | null {
+    const centersWithDistribution =
+      centers.filter(centerName => {
+        const statistics =
+          cohortCenters[centerName]
+            ?.numeric
+          ?.[variableId];
+
+        return this.hasBoxPlotStatistics(
+          statistics
+        );
+      });
+
+    if (!centersWithDistribution.length) {
+      return null;
+    }
+
+    const boxPlotData =
+      centersWithDistribution.map(centerName => {
+        const statistics =
+          cohortCenters[centerName]
+            ?.numeric
+          ?.[variableId] || {};
+
+        return {
+          x: centerName,
+          y: [
+            Number(statistics.min),
+            Number(statistics.q_25),
+            Number(statistics.median),
+            Number(statistics.q_75),
+            Number(statistics.max)
+          ]
+        };
+      });
+
+    const meanData =
+      centersWithDistribution
+        .map(centerName => {
+          const statistics =
+            cohortCenters[centerName]
+              ?.numeric
+            ?.[variableId] || {};
+
+          const mean = Number(statistics.mean);
+
+          if (!Number.isFinite(mean)) {
+            return null;
+          }
+
+          return {
+            x: centerName,
+            y: mean
+          };
+        })
+        .filter(
+          (
+            point
+          ): point is {
+            x: string;
+            y: number;
+          } => point !== null
+        );
+
+    return {
+      series: [
+        {
+          name: 'Distribution',
+          type: 'boxPlot',
+          data: boxPlotData
+        },
+        {
+          name: 'Mean',
+          type: 'scatter',
+          data: meanData
+        }
+      ],
+
+      chart: {
+        type: 'boxPlot',
+        height: 360,
+        toolbar: {
+          show: true
+        },
+        animations: {
+          enabled: true
+        }
+      },
+
+      plotOptions: {
+        boxPlot: {
+          colors: {
+            upper: '#255e87',
+            lower: '#99abb4'
+          }
+        }
+      },
+
+      xaxis: {
+        type: 'category',
+        categories: centersWithDistribution,
+        labels: {
+          rotate: -35,
+          trim: false
+        },
+        title: {
+          text: 'Center'
+        }
+      },
+
+      yaxis: {
+        title: {
+          text:
+            this.selectedValue.display_name ||
+            this.formatVariableName(
+              this.selectedValue.variable_name
+            )
+        },
+        labels: {
+          formatter: (value: number) =>
+            this.formatChartNumber(value)
+        }
+      },
+
+      dataLabels: {
+        enabled: false
+      },
+
+      markers: {
+        size: 6,
+        colors: ['#f59e0b'],
+        strokeColors: '#ffffff',
+        strokeWidth: 2,
+        hover: {
+          size: 8
+        }
+      },
+
+      stroke: {
+        width: 2
+      },
+
+      colors: [
+        '#255e87',
+        '#f59e0b'
+      ],
+
+      legend: {
+        show: true,
+        position: 'top'
+      },
+
+      tooltip: {
+        shared: false,
+        intersect: true
+      }
+    };
+  }
+
+  buildCenterCharts(): void {
+    if (!this.selectedValue) {
+      this.centerCharts = [];
+      return;
+    }
+
+    const variableId =
+      this.selectedValue.variable_id;
+
+    const datatype =
+      this.selectedValue.datatype;
+
+    const selectedCenterKeys = new Set(
+      this.centerFilters
+        .filter(center => center.selected)
+        .map(center => center.key)
+    );
+
+    this.centerCharts = Object.keys(
+      this.summaryStatisticsCenters || {}
+    )
+      .filter(cohortName =>
+        this.isSummaryCohortSelected(cohortName)
+      )
+      .map(cohortName => {
+        const cohortCenters =
+          this.summaryStatisticsCenters[
+          cohortName
+          ] || {};
+
+        const centers =
+          this.getEffectiveCentersForCohort(
+            cohortCenters,
+            selectedCenterKeys
+          );
 
         if (!centers.length) {
           return null;
         }
 
-        const charts = measureConfig.map((measure, index) => {
-          const values = centers.map(center => {
-            const numeric = cohortCenters[center]?.numeric?.[variableId] || {};
-            const raw = Number(numeric[measure.key] ?? 0);
-            return Number.isFinite(raw) ? Number(raw.toFixed(3)) : 0;
-          });
+        const distributionChart =
+          this.isNumericVariableType(datatype)
+            ? this.buildBoxPlotChart(
+              cohortCenters,
+              centers,
+              variableId
+            )
+            : null;
 
-          return {
-            title: measure.title,
-            series: [{ name: measure.title, data: values }],
-            chart: {
-              type: 'bar',
-              height: Math.max(180, centers.length * 44),
-              toolbar: { show: false }
-            },
-            plotOptions: {
-              bar: {
-                horizontal: true,
-                borderRadius: 4,
-                barHeight: '60%'
-              }
-            },
-            dataLabels: {
-              enabled: true,
-              formatter: (val: number) => Number(val).toFixed(2)
-            },
-            xaxis: {
-              categories: centers
-            },
-            colors: [index % 2 === 0 ? '#1ab5e5' : '#275b83']
-          };
-        });
+        const missingChart =
+          this.buildMissingChart(
+            cohortCenters,
+            centers,
+            variableId,
+            datatype
+          );
 
-        return { cohort, charts };
+        return {
+          cohort: cohortName,
+          distributionChart,
+          missingChart
+        };
       })
-      .filter((item): item is { cohort: string; charts: Array<{ title: string; series: any[]; chart: any; xaxis: any; plotOptions: any; dataLabels: any; colors: string[] }> } => !!item);
+      .filter(
+        (
+          item
+        ): item is {
+          cohort: string;
+          distributionChart: any | null;
+          missingChart: any;
+        } => item !== null
+      );
   }
 
-  getEffectiveCentersForCohort(cohortCenters: any, selectedCenterKeys: Set<string>): string[] {
-    const allCenters = Object.keys(cohortCenters || {});
+  private buildMissingChart(
+    cohortCenters: any,
+    centers: string[],
+    variableId: string,
+    datatype: string
+  ): any {
+    const missingData = centers.map(
+      centerName => {
+        const centerData =
+          cohortCenters[centerName] || {};
+
+        const missingStatistics =
+          this.getMissingStatistics(
+            centerData,
+            variableId,
+            datatype
+          );
+
+        return Number(
+          missingStatistics.percentage.toFixed(1)
+        );
+      }
+    );
+
+    return {
+      series: [
+        {
+          name: 'Missing',
+          data: missingData
+        }
+      ],
+
+      chart: {
+        type: 'bar',
+        height: Math.max(
+          220,
+          centers.length * 55
+        ),
+        toolbar: {
+          show: true
+        }
+      },
+
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          borderRadius: 4,
+          barHeight: '55%',
+          dataLabels: {
+            position: 'center'
+          }
+        }
+      },
+
+      xaxis: {
+        categories: centers,
+        min: 0,
+        max: 100,
+        tickAmount: 5,
+        title: {
+          text: 'Missing values (%)'
+        },
+        labels: {
+          formatter: (value: number) =>
+            `${Number(value).toFixed(0)}%`
+        }
+      },
+
+      yaxis: {
+        labels: {
+          maxWidth: 180
+        }
+      },
+
+      dataLabels: {
+        enabled: true,
+        formatter: (value: number) =>
+          `${Number(value).toFixed(1)}%`,
+        style: {
+          colors: ['#ffffff']
+        }
+      },
+
+      colors: ['#d97706'],
+
+      tooltip: {
+        y: {
+          formatter: (
+            value: number,
+            options: any
+          ) => {
+            const centerIndex =
+              options.dataPointIndex;
+
+            const centerName =
+              centers[centerIndex];
+
+            const statistics =
+              this.getMissingStatistics(
+                cohortCenters[centerName] || {},
+                variableId,
+                datatype
+              );
+
+            return (
+              `${statistics.missing} of ` +
+              `${statistics.total} ` +
+              `(${value.toFixed(1)}%)`
+            );
+          }
+        }
+      },
+
+      legend: {
+        show: false
+      }
+    };
+  }
+
+  private getMissingStatistics(
+    centerData: any,
+    variableId: string,
+    datatype: string
+  ): {
+    valid: number;
+    missing: number;
+    total: number;
+    percentage: number;
+  } {
+    let variableStatistics: any = {};
+    let validCount = 0;
+    let missingCount = 0;
+
+    if (
+      datatype === 'Number' ||
+      datatype === 'Float'
+    ) {
+      variableStatistics =
+        centerData.numeric?.[variableId] || {};
+
+      validCount = this.toFiniteNumber(
+        variableStatistics.count,
+        0
+      );
+
+      missingCount = this.toFiniteNumber(
+        variableStatistics.missing,
+        0
+      );
+    } else if (datatype === 'Date') {
+      variableStatistics =
+        centerData.date?.[variableId] || {};
+
+      validCount = this.toFiniteNumber(
+        variableStatistics.count,
+        0
+      );
+
+      missingCount = this.toFiniteNumber(
+        variableStatistics.missing,
+        0
+      );
+    } else if (
+      datatype === 'Categorical' ||
+      datatype === 'Boolean'
+    ) {
+      const values =
+        centerData.counts_unique_values
+        ?.[variableId] || {};
+
+      variableStatistics =
+        centerData.categorical
+        ?.[variableId] || {};
+
+      const missingKeys = new Set([
+        'N/A',
+        'N/A2'
+      ]);
+
+      const validFromCategories =
+        Object.keys(values)
+          .filter(key => !missingKeys.has(key))
+          .reduce((sum, key) => {
+            return (
+              sum +
+              this.toFiniteNumber(
+                values[key],
+                0
+              )
+            );
+          }, 0);
+
+      const explicitValid =
+        this.toFiniteNumber(
+          variableStatistics.count,
+          0
+        );
+
+      validCount =
+        explicitValid > 0
+          ? explicitValid
+          : validFromCategories;
+
+      const missingFromValues =
+        Object.keys(values)
+          .filter(key => missingKeys.has(key))
+          .reduce((sum, key) => {
+            return (
+              sum +
+              this.toFiniteNumber(
+                values[key],
+                0
+              )
+            );
+          }, 0);
+
+      const explicitMissing =
+        this.toFiniteNumber(
+          variableStatistics.missing,
+          0
+        );
+
+      missingCount =
+        explicitMissing > 0
+          ? explicitMissing
+          : missingFromValues;
+    }
+
+    const totalCount =
+      this.getCenterTotal(
+        centerData,
+        validCount,
+        missingCount
+      );
+
+    const percentage =
+      totalCount > 0
+        ? (missingCount / totalCount) * 100
+        : 0;
+
+    return {
+      valid: validCount,
+      missing: missingCount,
+      total: totalCount,
+      percentage
+    };
+  }
+
+  private hasBoxPlotStatistics(
+    statistics: any
+  ): boolean {
+    if (!statistics) {
+      return false;
+    }
+
+    const requiredValues = [
+      statistics.min,
+      statistics.q_25,
+      statistics.median,
+      statistics.q_75,
+      statistics.max
+    ];
+
+    return requiredValues.every(value => {
+      if (
+        value === undefined ||
+        value === null ||
+        value === ''
+      ) {
+        return false;
+      }
+
+      return Number.isFinite(Number(value));
+    });
+  }
+
+  private toFiniteNumber(
+    value: any,
+    fallback = 0
+  ): number {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ''
+    ) {
+      return fallback;
+    }
+
+    const numericValue = Number(value);
+
+    return Number.isFinite(numericValue)
+      ? numericValue
+      : fallback;
+  }
+
+  private formatChartNumber(
+    value: number
+  ): string {
+    if (!Number.isFinite(Number(value))) {
+      return '-';
+    }
+
+    return Number(value).toLocaleString(
+      undefined,
+      {
+        maximumFractionDigits: 3
+      }
+    );
+  }
+
+  private isSummaryCohortSelected(
+    summaryCohortName: string
+  ): boolean {
+    const selectedFilters =
+      this.cohortFilters.filter(
+        cohort => cohort.selected
+      );
+
+    if (!selectedFilters.length) {
+      return true;
+    }
+
+    const originalCohortName =
+      this.getOriginalCohortName(
+        summaryCohortName,
+        summaryCohortName
+      );
+
+    return selectedFilters.some(cohort => {
+      return (
+        cohort.key === summaryCohortName ||
+        cohort.label === summaryCohortName ||
+        cohort.key === originalCohortName ||
+        cohort.label === originalCohortName
+      );
+    });
+  }
+
+  getEffectiveCentersForCohort(
+    cohortCenters: any,
+    selectedCenterKeys: Set<string>
+  ): string[] {
+    const allCenters = Object.keys(
+      cohortCenters || {}
+    );
+
     if (!selectedCenterKeys.size) {
       return allCenters;
     }
 
-    const filteredCenters = allCenters.filter(center => selectedCenterKeys.has(center));
-    if (filteredCenters.length) {
-      return filteredCenters;
-    }
+    const filteredCenters =
+      allCenters.filter(center =>
+        selectedCenterKeys.has(center)
+      );
 
-    // If permit labels and result keys differ (e.g., INT vs organization_id),
-    // fall back to result centers to avoid empty center statistics/charts.
-    return allCenters;
+    /*
+     * Permit labels and result keys can differ.
+     * In that case all result centers remain available.
+     */
+    return filteredCenters.length
+      ? filteredCenters
+      : allCenters;
   }
 
   onCentersChange(): void {
@@ -1402,7 +2449,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.summaryStatisticsCohorts = [];
     this.summaryStatisticsCenters = {};
     this.centersTables = {};
-    this.numericCenterCharts = [];
+    this.centerCharts = [];
 
     this.dataSourceCohorts.data = [];
     this.displayedColumnsCohorts = [];
@@ -1410,6 +2457,7 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     this.dataSourceCenters.data = [];
     this.displayedColumnsCenters = [];
     this.cohortStatusList = [];
+    this.displayedColumnsCentersByCohort = {};
   }
 
   filterVariables(search: string) {
@@ -1541,5 +2589,86 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
     );
 
     return matchedCohort?.cohort_name || fallback;
+  }
+
+  private getCenterTotal(
+    centerData: any,
+    validCount: number,
+    missingCount: number
+  ): number {
+    const numberOfRows = this.toFiniteNumber(
+      centerData?.num_rows,
+      0
+    );
+
+    if (numberOfRows > 0) {
+      return numberOfRows;
+    }
+
+    return validCount + missingCount;
+  }
+
+  private getCenterColumnLabel(
+    centerName: string,
+    centerData: any
+  ): string {
+    const numberOfRows = this.toFiniteNumber(
+      centerData?.num_rows,
+      0
+    );
+
+    if (numberOfRows <= 0) {
+      return centerName;
+    }
+
+    return `${centerName} (n=${numberOfRows})`;
+  }
+
+  private formatMissingValue(
+    missingCount: number,
+    totalCount: number
+  ): string {
+    const percentage =
+      totalCount > 0
+        ? (missingCount / totalCount) * 100
+        : 0;
+
+    return (
+      `${missingCount} ` +
+      `(${percentage.toFixed(1)}%)`
+    );
+  }
+
+  private getNumericMean(
+    statistics: any
+  ): number | null {
+    if (!statistics) {
+      return null;
+    }
+
+    const explicitMean = Number(
+      statistics.mean
+    );
+
+    if (
+      statistics.mean !== undefined &&
+      statistics.mean !== null &&
+      Number.isFinite(explicitMean)
+    ) {
+      return explicitMean;
+    }
+
+    const sum = Number(statistics.sum);
+    const count = Number(statistics.count);
+
+    if (
+      Number.isFinite(sum) &&
+      Number.isFinite(count) &&
+      count > 0
+    ) {
+      return sum / count;
+    }
+
+    return null;
   }
 }

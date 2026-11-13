@@ -42,7 +42,8 @@
 
                 <!-- Workspace Name variables -->
                 <ng-container matColumnDef="input_variables">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'pages.data-analysis.analytic-selection.variables-input'
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        {{'pages.data-analysis.analytic-selection.variables-input'
                         | translate}}</th>
                     <td mat-cell *matCellDef="let element"> {{element.input}} </td>
                 </ng-container>
@@ -75,17 +76,19 @@
                 <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef>{{'pages.workspace.action' | translate}}</th>
                     <td mat-cell *matCellDef="let element">
-                        <ng-container *ngIf="canShowAction(element)">
+                        <ng-container>
                             <!-- Open Analysis button -->
-                            <button mat-button class="open-button" (click)="openAlgorithm(element.id)">
+                            <button mat-button class="open-button" (click)="openAlgorithm(element.id)"
+                                *ngIf="canShowOpen(element)">
                                 <mat-icon>open_in_new</mat-icon>
                                 {{'pages.workspace.open' | translate}}
                             </button>
                             <!-- Delete button -->
-                            <button class="delete-button" (click)="deleteAlgorithm(element.id)">
-                                <img src="./assets/images/icons/workspace/delete-icon.svg" alt="delete-icon" />
+                            <ng-container *ngIf="canShowDelete(element)"><button class="delete-button"
+                                    (click)="deleteAlgorithm(element)">
+                                    <img src="./assets/images/icons/workspace/delete-icon.svg" alt="delete-icon" />
 
-                            </button>
+                                </button></ng-container>
                         </ng-container>
                     </td>
 
@@ -130,10 +133,7 @@
                         class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.select-analysis-method-label'
                         | translate}}</mat-label>
                     <mat-select [(value)]="selectedMethod" (selectionChange)="onMethodChange($event.value)">
-                        <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                            [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                            [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                        </ngx-mat-select-search>
+
                         <mat-option *ngFor="let method of methods" [value]="method.value">
                             {{ method.label }}
                         </mat-option>
@@ -162,14 +162,15 @@
                                 class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-column-variable-label'
                                 | translate}}</mat-label>
                             <mat-select [(value)]="selectedColumnVariable"
-                              (openedChange)="onVariableSelectOpened($event)"
+                                (openedChange)="onVariableSelectOpened($event)"
                                 (selectionChange)="onColumnVariableChange($event.value)">
                                 <mat-option>
                                     <ngx-mat-select-search [formControl]="variableFilterCtrl"
                                         [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                         [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate"></ngx-mat-select-search>
                                 </mat-option>
-                                <mat-option *ngFor="let variable of getCategoricalAndBooleanVariables()" [value]="variable.value">
+                                <mat-option *ngFor="let variable of getCategoricalAndBooleanVariables()"
+                                    [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
@@ -182,11 +183,16 @@
                                 class="algorithm-search-label">{{'pages.data-analysis.analytic-selection.crosstab-row-variables-label'
                                 | translate}}</mat-label>
                             <mat-select [(value)]="selectedRowVariables" multiple
+                                (openedChange)="onVariableSelectOpened($event)"
                                 (selectionChange)="onSelectionChange($event)">
-                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                                </ngx-mat-select-search>
+
+                                <mat-option>
+                                    <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                        [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                        [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+
                                 <mat-option *ngFor="let variable of getAvailableRowVariables()"
                                     [value]="variable.value">
                                     {{ variable.display_name }}
@@ -213,44 +219,61 @@
                     <p class="algorithm-subtext">Select time, censor, and optionally strata variables</p>
 
                     <div class="variable-selector">
-                        <!-- Time Column -->
+                        <!-- Time column -->
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Time Column *</mat-label>
-                            <mat-select [(value)]="selectedTimeColumn">
-                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                                </ngx-mat-select-search><mat-option *ngFor="let variable of getTimeAndDateVariables()"
-                                    [value]="variable.value">
+
+                            <mat-select [(value)]="selectedTimeColumn" (openedChange)="onVariableSelectOpened($event)">
+
+                                <mat-option>
+                                    <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                        [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                        [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+
+                                <mat-option *ngFor="let variable of getTimeAndDateVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <!-- Censor Column -->
+                        <!-- Censor column -->
                         <mat-form-field appearance="outline" class="algorithm-select">
-                            <mat-label class="algorithm-search-label">Censor Column*</mat-label>
-                            <mat-select [(value)]="selectedCensorColumn">
-                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                                </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getBooleanVariables()"
-                                    [value]="variable.value">
+                            <mat-label class="algorithm-search-label">Censor Column *</mat-label>
+
+                            <mat-select [(value)]="selectedCensorColumn"
+                                (openedChange)="onVariableSelectOpened($event)">
+
+                                <mat-option>
+                                    <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                        [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                        [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+
+                                <mat-option *ngFor="let variable of getBooleanVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <!-- Strata Column (Optional) -->
+                        <!-- Optional strata column -->
                         <mat-form-field appearance="outline" class="algorithm-select">
                             <mat-label class="algorithm-search-label">Strata Column (Optional)</mat-label>
-                            <mat-select [(value)]="selectedStrataColumn">
-                                <ngx-mat-select-search [formControl]="variableFilterCtrl"
-                                    [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
-                                    [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
-                                </ngx-mat-select-search>
-                                <mat-option>-- None --</mat-option>
+
+                            <mat-select [(value)]="selectedStrataColumn"
+                                (openedChange)="onVariableSelectOpened($event)">
+
+                                <mat-option>
+                                    <ngx-mat-select-search [formControl]="variableFilterCtrl"
+                                        [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
+                                        [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+
+                                <mat-option [value]="null">-- None --</mat-option>
+
                                 <mat-option *ngFor="let variable of getCategoricalVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
@@ -296,8 +319,7 @@
                                     [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                     [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
                                 </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getPredictorVariables()"
-                                    [value]="variable.value">
+                                <mat-option *ngFor="let variable of getPredictorVariables()" [value]="variable.value">
                                     {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>
@@ -311,8 +333,7 @@
                                     [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                     [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
                                 </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getOutcomeVariables()"
-                                    [value]="variable.value">
+                                <mat-option *ngFor="let variable of getOutcomeVariables()" [value]="variable.value">
                                     {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>
@@ -337,8 +358,7 @@
                                     [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                     [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
                                 </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getTimeAndDateVariables()"
-                                    [value]="variable.value">
+                                <mat-option *ngFor="let variable of getTimeAndDateVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
@@ -351,8 +371,7 @@
                                     [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                     [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
                                 </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getBooleanVariables()"
-                                    [value]="variable.value">
+                                <mat-option *ngFor="let variable of getBooleanVariables()" [value]="variable.value">
                                     {{ variable.display_name }}
                                 </mat-option>
                             </mat-select>
@@ -365,8 +384,7 @@
                                     [placeholderLabel]="'pages.data-analysis.search_variable' | translate"
                                     [noEntriesFoundLabel]="'pages.data-analysis.no_results' | translate">
                                 </ngx-mat-select-search>
-                                <mat-option *ngFor="let variable of getPredictorVariables()"
-                                    [value]="variable.value">
+                                <mat-option *ngFor="let variable of getPredictorVariables()" [value]="variable.value">
                                     {{ variable.display_name }} ({{ variable.type }})
                                 </mat-option>
                             </mat-select>

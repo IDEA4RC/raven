@@ -1,53 +1,56 @@
-<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom" #stepper >
-  
-  <!-- STEP 1 -->
+<mat-stepper [linear]="true" headerPosition="bottom" labelPosition="bottom"
+  (selectionChange)="onStepSelectionChange($event)" #stepper>
+  <!-- Cohort selection -->
   <mat-step [stepControl]="cohortSelectionFormGroup">
     <ng-template matStepLabel class="stepper-label">
-      {{'pages.data-analysis.cohort-selection.cohort-selection' | translate}}
+      {{
+      'pages.data-analysis.cohort-selection.cohort-selection'
+      | translate
+      }}
     </ng-template>
 
     <ng-template matStepContent>
-      <app-cohort-selection (nextStep)="goToNextStep()"></app-cohort-selection>
+      <app-cohort-selection (nextStep)="goToNextStep()">
+      </app-cohort-selection>
     </ng-template>
   </mat-step>
 
-  <!-- STEP 3 -->
+  <!-- Data quality and preparation -->
   <mat-step [stepControl]="dataPreparationFormGroup">
     <ng-template matStepLabel class="stepper-label">
-      {{'pages.data-analysis.data_preparation.data_quality_preparation' | translate}}
+      {{
+      'pages.data-analysis.data_preparation.data_quality_preparation'
+      | translate
+      }}
     </ng-template>
 
     <ng-template matStepContent>
-      <app-data-preparation
-        (nextStep)="goToNextStep()"
-        (previousStep)="goToPreviousStep()">
+      <app-data-preparation (nextStep)="goToNextStep()" (previousStep)="goToPreviousStep()">
       </app-data-preparation>
     </ng-template>
   </mat-step>
 
-  <!-- STEP 4 -->
+  <!-- Analytic selection -->
   <mat-step [stepControl]="analyticSelectionFormGroup">
     <ng-template matStepLabel class="stepper-label">
-      {{'pages.data-analysis.analytic-selection.analytic-selection' | translate}}
+      {{ 'pages.data-analysis.analytic-selection.analytic-selection' | translate }}
     </ng-template>
 
     <ng-template matStepContent>
-      <app-analytic-selection
-        (nextStep)="goToNextStep()"
-        (previousStep)="goToPreviousStep()">
+      <app-analytic-selection (nextStep)="goToNextStep()" (previousStep)="goToPreviousStep()">
       </app-analytic-selection>
     </ng-template>
   </mat-step>
 
-  <!-- STEP 5 -->
+  <!-- Analysis results -->
   <mat-step [stepControl]="analysisResultsFormGroup">
     <ng-template matStepLabel class="stepper-label">
-      {{'pages.data-analysis.analysis-results.analysis-results' | translate}}
+      {{ 'pages.data-analysis.analysis-results.analysis-results' | translate }}
     </ng-template>
 
     <ng-template matStepContent>
-      <app-analysis-results (previousStep)="goToPreviousStep()"></app-analysis-results>
+      <app-analysis-results (previousStep)="goToPreviousStep()">
+      </app-analysis-results>
     </ng-template>
   </mat-step>
-
 </mat-stepper>

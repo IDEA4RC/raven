@@ -621,7 +621,7 @@ export class MetadataSearchComponent implements OnInit {
     const workspaceDescription = this.workspaceDescriptionCtrl.value;
 
     const variablesSelected = this.selectionService.getDataSelected().map((variable: any) => variable.variable_id);
-    const centersSelected = this.selectionService.getSelectedCenters();
+    const centersSelected = this.selectionService.getSelectedCenters(true);
     const typeCancer = (this.cancerType || '').replace(/\.$/, '');
 
 

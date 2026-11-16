@@ -72,8 +72,17 @@ export class SelectionService {
     this.selectionCenters.clear();
   }
   // Get selected centers
-  getSelectedCenters(): any[] {
-    return this.selectionCenters.selected;
+  // If forServer is true, centers whose capsule lives on a different server are remapped
+  // (e.g. the IIS-FJD capsule is actually hosted at UPM).
+  getSelectedCenters(forServer: boolean = false): any[] {
+    const selected = this.selectionCenters.selected;
+    if (!forServer) {
+      return selected;
+    }
+    const serverMapping: { [center: string]: string } = {
+      'IIS-FJD': 'UPM',
+    };
+    return selected.map((center: any) => serverMapping[center] ?? center);
   }
 
 }

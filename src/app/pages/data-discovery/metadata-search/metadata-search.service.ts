@@ -74,7 +74,7 @@ export class MetadataSearchService {
      * @param data the data of the data application to create
      *  */
     createDataApplication(data:any) {
-      console.log("AAAAAAAAAAAAAAAAAAAd",data);
+      console.log("createDataApplication",data);
       
       const url = '/api/workspace-application/init';
       return this.postRequest(url, data);

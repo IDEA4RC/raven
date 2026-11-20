@@ -2259,9 +2259,16 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
 
     this.centerFilters = normalized.map(label => ({
       key: label,
-      label,
+      label: this.getCenterDisplayLabel(label),
       selected: previousByKey.has(label) ? Boolean(previousByKey.get(label)) : true
     }));
+  }
+
+  getCenterDisplayLabel(centerKey: string): string {
+    const displayAliases: Record<string, string> = {
+      UPM: 'IIS-FJD'
+    };
+    return displayAliases[String(centerKey).trim().toUpperCase()] ?? centerKey;
   }
 
   syncCohortFilters(): void {
@@ -2343,11 +2350,10 @@ export class DataPreparationComponent implements OnInit, OnDestroy {
           '6': 'CLB',
           '11': 'APHP',
           '8': 'VGR',
+          '1': 'IIS-FJD',
         };
 
         this.resultGlobal = result.result;
-        console.log("Result global : ", this.resultGlobal);
-
 
         Object.keys(result.result).forEach(cohortName => {
           const nodeData = result.result[cohortName];

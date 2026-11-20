@@ -71,9 +71,6 @@ export class Table1ResultsComponent implements OnChanges {
   }
 
   renderTable1(): void {
-
-    console.log("resultData *************: ", this.resultData);
-    console.log("selectedAlgorithm *************: ", this.selectedAlgorithm);
     if (!this.resultData) {
       this.table = null;
       this.groups = [];
@@ -92,7 +89,6 @@ export class Table1ResultsComponent implements OnChanges {
     }
 
     const result = this.normalizeResult(rawResult);
-    console.log("Normalized result: ", result);
     const cohortNames = Object.keys(result);
     const rows: Table1Row[] = [];
 
@@ -310,7 +306,6 @@ export class Table1ResultsComponent implements OnChanges {
       cohortCounts
     };
 
-    console.log("Table1DisplayTable: ", this.table);
     this.buildGroups();
   }
 
@@ -412,14 +407,13 @@ export class Table1ResultsComponent implements OnChanges {
       '10': 'MSCI',
       '6': 'CLB',
       '11': 'APHP',
-      '8': 'VGR'
+      '8': 'VGR',
+      '1': 'IIS-FJD',
     };
 
     (rawResult.partials || []).forEach((partial: any) => {
-      console.log("Processing partial: ", partial);
       const orgId = String(partial.organization_id);
 
-      console.log("Organization ID: ", orgId);
 
       if (!orgId) {
         console.warn('No organization_id found in partial', partial);
@@ -427,8 +421,6 @@ export class Table1ResultsComponent implements OnChanges {
       }
 
       const cohort = orgMap[orgId] || `ORG_${orgId}`;
-      console.log("Organization ID cohort: ", cohort);
-
       let numRows = 0;
       const rawNumRows = partial.num_rows_per_node;
 
@@ -560,7 +552,6 @@ export class Table1ResultsComponent implements OnChanges {
       cohort_ids: cohortId !== undefined ? [cohortId] : [],
       selected_variables: selectedVariables
     };
-    console.log('Saving view with body:', bodySave);
     this.dataAnalysisService.saveTable1View(bodySave).subscribe
       ({
         next: (response) => { console.log('View saved successfully:', response); },
@@ -578,9 +569,6 @@ export class Table1ResultsComponent implements OnChanges {
       cohort_ids: cohortIds,
       selected_variables: selectedVariables
     };
-
-    console.log('Saving view with payload:', payload);
-
   }
 
 

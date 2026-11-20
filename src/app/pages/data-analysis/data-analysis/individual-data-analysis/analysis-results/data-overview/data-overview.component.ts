@@ -89,7 +89,8 @@ export class DataOverviewComponent
       '10': 'MSCI',
       '6': 'CLB',
       '11': 'APHP',
-      '8': 'VGR'
+      '8': 'VGR',
+      '1': 'IIS-FJD',
     };
 
   private readonly missingCategoryValues =
@@ -208,10 +209,8 @@ export class DataOverviewComponent
     this.loading = true;
 
     const body = { cohort_ids: cohortIds };
-    console.log("boyd: ", body)
     this.summarySubscription = this.dataAnalysisService.existsSummaryByCohort(body).subscribe({
       next: response => {
-        console.log("REsponse summary subcription: ", response)
         if (currentRequestVersion !== this.requestVersion) {
           return;
         }
@@ -313,11 +312,7 @@ export class DataOverviewComponent
     const variables: string[] = [];
 
     const rowVariables = this.parseVariableList(this.selectedAlgorithm?.row_var_list);
-
-    console.log("rowVariables: ", rowVariables)
-
-    rowVariables.forEach(variable => variables.push(variable)
-    );
+    rowVariables.forEach(variable => variables.push(variable));
 
     const columnVariable = String(this.selectedAlgorithm?.col_var || '').trim();
 

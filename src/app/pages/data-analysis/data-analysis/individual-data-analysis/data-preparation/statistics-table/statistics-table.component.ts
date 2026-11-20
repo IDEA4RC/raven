@@ -38,17 +38,14 @@ export class StatisticsTableComponent implements OnInit, OnChanges {
   }
 
   formatHeader(column: string): string {
-    if (column.startsWith('UKE') || column.startsWith('INT') || column === 'APHP'
-      || column === 'OUS' || column === 'MSCI' || column === 'CLB'
-      || column === 'VGR' || column.startsWith('FPNS')) {
+    if (column.startsWith('UKE') || column.startsWith('INT') || column.startsWith('APHP')
+      || column.startsWith('OUS') || column.startsWith('MSCI') || column.startsWith('CLB') || column.startsWith('IIS-FJD') 
+      || column.startsWith('VGR') || column.startsWith('FPNS')) {
       return column;
     }
 
     return this.formatVariableName(column);
   }
-
-
-
 
   private formatVariableName(name: string): string {
     if (!name) return '';

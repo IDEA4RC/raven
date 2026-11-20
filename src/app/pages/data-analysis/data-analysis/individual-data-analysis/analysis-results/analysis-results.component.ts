@@ -127,7 +127,6 @@ export class AnalysisResultsComponent implements OnInit {
     }
 
     initializeSelectedAlgorithm(selectedAlgorithm: SelectedAlgorithm): void {
-        console.log("Selected algorithm:", selectedAlgorithm);
         this.name_algorithm = selectedAlgorithm.method_name || '';
 
         const rowVariables = this.parseRowVariables(selectedAlgorithm);
@@ -326,6 +325,7 @@ export class AnalysisResultsComponent implements OnInit {
             '6': 'CLB',
             '11': 'APHP',
             '8': 'VGR',
+            '1': 'IIS-FJD',
 
         };
 
@@ -337,7 +337,6 @@ export class AnalysisResultsComponent implements OnInit {
                 console.warn('No organization_id found in partial', partial);
                 return;
             }
-
             const cohort = orgMap[orgId] || `ORG_${orgId}`;
 
             let numRows = 0;
@@ -359,9 +358,6 @@ export class AnalysisResultsComponent implements OnInit {
                 num_rows: numRows
             };
         });
-
-        console.log("Normalized result:", result);
-
         return result;
 
     }
